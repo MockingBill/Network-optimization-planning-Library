@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/net_coll_log"
+        android:title="网络测试" />
+
+    <item
+        android:id="@+id/navigation_dashboard"
+        android:icon="@drawable/history_log"
+        android:title="历史记录" />
+    <item
+        android:id="@+id/deal_status"
+        android:icon="@drawable/deal_status_log"
+        android:title="受理情况" />
+
+    <item
+        android:id="@+id/navigation_notifications"
+        android:icon="@drawable/user_logo"
+        android:title="个人信息" />
+
+</menu>

@@ -1,0 +1,58 @@
+<resources>
+    <string name="app_name">网优规划库</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="disData">
+        <item>全部</item>
+        <item>凯里市</item>
+        <item>从江县</item>
+        <item>岑巩县</item>
+        <item>丹寨县</item>
+        <item>黄平县</item>
+        <item>锦屏县</item>
+        <item>雷山县</item>
+        <item>黎平县</item>
+        <item>榕江县</item>
+        <item>剑河县</item>
+        <item>台江县</item>
+        <item>镇远县</item>
+        <item>施秉县</item>
+        <item>麻江县</item>
+        <item>三穗县</item>
+        <item>天柱县</item>
+    </string-array>
+    <string-array name="disDataForColl">
+        <item></item>
+        <item>凯里市</item>
+        <item>从江县</item>
+        <item>岑巩县</item>
+        <item>丹寨县</item>
+        <item>黄平县</item>
+        <item>锦屏县</item>
+        <item>雷山县</item>
+        <item>黎平县</item>
+        <item>榕江县</item>
+        <item>剑河县</item>
+        <item>台江县</item>
+        <item>镇远县</item>
+        <item>施秉县</item>
+        <item>麻江县</item>
+        <item>三穗县</item>
+        <item>天柱县</item>
+    </string-array>
+
+    <string-array name="upload">
+        <item>未上传</item>
+        <item>已上传</item>
+    </string-array>
+
+    <string name="singleObjUpload">http://117.187.6.14:5528/getSingleNetColl</string>
+    <string name="allObjUpload">http://117.187.6.14:5528/getAllNetColl</string>
+    <string name="getStatusData">http://117.187.6.14:5528/getStatusData</string>
+    <string name="host">117.187.6.14</string>
+    <!--116.85.25.186-->
+    <!--10.196.127.46-->
+</resources>

@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.dengqian.netcolltool.dealStatusFragment">
+
+
+
+
+    <LinearLayout android:id="@+id/listLinearLayout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="30dip"
+            android:orientation="horizontal"
+            android:paddingLeft="0dip"
+            android:paddingRight="0dip"
+            android:paddingTop="1dip"
+            android:paddingBottom="1dip">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="30dip"
+                android:textSize="10pt"
+                android:gravity="center"
+                android:text="详细地址" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dip"
+                android:textSize="10pt"
+                android:gravity="center"
+                android:text="信号" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="30dip"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="采集时间"
+                android:textSize="10pt" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="30dip"
+                android:textSize="10pt"
+                android:gravity="center"
+                android:text="状态" />
+        </LinearLayout>
+
+        <ListView android:id="@id/android:list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawSelectorOnTop="true"
+            android:divider="@null"
+            android:orientation="vertical"/>
+    </LinearLayout>
+
+</LinearLayout>
