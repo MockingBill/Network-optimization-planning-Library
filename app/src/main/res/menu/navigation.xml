@@ -16,8 +16,8 @@
         android:title="受理情况" />
 
     <item
-        android:id="@+id/navigation_notifications"
-        android:icon="@drawable/user_logo"
-        android:title="个人信息" />
+    android:id="@+id/navigation_notifications"
+    android:icon="@drawable/user_logo"
+    android:title="个人信息" />
 
 </menu>

@@ -52,7 +52,18 @@
     <string name="singleObjUpload">http://117.187.6.14:5528/getSingleNetColl</string>
     <string name="allObjUpload">http://117.187.6.14:5528/getAllNetColl</string>
     <string name="getStatusData">http://117.187.6.14:5528/getStatusData</string>
+    <string name="getCheckVersion">http://117.187.6.14:5528/getCheckVersion</string>
     <string name="host">117.187.6.14</string>
+
+    <!--<string name="singleObjUpload">http://10.196.127.46:4000/getSingleNetColl</string>-->
+    <!--<string name="allObjUpload">http://10.196.127.46:4000/getAllNetColl</string>-->
+    <!--<string name="getStatusData">http://10.196.127.46:4000/getStatusData</string>-->
+    <!--<string name="getCheckVersion">http://10.196.127.46:4000/getCheckVersion</string>-->
+    <!--<string name="host">10.196.127.46</string>-->
+
+    <string name="currentVersion">1.11</string>
+    <string name="BSSS4GMin">-130</string>
+    <string name="is2G4Gwarm">成功上传！已生成与2G对应4G弱覆盖并上传。</string>
     <!--116.85.25.186-->
     <!--10.196.127.46-->
 </resources>

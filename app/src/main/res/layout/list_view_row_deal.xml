@@ -6,6 +6,7 @@
     android:paddingLeft="0dip"
     android:paddingRight="0dip"
     android:paddingTop="1dip"
+    android:layout_margin="4dp"
     android:paddingBottom="1dip">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
@@ -18,6 +19,7 @@
             android:layout_height="30dip"
             android:gravity="center"
             android:singleLine="true"
+            android:background="@drawable/znnlist"
             android:textSize="10pt" />
         <TextView
             android:id="@+id/upBSSS"
@@ -26,6 +28,7 @@
             android:layout_height="30dip"
             android:textSize="10pt"
             android:gravity="center"
+            android:background="@drawable/znnlist"
             android:singleLine="true"/>
         <TextView
             android:id="@+id/upTime"
@@ -34,6 +37,7 @@
             android:layout_height="30dip"
             android:textSize="10pt"
             android:gravity="center"
+            android:background="@drawable/znnlist"
             android:singleLine="true"/>
         <TextView
             android:id="@+id/upStatus"
@@ -42,6 +46,7 @@
             android:layout_height="30dip"
             android:textSize="10pt"
             android:gravity="center"
+            android:background="@drawable/znnlist"
             android:singleLine="true"/>
     </LinearLayout>
 </LinearLayout>

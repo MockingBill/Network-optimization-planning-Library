@@ -4,7 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#ffffff"
+    android:background="@drawable/znnwin"
     android:orientation="vertical"
     android:paddingBottom="5dp">
     <LinearLayout
@@ -20,12 +20,15 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:gravity="right"
+        android:background="@drawable/znnwincontent"
         android:paddingRight="5dp"
         android:text="采集时间："/>
     <TextView
         android:id="@+id/ValueCollTime"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/znnwincontent"
         android:text="2018年12月21日 14时02分01秒"
         android:textSize="14dp"
         />
@@ -44,9 +47,12 @@
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:background="@drawable/znnwincontent"
             android:paddingRight="5dp"
             android:text="ECI："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueECI"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,12 +70,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="TAC："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueTAC"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,12 +96,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="BSSS："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueBSSS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -110,12 +122,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="GPS："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueGPS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -133,12 +148,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="手机号码："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValuePhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -156,12 +174,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="覆盖场景："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueOverlayScene"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -180,12 +201,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="区县："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueDistrict"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -204,12 +228,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="地址："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -228,12 +255,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="运营商："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueNetworkOperatorName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -251,12 +281,15 @@
     android:layout_marginTop="22dp"
     android:orientation="horizontal">
     <TextView
+        android:background="@drawable/znnwincontent"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:gravity="right"
         android:paddingRight="5dp"
         android:text="状态："/>
     <TextView
+        android:background="@drawable/znnwincontent"
+        android:gravity="center_horizontal"
         android:id="@+id/ValueSolveStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -274,12 +307,15 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
+            android:background="@drawable/znnwincontent"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:text="变更时间："/>
         <TextView
+            android:background="@drawable/znnwincontent"
+            android:gravity="center_horizontal"
             android:id="@+id/ValueSolveTime"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

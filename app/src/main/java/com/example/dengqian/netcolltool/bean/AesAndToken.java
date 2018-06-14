@@ -125,7 +125,7 @@ public class AesAndToken {
         Date date=new Date();
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd-HH");
         String  str=SALT+df.format(date)+SALT;
-        Log.e("appOld",str);
+        //Log.e("appOld",str);
         MessageDigest md5 = null;
         try {
             md5 = MessageDigest.getInstance("MD5");

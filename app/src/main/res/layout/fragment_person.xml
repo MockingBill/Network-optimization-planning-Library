@@ -1,8 +1,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
-
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:paddingRight="5dp"
+            android:text="当前版本:v1.11">
+        </TextView>
+    </LinearLayout>
     <LinearLayout
         android:id="@+id/regist_username"
         android:layout_width="match_parent"
@@ -89,6 +104,7 @@
         android:text="保存"
         />
 
+
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
@@ -96,7 +112,11 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/button_save"
         android:layout_marginBottom="80dp"
-        app:srcCompat="@drawable/code" />
+        android:src="@mipmap/code" />
+
+
+
+
 
 
 </RelativeLayout>

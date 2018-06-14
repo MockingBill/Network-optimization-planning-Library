@@ -128,7 +128,8 @@ public class dealStatusFragment extends ListFragment {
                             for (information info : listInfo) {
                                 map1 = new HashMap<String, String>();
                                 String time = info.getCollTime();
-                                if (!time.equals("")) {
+
+                                if (!time.equals("")&&time.split(" ").length==2) {
                                     time = time.split(" ")[1];
                                     time = time.split(":")[0] + ":" + time.split(":")[1];
                                 }

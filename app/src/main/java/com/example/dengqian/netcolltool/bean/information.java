@@ -63,6 +63,23 @@ public class information {
         this.isUpload = isUpload;
         this.NetworkOperatorName=NetworkOperatorName;
     }
+    public information(information in) {
+        this.ID=in.getID();
+        this.TAC = in.getTAC();
+        this.ECI = in.getECI();
+        this.BSSS = in.getBSSS();
+        this.GPS = in.getGPS();
+        this.phoneNumber = in.getPhoneNumber();
+        this.phoneType = in.getPhoneType();
+        this.overlayScene = in.getOverlayScene();
+        this.collTime = in.collTime;
+        this.isUpload = in.getIsUpload();
+        this.NetworkOperatorName=in.getNetworkOperatorName();
+        this.district=in.getDistrict();
+        this.address=in.getAddress();
+        this.solveStatus=in.getSolveStatus();
+        this.solveTime=in.getSolveTime();
+    }
 
     public information(){
 
@@ -223,7 +240,7 @@ public class information {
     public String show(){
         StringBuffer sb=new StringBuffer();
         sb.append("---------------------------------\n");
-        sb.append("TAC:"+this.getID()+"\n");
+        sb.append("ID:"+this.getID()+"\n");
         sb.append("TAC:"+this.getTAC()+"\n");
         sb.append("ECI:"+this.getECI()+"\n");
         sb.append("GPS:"+this.getGPS()+"\n");

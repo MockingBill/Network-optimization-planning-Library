@@ -170,7 +170,23 @@ public class connNetReq {
             return list;
         }
         return list;
+    }
 
+    public static versionInfo jsonToVersionInfo(String str){
+        versionInfo version=new versionInfo();
+        try{
+            JSONObject jsonObject=new JSONObject(str);
+            version.setAppName(jsonObject.get("appName").toString());
+            version.setServerVersion(jsonObject.get("serverVersion").toString());
+            version.setUpdateUrl(jsonObject.get("updateUrl").toString());
+            version.setUpgradeinfo(jsonObject.get("upgradeinfo").toString());
+        }catch(Exception e){
+            Log.e("jsonToVersionInfoError",e.toString());
+            return new versionInfo(e);
+        }
+
+
+        return version;
     }
 
 

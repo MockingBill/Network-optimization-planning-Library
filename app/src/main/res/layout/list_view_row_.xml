@@ -6,6 +6,7 @@
     android:paddingLeft="0dip"
     android:paddingRight="0dip"
     android:paddingTop="1dip"
+    android:layout_margin="4dp"
     android:paddingBottom="1dip">
     <TextView
         android:id="@+id/row_address"
@@ -14,6 +15,7 @@
         android:layout_height="40dip"
         android:textSize="10pt"
         android:gravity="center"
+        android:background="@drawable/znnlist"
         android:singleLine="true"/>
     <TextView
         android:id="@+id/CollTime"
@@ -22,5 +24,6 @@
         android:layout_height="40dip"
         android:singleLine="true"
         android:gravity="center"
+        android:background="@drawable/znnlist"
         android:textSize="10pt" />
 </LinearLayout>

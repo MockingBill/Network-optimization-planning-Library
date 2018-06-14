@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 
 import android.os.Bundle;
@@ -43,6 +45,7 @@ import com.example.dengqian.netcolltool.bean.information;
 import java.lang.reflect.Method;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -100,6 +103,7 @@ public class netCollFragment extends Fragment {
     //信号强度显示栏
     private TextView CurrentBess;
     public String currentDbmValue="0";
+    public String currentNetType="4G";
 
     //当前imsi
     private String imsi;
@@ -117,9 +121,15 @@ public class netCollFragment extends Fragment {
     private String[][] overlay2 = new String[][]{
             {""},
             {"学校","商业区","景区","党政军","住宅","医院","酒店","企事业单位"},
-            {"住宅区","景区","党政军","商业区"},
-            {"行政村","村寨","景区"},
+            {"住宅区","景区","党政军","商业区","企事业单位","学校"},
+            {"行政村","村寨","景区","学校"},
             {"高速","车站","高铁","公路","机场"}};
+    public static final int NETWORK_NONE = 0; // 没有网络连接
+    public static final int NETWORK_WIFI = 1; // wifi连接
+    public static final int NETWORK_2G = 2; // 2G
+    public static final int NETWORK_3G = 3; // 3G
+    public static final int NETWORK_4G = 4; // 4G
+    public static final int NETWORK_MOBILE = 5; // 手机流量
 
 
     private Activity activity;
@@ -171,18 +181,45 @@ public class netCollFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if(information.checkData()){
+
                 new Thread() {
                     public void run() {
+                        boolean is2G=false;
                         try {
+                            List<information> listAll=new ArrayList<>();
+                            if(information.getNetworkOperatorName().indexOf("2G")!=-1){
+                                is2G=true;
+                                information info1=new information(information);
+                                info1.setID(UUID.randomUUID().toString());
+                                info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
+                                info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                                listAll.add(info1);
+                            }
+                            else if(information.getNetworkOperatorName().indexOf("3G")!=-1){
+                                is2G=true;
+                                information info2=new information(information);
+                                info2.setID(UUID.randomUUID().toString());
+                                info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
+                                info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                                listAll.add(info2);
 
-                            res=connNetReq.post(getString(R.string.singleObjUpload),connNetReq.beanToJson(information));
+                            }
+                            listAll.add(information);
+                            res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAll));
+                            //res=connNetReq.post(getString(R.string.singleObjUpload),connNetReq.beanToJson(information));
 
                         } catch (Exception e) {
                             alertText="网络错误，上传失败。"+e.toString();
                             Log.e("err",e.toString());
                         }
+                        Log.e("wwww",res.toString());
                         if(res.equals("1")){
-                            alertText="上传成功！";
+                            if(is2G){
+                                alertText =getString(R.string.is2G4Gwarm);
+                            }else{
+                                alertText="上传成功！";
+                            }
+
                             isUp=true;
                             sqLiteOpenHelper.updateIsUpload(db,information.getID(),context);
                             information.setIsUpload("1");
@@ -255,6 +292,8 @@ public class netCollFragment extends Fragment {
                 TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
 
 
+
+
                 //鉴权后执行GPS采集
                 if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
                 {
@@ -271,28 +310,35 @@ public class netCollFragment extends Fragment {
                     GsmCellLocation gsmCellLocation = (GsmCellLocation) mTelephonyManager.getCellLocation();
                     information.setTAC(String.valueOf(gsmCellLocation.getLac()));
                     information.setECI(String.valueOf(gsmCellLocation.getCid()));
-
                 }
+
+//                information.setTAC("0");
+//                information.setECI("0");
+
+
+
+
+
                 information.setBSSS(Integer.valueOf(currentDbmValue));
                 // 中国移动和中国联通获取LAC、CID、BSSS的方式
                 //中国移动（China Mobile）
                 if (imsi.startsWith("46000")||imsi.startsWith("46007")||imsi.startsWith("46002")){
-                    information.setNetworkOperatorName("中国移动(China Mobile)");
+                    information.setNetworkOperatorName("中国移动 "+currentNetType);
                 }
                 //中国联通（China Unicom）
                 else if(imsi.startsWith("46001")||imsi.startsWith("46006")){
-                    information.setNetworkOperatorName("中国联通(China Unicom)");
+                    information.setNetworkOperatorName("中国联通 "+currentNetType);
                 }
                 //中国铁通（China Tietong）
                 else if(imsi.startsWith("46020")){
-                    information.setNetworkOperatorName("中国铁通(China Tietong)");
+                    information.setNetworkOperatorName("中国铁通 "+currentNetType);
                 }
 
                 //中国电信（China Telecom）CDMA网络
                 else if (imsi.startsWith("46003")||imsi.startsWith("46011")||imsi.startsWith("46005")) {
-                    information.setNetworkOperatorName("中国电信(China Telecom)");
+                    information.setNetworkOperatorName("中国电信 "+currentNetType);
                 }else{
-                    information.setNetworkOperatorName("未知网络");
+                    information.setNetworkOperatorName("未知网络 "+currentNetType);
                 }
 
 
@@ -480,14 +526,36 @@ public class netCollFragment extends Fragment {
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
-            //String signalInfo = signalStrength.toString();
-            //String[] parts = signalInfo.split(" ");
+
+            TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
             try{
                 Method method1 = null;
 
                 method1 = signalStrength.getClass().getMethod("getDbm");
                 String dbm = method1.invoke(signalStrength).toString();
-                CurrentBess.setText(dbm);
+
+                method1 = signalStrength.getClass().getMethod("getGsmDbm");
+                String dbm2 = method1.invoke(signalStrength).toString();
+
+                method1 = signalStrength.getClass().getMethod("getLteDbm");
+                String dbm3 = method1.invoke(signalStrength).toString();
+
+                method1 = signalStrength.getClass().getMethod("getTdScdmaDbm");
+                String dbm4 = method1.invoke(signalStrength).toString();
+
+
+                if(Integer.valueOf(dbm2)>=-130&&Integer.valueOf(dbm2)<-1&&dbm.equals(dbm2)){
+                    currentNetType="2G";
+                }
+                else if(Integer.valueOf(dbm3)>=-130&&Integer.valueOf(dbm3)<-1&&dbm.equals(dbm3)){
+                    currentNetType="4G";
+                }
+                else if(Integer.valueOf(dbm4)>=-130&&Integer.valueOf(dbm4)<-1&&dbm.equals(dbm4)){
+                    currentNetType="3G";
+                }else{
+                    currentNetType=getNetWorkType(mTelephonyManager);
+                }
+                CurrentBess.setText(" "+currentNetType+"信号强度:"+dbm);
                 currentDbmValue=dbm;
             }catch (Exception e){
                 currentDbmValue="-1";
@@ -580,6 +648,62 @@ public class netCollFragment extends Fragment {
             return "no GPS.";
         }
     }
+
+
+
+    private String getNetWorkType(TelephonyManager mTelephonyManager){
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE); // 获取网络服务
+        if (null == connManager) { // 为空则认为无网络
+            return "无网络";
+        }
+
+        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
+        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
+            return "无网络";
+        }
+
+
+        NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (null != wifiInfo) {
+            NetworkInfo.State state = wifiInfo.getState();
+            if (null != state) {
+                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
+                    return "WIFI";
+                }
+            }
+        }
+
+
+        int networkType = mTelephonyManager.getNetworkType();
+        switch (networkType) {
+
+            // 2G网络
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return "2G";
+            // 3G网络
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return "3G";
+            // 4G网络
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return "4G";
+            default:
+                return "无网络";
+        }
+    }
+
+
 
 
 

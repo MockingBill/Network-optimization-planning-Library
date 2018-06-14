@@ -33,6 +33,7 @@ import com.example.dengqian.netcolltool.bean.information;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -191,15 +192,42 @@ public class historyFragment extends ListFragment {
                         if (inf.checkData() && 1 == Integer.valueOf(inf.getIsUpload())) {
                             alertText = "该记录已经上传，请勿重复上传。";
                         } else {
+
+                            List<information> listAllinfo=new ArrayList<>();
+                            boolean is2G=false;
+                            if(inf.getNetworkOperatorName().indexOf("2G")!=-1){
+                                is2G=true;
+                                information info1=new information(inf);
+                                info1.setID(UUID.randomUUID().toString());
+                                info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
+                                info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                                listAllinfo.add(info1);
+                            }
+                            else if(inf.getNetworkOperatorName().indexOf("3G")!=-1){
+                                is2G=true;
+                                information info2=new information(inf);
+                                info2.setID(UUID.randomUUID().toString());
+                                info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
+                                info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                                listAllinfo.add(info2);
+                            }
+                            listAllinfo.add(inf);
+
                             try {
-                                res = connNetReq.post(getString(R.string.singleObjUpload), connNetReq.beanToJson(inf));
+                                res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllinfo));
+                                //res = connNetReq.post(getString(R.string.singleObjUpload), connNetReq.beanToJson(inf));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
 
                             if (Integer.valueOf(res) == 1) {
-                                alertText = "上传成功";
+                                if(is2G){
+                                    alertText = getString(R.string.is2G4Gwarm);
+                                }else{
+                                    alertText = "上传成功";
+                                }
+
                                 sqLiteOpenHelper.updateIsUpload(db, inf.getID(), context);
                                 inf.setIsUpload("1");
 
@@ -327,14 +355,41 @@ public class historyFragment extends ListFragment {
                     Toast.makeText(activity, "没有数据需要上传", Toast.LENGTH_LONG).show();
                 else {
                     new Thread() {
+                        boolean is2G=false;
                         public void run() {
+
                             try {
+                                List<information> listAllInf=new ArrayList<>();
                                 for (information x : listAll){
                                     uploadListID.add(x.getID());
                                 }
-                                res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAll));
+                                for(information y:listAll){
+                                    /**
+                                     * 筛选出当前的2G、3G信号，用于生成对应的4G标记。
+                                     */
+                                    listAllInf.add(y);
+                                    if(y.getNetworkOperatorName().indexOf("2G")!=-1){
+                                        is2G=true;
+                                        information info1=new information(y);
+                                        info1.setID(UUID.randomUUID().toString());
+                                        info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
+                                        info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                                        listAllInf.add(info1);
+                                    }
+                                    else if(y.getNetworkOperatorName().indexOf("3G")!=-1){
+                                        is2G=true;
+                                        information info2=new information(y);
+                                        info2.setID(UUID.randomUUID().toString());
+                                        info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
+                                        info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                                        listAllInf.add(info2);
+                                    }
+
+                                }
+                                res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllInf));
                             } catch (Exception e) {
                                 res = "0";
+                                Log.e("upload",e.toString());
                             }
                             Looper.prepare();
                             new Handler(context.getMainLooper()).post(new Runnable() {
@@ -345,17 +400,21 @@ public class historyFragment extends ListFragment {
                                      */
                                     if (res.equals("1")) {
                                         sqLiteOpenHelper.updateListIsUpload(db, uploadListID, context);
-                                        Toast.makeText(activity, "批量上传成功", Toast.LENGTH_LONG).show();
+                                        String uploadText="批量上传成功";
+                                        if(is2G){
+                                            uploadText=getString(R.string.is2G4Gwarm);
+                                        }else{
+                                            uploadText="批量上传成功";
+                                        }
+                                        Toast.makeText(activity,uploadText, Toast.LENGTH_LONG).show();
                                         refreshList();
                                         Looper.loop();
                                     } else {
                                         Toast.makeText(activity, "批量上传失败", Toast.LENGTH_LONG).show();
                                     }
-
                                 }
                             });
                         }
-
                     }.start();
                 }
 
