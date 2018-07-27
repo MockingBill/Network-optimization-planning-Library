@@ -185,8 +185,10 @@ public class netCollFragment extends Fragment {
                 new Thread() {
                     public void run() {
                         boolean is2G=false;
+                        information infoForSave=new information();
                         try {
                             List<information> listAll=new ArrayList<>();
+
                             if(information.getNetworkOperatorName().indexOf("2G")!=-1){
                                 is2G=true;
                                 information info1=new information(information);
@@ -194,6 +196,8 @@ public class netCollFragment extends Fragment {
                                 info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
                                 info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAll.add(info1);
+                                infoForSave=new information(info1);
+
                             }
                             else if(information.getNetworkOperatorName().indexOf("3G")!=-1){
                                 is2G=true;
@@ -202,6 +206,7 @@ public class netCollFragment extends Fragment {
                                 info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
                                 info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAll.add(info2);
+                                infoForSave=new information(info2);
 
                             }
                             listAll.add(information);
@@ -212,7 +217,7 @@ public class netCollFragment extends Fragment {
                             alertText="网络错误，上传失败。"+e.toString();
                             Log.e("err",e.toString());
                         }
-                        Log.e("wwww",res.toString());
+
                         if(res.equals("1")){
                             if(is2G){
                                 alertText =getString(R.string.is2G4Gwarm);
@@ -223,6 +228,9 @@ public class netCollFragment extends Fragment {
                             isUp=true;
                             sqLiteOpenHelper.updateIsUpload(db,information.getID(),context);
                             information.setIsUpload("1");
+
+                            sqLiteOpenHelper.save(db,infoForSave,context);
+                            sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID(),context);
                         }
                         else
                             alertText="远程服务器错误,上传失败。";
@@ -281,7 +289,7 @@ public class netCollFragment extends Fragment {
 
 
             //判断手机号是否有效
-            if(isMobileNO(sharedPreferences.getString("user_phone",""))&&!addressText.getText().toString().equals("")&&!sharedPreferences.getString("user_name","").equals(""))
+            if(isMobileNO(sharedPreferences.getString("user_phone",""))&&!addressText.getText().toString().equals("")&&!sharedPreferences.getString("user_name","").equals("")&&!sharedPreferences.getString("user_department","").equals(""))
             {
                 uploadButton.setEnabled(true);
             try {
@@ -314,12 +322,13 @@ public class netCollFragment extends Fragment {
 
 //                information.setTAC("0");
 //                information.setECI("0");
+                if(currentNetType.equals("无网络")){
+                    information.setBSSS(-130);
+                }else{
+                    information.setBSSS(Integer.valueOf(currentDbmValue));
+                }
 
 
-
-
-
-                information.setBSSS(Integer.valueOf(currentDbmValue));
                 // 中国移动和中国联通获取LAC、CID、BSSS的方式
                 //中国移动（China Mobile）
                 if (imsi.startsWith("46000")||imsi.startsWith("46007")||imsi.startsWith("46002")){
@@ -341,9 +350,6 @@ public class netCollFragment extends Fragment {
                     information.setNetworkOperatorName("未知网络 "+currentNetType);
                 }
 
-
-
-
                 //手机品牌类型
                 StringBuffer phoneType=new StringBuffer();
                 phoneType.append(SystemUtil.getDeviceBrand()+";");
@@ -351,17 +357,13 @@ public class netCollFragment extends Fragment {
                 phoneType.append(SystemUtil.getIMEI(context));
                 information.setPhoneType(phoneType.toString());
 
-
-
-
-
                 Date day=new Date();
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 information.setCollTime(df.format(day));
 
                 SharedPreferences sp=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
 
-                information.setPhoneNumber(sharedPreferences.getString("user_name","未填写")+"_"+sharedPreferences.getString("user_phone","未填写"));
+                information.setPhoneNumber(sharedPreferences.getString("user_name","未填写")+"_"+sharedPreferences.getString("user_phone","未填写")+"_"+sharedPreferences.getString("user_department","未填写"));
                 information.setIsUpload("0");
                 information.setID(UUID.randomUUID().toString());
                 setDisplay();
@@ -377,8 +379,12 @@ public class netCollFragment extends Fragment {
                 disp.append("err:"+e.toString());
             }
             } else {
-                if (addressText.getText().toString().equals(""))
+                if (addressText.getText().toString().equals("")){
                     Toast.makeText(activity, "详细地址不能未空。", Toast.LENGTH_LONG).show();
+                }
+                else if(sharedPreferences.getString("user_department","").equals("")){
+                    Toast.makeText(activity, "请在个人界面选择所属部门", Toast.LENGTH_LONG).show();
+                }
                 else
                     Toast.makeText(activity, "请在个人信息界面填写有效的手机号与姓名，否则无法采集。", Toast.LENGTH_LONG).show();
             }
@@ -434,10 +440,19 @@ public class netCollFragment extends Fragment {
 
         uploadButton.setOnClickListener(new uploadButtonListener());
 
+
+
         /**监听当前信号*/
         TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-        mylistener listener=new mylistener();
-        tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        boolean isSIM=hasSimCard(tmm);
+        if(isSIM ){
+            mylistener listener=new mylistener();
+            tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }else{
+                collButton.setEnabled(false);
+                Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
+        }
+
         return view;
     }
 
@@ -528,6 +543,8 @@ public class netCollFragment extends Fragment {
             super.onSignalStrengthsChanged(signalStrength);
 
             TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+
+
             try{
                 Method method1 = null;
 
@@ -544,24 +561,50 @@ public class netCollFragment extends Fragment {
                 String dbm4 = method1.invoke(signalStrength).toString();
 
 
-                if(Integer.valueOf(dbm2)>=-130&&Integer.valueOf(dbm2)<-1&&dbm.equals(dbm2)){
-                    currentNetType="2G";
-                }
-                else if(Integer.valueOf(dbm3)>=-130&&Integer.valueOf(dbm3)<-1&&dbm.equals(dbm3)){
-                    currentNetType="4G";
-                }
-                else if(Integer.valueOf(dbm4)>=-130&&Integer.valueOf(dbm4)<-1&&dbm.equals(dbm4)){
-                    currentNetType="3G";
+                if(getNetWorkType(mTelephonyManager).equals("无网络")){
+                    currentNetType="无网络";
+                    CurrentBess.setText(" "+currentNetType+"信号强度:"+"-130");
+                    currentDbmValue="-130";
                 }else{
-                    currentNetType=getNetWorkType(mTelephonyManager);
+                    if(Integer.valueOf(dbm2)>=-130&&Integer.valueOf(dbm2)<-1&&dbm.equals(dbm2)){
+                        currentNetType="2G";
+                    }
+                    else if(Integer.valueOf(dbm3)>=-130&&Integer.valueOf(dbm3)<-1&&dbm.equals(dbm3)){
+                        currentNetType="4G";
+                    }
+                    else if(Integer.valueOf(dbm4)>=-130&&Integer.valueOf(dbm4)<-1&&dbm.equals(dbm4)){
+                        currentNetType="3G";
+                    }else{
+                        currentNetType=getNetWorkType(mTelephonyManager);
+                    }
+                    CurrentBess.setText(" "+currentNetType+"信号强度:"+dbm);
+                    currentDbmValue=dbm;
                 }
-                CurrentBess.setText(" "+currentNetType+"信号强度:"+dbm);
-                currentDbmValue=dbm;
             }catch (Exception e){
                 currentDbmValue="-1";
                 CurrentBess.setText("-1");
             }
         }
+    }
+
+
+    /**
+     * 查看当前是否存在SIM卡
+     * @param telMgr
+     * @return
+     */
+    public  boolean hasSimCard(TelephonyManager telMgr) {
+        int simState = telMgr.getSimState();
+        boolean result = true;
+        switch (simState) {
+            case TelephonyManager.SIM_STATE_ABSENT:
+                result = false; // 没有SIM卡
+                break;
+            case TelephonyManager.SIM_STATE_UNKNOWN:
+                result = false;
+                break;
+        }
+        return result;
     }
 
 
@@ -651,27 +694,29 @@ public class netCollFragment extends Fragment {
 
 
 
+
+
     private String getNetWorkType(TelephonyManager mTelephonyManager){
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE); // 获取网络服务
-        if (null == connManager) { // 为空则认为无网络
-            return "无网络";
-        }
-
-        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
-        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
-            return "无网络";
-        }
-
-
-        NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        if (null != wifiInfo) {
-            NetworkInfo.State state = wifiInfo.getState();
-            if (null != state) {
-                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
-                    return "WIFI";
-                }
-            }
-        }
+//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE); // 获取网络服务
+//        if (null == connManager) { // 为空则认为无网络
+//            return "无网络";
+//        }
+//
+//        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
+//        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
+//            return "无网络";
+//        }
+//
+//
+//        NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//        if (null != wifiInfo) {
+//            NetworkInfo.State state = wifiInfo.getState();
+//            if (null != state) {
+//                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
+//                    return "WIFI";
+//                }
+//            }
+//        }
 
 
         int networkType = mTelephonyManager.getNetworkType();

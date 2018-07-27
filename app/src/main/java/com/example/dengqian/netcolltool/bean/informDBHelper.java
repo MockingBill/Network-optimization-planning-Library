@@ -113,7 +113,6 @@ public class informDBHelper extends SQLiteOpenHelper {
 
 
     public void save(SQLiteDatabase db,information info,Context context){
-        Log.e("www",info.getID());
         String sql="INSERT INTO 'NetWorkInfor' (ID,TAC,ECI,BSSS,GPS,phoneNumber,phoneType,overlayScene,collTime,isUpload,district,address,NetworkOperatorName) VALUES " +
         "('"+info.getID()+"', " +
         "'"+info.getTAC()+"', " +

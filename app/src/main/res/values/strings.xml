@@ -44,6 +44,38 @@
         <item>天柱县</item>
     </string-array>
 
+    <string-array name="disDataFordepartment">
+        <item></item>
+        <item>综合部</item>
+        <item>人力资源部</item>
+        <item>财务部</item>
+        <item>纪检监察室</item>
+        <item>党委办公室</item>
+        <item>工会</item>
+        <item>计划建设部</item>
+        <item>网络部</item>
+        <item>市场销售部</item>
+        <item>政企事业部</item>
+        <item>岑巩县</item>
+        <item>从江县</item>
+        <item>丹寨县</item>
+        <item>黄平县</item>
+        <item>剑河县</item>
+        <item>锦屏县</item>
+        <item>凯里市</item>
+        <item>雷山县</item>
+        <item>黎平县</item>
+        <item>麻江县</item>
+        <item>榕江县</item>
+        <item>三穗县</item>
+        <item>施秉县</item>
+        <item>台江县</item>
+        <item>天柱县</item>
+        <item>镇远县</item>
+    </string-array>
+
+
+
     <string-array name="upload">
         <item>未上传</item>
         <item>已上传</item>
@@ -61,7 +93,7 @@
     <!--<string name="getCheckVersion">http://10.196.127.46:4000/getCheckVersion</string>-->
     <!--<string name="host">10.196.127.46</string>-->
 
-    <string name="currentVersion">1.11</string>
+    <string name="currentVersion">1.13</string>
     <string name="BSSS4GMin">-130</string>
     <string name="is2G4Gwarm">成功上传！已生成与2G对应4G弱覆盖并上传。</string>
     <!--116.85.25.186-->

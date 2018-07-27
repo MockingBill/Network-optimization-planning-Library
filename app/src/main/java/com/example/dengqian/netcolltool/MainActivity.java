@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements historyFragment.O
                         }
                     }
                 }catch(Exception e){
-                    Log.e("errMain",e.toString());
+                    Log.e("errMain:版本更新检查",e.toString());
                 }
 
                 try{

@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.Toast;
 
 
@@ -75,13 +77,16 @@ public class personFragment extends Fragment {
         public void onClick(View v) {
             EditText name= (EditText)view.findViewById(R.id.usenames);
             EditText phoneNumber=(EditText)view.findViewById(R.id.userPhoneNumber);
+            Spinner department=(Spinner)view.findViewById(R.id.user_department);
             String u=name.getText().toString();
             String ph=phoneNumber.getText().toString();
+            String depa=department.getSelectedItem().toString();
             SharedPreferences sp=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
             SharedPreferences.Editor edit=sp.edit();
             edit.clear();
             edit.putString("user_name", u);
             edit.putString("user_phone",ph);
+            edit.putString("user_department",depa);
             edit.commit();
             Toast.makeText(activity,"保存成功!", Toast.LENGTH_LONG).show();
 
@@ -98,11 +103,17 @@ public class personFragment extends Fragment {
         this.view=inflater.inflate(R.layout.fragment_person, container, false);
         view.findViewById(R.id.button_save).setOnClickListener(new saveButtonListener());
         SharedPreferences sp=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
+
         EditText name= (EditText)view.findViewById(R.id.usenames);
         EditText phoneNumber=(EditText)view.findViewById(R.id.userPhoneNumber);
+        Spinner department=(Spinner)view.findViewById(R.id.user_department);
 
         name.setText(sp.getString("user_name",""));
         phoneNumber.setText(sp.getString("user_phone",""));
+        setSpinnerItemSelectedByValue(department,sp.getString("user_department",""));
+
+
+
 
         return view;
     }
@@ -111,6 +122,17 @@ public class personFragment extends Fragment {
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    public static void setSpinnerItemSelectedByValue(Spinner spinner,String value){
+        SpinnerAdapter apsAdapter= spinner.getAdapter(); //得到SpinnerAdapter对象
+        int k= apsAdapter.getCount();
+        for(int i=0;i<k;i++){
+            if(value.equals(apsAdapter.getItem(i).toString())){
+                spinner.setSelection(i,true);// 默认选中项
+                break;
+            }
         }
     }
 

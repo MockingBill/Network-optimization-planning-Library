@@ -195,6 +195,7 @@ public class historyFragment extends ListFragment {
 
                             List<information> listAllinfo=new ArrayList<>();
                             boolean is2G=false;
+                            information infoForSave=new information();
                             if(inf.getNetworkOperatorName().indexOf("2G")!=-1){
                                 is2G=true;
                                 information info1=new information(inf);
@@ -202,6 +203,7 @@ public class historyFragment extends ListFragment {
                                 info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
                                 info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAllinfo.add(info1);
+                                infoForSave=new information(info1);
                             }
                             else if(inf.getNetworkOperatorName().indexOf("3G")!=-1){
                                 is2G=true;
@@ -210,6 +212,7 @@ public class historyFragment extends ListFragment {
                                 info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
                                 info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAllinfo.add(info2);
+                                infoForSave=new information(info2);
                             }
                             listAllinfo.add(inf);
 
@@ -227,9 +230,10 @@ public class historyFragment extends ListFragment {
                                 }else{
                                     alertText = "上传成功";
                                 }
-
                                 sqLiteOpenHelper.updateIsUpload(db, inf.getID(), context);
                                 inf.setIsUpload("1");
+                                sqLiteOpenHelper.save(db,infoForSave,context);
+                                sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID(), context);
 
                             } else
                                 alertText = "上传失败";
@@ -267,7 +271,7 @@ public class historyFragment extends ListFragment {
             @Override
             public void onClick(View v) {
                 sqLiteOpenHelper.delete(db,inf.getID(),context);
-                Toast.makeText(activity,"删除成功:"+inf.getID(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(activity,"删除成功", Toast.LENGTH_LONG).show();
                 refreshList();
                 mPopWindow.dismiss();
             }
@@ -356,10 +360,12 @@ public class historyFragment extends ListFragment {
                 else {
                     new Thread() {
                         boolean is2G=false;
+                        List<information> listForSave=new ArrayList<>();
                         public void run() {
 
                             try {
                                 List<information> listAllInf=new ArrayList<>();
+
                                 for (information x : listAll){
                                     uploadListID.add(x.getID());
                                 }
@@ -375,6 +381,7 @@ public class historyFragment extends ListFragment {
                                         info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
                                         info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                         listAllInf.add(info1);
+                                        listForSave.add(info1);
                                     }
                                     else if(y.getNetworkOperatorName().indexOf("3G")!=-1){
                                         is2G=true;
@@ -383,8 +390,8 @@ public class historyFragment extends ListFragment {
                                         info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
                                         info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                         listAllInf.add(info2);
+                                        listForSave.add(info2);
                                     }
-
                                 }
                                 res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllInf));
                             } catch (Exception e) {
@@ -401,6 +408,11 @@ public class historyFragment extends ListFragment {
                                     if (res.equals("1")) {
                                         sqLiteOpenHelper.updateListIsUpload(db, uploadListID, context);
                                         String uploadText="批量上传成功";
+                                        //将上传的对应4G数据保存到本地
+                                        for (information j : listForSave){
+                                            sqLiteOpenHelper.save(db,j,context);
+                                            sqLiteOpenHelper.updateIsUpload(db,j.getID(),context);
+                                        }
                                         if(is2G){
                                             uploadText=getString(R.string.is2G4Gwarm);
                                         }else{
