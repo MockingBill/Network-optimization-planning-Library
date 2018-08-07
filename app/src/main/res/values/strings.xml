@@ -107,7 +107,7 @@
     <!--<string name="getCheckVersion">http://10.196.127.46:4000/getCheckVersion</string>-->
     <!--<string name="host">10.196.127.46</string>-->
 
-    <string name="currentVersion">1.16</string>
+    <string name="currentVersion">2.00</string>
     <string name="BSSS4GMin">-130</string>
     <string name="is2G4Gwarm">成功上传！已生成与2G对应4G弱覆盖并上传。</string>
     <!--116.85.25.186-->

@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:paddingRight="5dp"
-            android:text="当前版本:v1.16">
+            android:text="当前版本:v2.00">
         </TextView>
     </LinearLayout>
 
