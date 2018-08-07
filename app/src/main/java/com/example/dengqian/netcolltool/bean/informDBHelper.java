@@ -33,7 +33,7 @@ public class informDBHelper extends SQLiteOpenHelper {
             "  'ECI' varchar(50) DEFAULT NULL ," +
             "  'BSSS' varchar(20) DEFAULT NULL ," +
             "  'GPS' varchar(50) DEFAULT NULL ," +
-            "  'phoneNumber' varchar(22) DEFAULT NULL ," +
+            "  'phoneNumber' varchar(80) DEFAULT NULL ," +
             "  'phoneType' varchar(50) DEFAULT NULL ," +
             "  'overlayScene' varchar(20) DEFAULT NULL ," +
             "  'collTime' varchar(32) DEFAULT NULL ," +
@@ -100,6 +100,8 @@ public class informDBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
 
     }
+
+
 
     public void updateListIsUpload(SQLiteDatabase db,List<String> idList,Context context){
         if(!idList.isEmpty()){

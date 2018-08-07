@@ -17,7 +17,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:paddingRight="5dp"
-            android:text="当前版本:v1.13">
+            android:text="当前版本:v1.16">
         </TextView>
     </LinearLayout>
 
@@ -76,10 +76,11 @@
     <LinearLayout
         android:id="@+id/department_name"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:layout_marginBottom="5dp"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/regist_username"
-        android:layout_margin="10dp"
+        android:layout_margin="2dp"
         android:orientation="horizontal"
         >
 
@@ -88,6 +89,7 @@
             android:layout_width="79dp"
             android:layout_height="35dp"
             android:gravity="center"
+            android:layout_marginTop="2dp"
             android:paddingRight="5dp"
             android:text="部门选择:"
             android:textSize="15dp" />
@@ -95,7 +97,7 @@
         <Spinner
             android:id="@+id/user_department"
             android:layout_width="289dp"
-            android:layout_height="35dp"
+            android:layout_height="32dp"
             android:layout_weight="2"
             android:background="@drawable/znns"
             android:entries="@array/disDataFordepartment" />
@@ -106,7 +108,7 @@
         android:layout_width="297dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="center"
         android:orientation="horizontal"
         android:paddingLeft="100dp">

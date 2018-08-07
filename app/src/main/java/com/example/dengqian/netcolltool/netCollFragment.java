@@ -210,6 +210,9 @@ public class netCollFragment extends Fragment {
 
                             }
                             listAll.add(information);
+                            for(information x:listAll){
+                                Log.e("",x.show());
+                            }
                             res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAll));
                             //res=connNetReq.post(getString(R.string.singleObjUpload),connNetReq.beanToJson(information));
 
@@ -228,9 +231,14 @@ public class netCollFragment extends Fragment {
                             isUp=true;
                             sqLiteOpenHelper.updateIsUpload(db,information.getID(),context);
                             information.setIsUpload("1");
+                            Log.e("info1",information.show());
+                            Log.e("infoForSave",infoForSave.show());
 
-                            sqLiteOpenHelper.save(db,infoForSave,context);
-                            sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID(),context);
+                            if(infoForSave.checkData()){
+                                sqLiteOpenHelper.save(db,infoForSave,context);
+                                sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID(),context);
+                            }
+
                         }
                         else
                             alertText="远程服务器错误,上传失败。";
@@ -308,7 +316,7 @@ public class netCollFragment extends Fragment {
                     information.setGPS(getLocation(context));
                 }
                 else
-                    information.setGPS("No GPS...");
+                    information.setGPS("No GPS");
                 imsi = mTelephonyManager.getSubscriberId();
                 if(tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA){
                     CdmaCellLocation cdmacelllocation = (CdmaCellLocation)tm.getCellLocation();
@@ -433,7 +441,6 @@ public class netCollFragment extends Fragment {
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp2.setAdapter(adapter2);
         /** */
-
 
         collButton=view.findViewById(R.id.collButton);
         collButton.setOnClickListener(new collButtonListener());

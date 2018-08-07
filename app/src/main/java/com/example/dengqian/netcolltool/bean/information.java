@@ -9,45 +9,45 @@ import android.util.Log;
 public class information {
 
     //记录ID
-    private String ID;
+    private String ID="";
 
     // LAC，Location Area Code，位置区域码；
-    private String TAC;
+    private String TAC="";
 
     //ID，cellID，基站编号；
-    private String ECI;
+    private String ECI="";
 
     //BSSS，Base station signal strength，基站信号强度。
     private int BSSS;
 
     //当前GPS定位
-    private String GPS;
+    private String GPS="";
 
     //手机号码
-    private String phoneNumber;
+    private String phoneNumber="";
 
     //手机品牌型号
-    private String phoneType;
+    private String phoneType="";
 
     //覆盖场景
-    private String overlayScene;
+    private String overlayScene="";
 
     //采集时间
-    private String collTime;
+    private String collTime="";
 
     //是否上传
-    private String isUpload;
+    private String isUpload="";
 
 
-    private String district;
+    private String district="";
 
-    private String address;
+    private String address="";
 
-    private String NetworkOperatorName;
+    private String NetworkOperatorName="";
 
-    private String solveStatus;
+    private String solveStatus="";
 
-    private String solveTime;
+    private String solveTime="";
 
 
     public information(String ID, String TAC, String ECI, int BSSS, String GPS, String phoneNumber, String phoneType, String overlayScene, String collTime, String isUpload,String NetworkOperatorName) {

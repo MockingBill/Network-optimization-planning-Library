@@ -232,8 +232,12 @@ public class historyFragment extends ListFragment {
                                 }
                                 sqLiteOpenHelper.updateIsUpload(db, inf.getID(), context);
                                 inf.setIsUpload("1");
-                                sqLiteOpenHelper.save(db,infoForSave,context);
-                                sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID(), context);
+
+                                if(infoForSave.checkData()){
+                                    sqLiteOpenHelper.save(db,infoForSave,context);
+                                    sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID(), context);
+                                }
+
 
                             } else
                                 alertText = "上传失败";
@@ -393,6 +397,7 @@ public class historyFragment extends ListFragment {
                                         listForSave.add(info2);
                                     }
                                 }
+
                                 res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllInf));
                             } catch (Exception e) {
                                 res = "0";
