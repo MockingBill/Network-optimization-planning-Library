@@ -5,6 +5,10 @@
         android:id="@+id/navigation_home"
         android:icon="@drawable/net_coll_log"
         android:title="网络测试" />
+    <item
+        android:id="@+id/SignalTesting"
+        android:icon="@drawable/net_coll_log"
+        android:title="弱覆盖核查" />
 
     <item
         android:id="@+id/navigation_dashboard"

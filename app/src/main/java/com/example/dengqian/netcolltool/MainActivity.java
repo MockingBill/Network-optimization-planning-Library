@@ -61,19 +61,25 @@ public class MainActivity extends AppCompatActivity implements historyFragment.O
             FragmentTransaction MfragmentTransaction =FM.beginTransaction();
 
             /**
-             * 创建三个子Fragment用于不同按钮之间切换
+             * 创建五个子Fragment用于不同按钮之间切换
              */
             netCollFragment f1 = new netCollFragment();
             historyFragment f2=new historyFragment();
             personFragment f3=new personFragment();
             dealStatusFragment f4=new dealStatusFragment();
-
+            signTestingFragment f5=new signTestingFragment();
 
             switch (item.getItemId()) {
+
                 case R.id.navigation_home:{
                     //向容器内加入Fragment，一般使用add或者replace方法实现，需要传入容器的id和Fragment的实例。
                     MfragmentTransaction.replace(R.id.container,f1);
                     //提交事务，调用commit方法提交。
+                    MfragmentTransaction.commit();
+                    return true;
+                }
+                case R.id.SignalTesting:{
+                    MfragmentTransaction.replace(R.id.container,f5);
                     MfragmentTransaction.commit();
                     return true;
                 }

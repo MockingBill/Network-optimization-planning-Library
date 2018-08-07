@@ -1,0 +1,189 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingLeft="0dip"
+    android:paddingRight="0dip"
+    android:paddingTop="1dip"
+    android:layout_margin="4dp"
+    android:paddingBottom="1dip"
+    tools:context="com.example.dengqian.netcolltool.signTestingFragment"
+    >
+
+    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@color/color1"-->
+        <!--android:orientation="vertical">-->
+
+        <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:background="@color/color1"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginStart="15dp"-->
+                <!--android:background="@null"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/select_date"-->
+                <!--android:textColor="@color/color3"-->
+                <!--android:textSize="15sp" />-->
+
+        <!--</LinearLayout>-->
+
+        <!--<RelativeLayout-->
+            <!--android:id="@+id/selectDate"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="50dp"-->
+            <!--android:background="@color/color2"-->
+            <!--android:gravity="center_vertical">-->
+
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_marginStart="15dp"-->
+                <!--android:background="@null"-->
+                <!--android:gravity="center"-->
+                <!--android:text="@string/current_date"-->
+                <!--android:textColor="@color/color4"-->
+                <!--android:textSize="15sp" />-->
+
+            <!--<TextView-->
+                <!--android:id="@+id/currentDate"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_alignParentEnd="true"-->
+                <!--android:background="@null"-->
+                <!--android:gravity="center"-->
+                <!--android:paddingEnd="15dp"-->
+                <!--android:paddingStart="15dp"-->
+                <!--android:textColor="@color/color5"-->
+                <!--android:textSize="15sp" />-->
+
+        <!--</RelativeLayout>-->
+    <!--</LinearLayout>-->
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="145dp"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/znntitle"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/selectDate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/weakQuery_collTime"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:padding="3dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="时间"
+                android:textSize="15dp"
+                android:layout_height="35dp" />
+            <TextView
+                android:id="@+id/currentDate"
+                android:layout_width="match_parent"
+                android:layout_weight="0.8"
+                android:padding="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/znnsign"
+                android:gravity="center"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                android:textSize="15dp" />
+
+            <TextView
+                android:id="@+id/weakQuery_district"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:padding="3dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="县市:"
+                android:textSize="15sp"
+                android:layout_height="35dp" />
+
+            <Spinner
+                android:id="@+id/weakQuery_district_value"
+                android:layout_width="match_parent"
+                android:layout_weight="0.8"
+                android:padding="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="13dp"
+                android:background="@drawable/znnsign"
+                android:entries="@array/disDataForColl"
+                android:textSize="15dp"
+                android:text=""
+                android:layout_height="35dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#4e4444"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/weakQuery_address"
+                android:layout_width="match_parent"
+                android:layout_weight="1.5"
+                android:padding="3dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="详细地址:"
+                android:textSize="15dp"
+                android:layout_height="35dp" />
+
+            <EditText
+                android:id="@+id/weakQuery_address_value"
+                android:layout_width="match_parent"
+                android:layout_weight="0.5"
+                android:padding="3dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/znnsign"
+                android:textSize="21dp"
+                android:text=""
+                android:layout_height="30dp" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginRight="9dp"
+            android:layout_marginLeft="9dp"
+            android:orientation="horizontal">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:text="查询"
+                android:layout_height="wrap_content" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:text="保存"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>
