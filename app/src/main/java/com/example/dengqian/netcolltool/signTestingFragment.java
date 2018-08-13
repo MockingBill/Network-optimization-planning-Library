@@ -134,7 +134,7 @@ public class signTestingFragment extends ListFragment {
         }
 
 
-        listAdapter=new SimpleAdapter(activity,list,R.layout.list_view_row_,
+        listAdapter=new SimpleAdapter(activity,list,R.layout.list_view_row_weak_confirm,
                 new String[]{
                         "row_weak_address",
                         "row_weak_city",
