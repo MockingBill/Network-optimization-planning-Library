@@ -55,6 +55,23 @@ public class connNetReq {
         return json.toString();
     }
 
+
+    public static String weakQueryToJson(String collTime,String address,String district,String lon,String lat){
+        JSONObject json =new JSONObject();
+        try{
+            json.put("collTime",collTime);
+            json.put("address",address);
+            json.put("district",district);
+            json.put("lon",lon);
+            json.put("lat",lat);
+            json.put("token",AesAndToken.md5());
+        }catch(Exception e){
+            return "err";
+        }
+
+        return json.toString();
+    }
+
     /**
      * 将一个List<information>转化为一个json数组字符串
      * @param list
@@ -156,6 +173,85 @@ public class connNetReq {
                 info.setDistrict(jsonObject.getString( "district"));
                 info.setECI(jsonObject.getString( "ECI"));
                 info.setGPS(jsonObject.getString( "GPS"));
+                info.setNetworkOperatorName(jsonObject.getString( "NetworkOperatorName"));
+                info.setOverlayScene(jsonObject.getString( "overlayScene"));
+                info.setTAC(jsonObject.getString( "TAC"));
+                info.setSolveStatus(jsonObject.getString( "solveStatus"));
+                info.setSolveTime(jsonObject.getString( "solveTime"));
+                info.setPhoneNumber(jsonObject.getString( "phoneNumber"));
+                info.setPhoneType(jsonObject.getString( "phoneType"));
+                list.add(info);
+            }
+        }catch(Exception e){
+            Log.e("err","json to list fail\n"+e.toString());
+            return list;
+        }
+        return list;
+    }
+
+
+
+    /**
+     * 将json数组转化为List<information>
+     * @param str
+     * @return
+     */
+    public static List<weakInformation> jsonToWeakInf(String str){
+        List<weakInformation> list = new ArrayList<weakInformation>();
+        try{
+            JSONArray jsonArray=new JSONArray(str);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                weakInformation info=new weakInformation();
+                info.setID(jsonObject.getString( "ID"));
+                info.setAddress(jsonObject.getString( "address"));
+                info.setCollTime(jsonObject.getString( "collTime"));
+                info.setGpsLat(jsonObject.getDouble( "GpsLat"));
+                info.setGpsLon(jsonObject.getDouble("GpsLon"));
+                info.setECI(jsonObject.getString("ECI"));
+                info.setTAC(jsonObject.getString("TAC"));
+                info.setBSSS(jsonObject.getInt( "BSSS"));
+                info.setCity(jsonObject.getString("city"));
+                info.setCollectUsername(jsonObject.getString("collectUsername"));
+                info.setPhoneNumber(jsonObject.getString( "phoneNumber"));
+                info.setFromDepartment(jsonObject.getString("FromDepartment"));
+                info.setPhoneType(jsonObject.getString( "phoneType"));
+                info.setOverlayScene(jsonObject.getString( "overlayScene"));
+                info.setDistrict(jsonObject.getString( "district"));
+                info.setNetworkOperatorName(jsonObject.getString( "NetworkOperatorName"));
+                info.setNetWorkType(jsonObject.getString("netWorkType"));
+                info.setSolveStatus(jsonObject.getString( "solveStatus"));
+                info.setSolveTime(jsonObject.getString( "solveTime"));
+                info.setCreatePersion(jsonObject.getString("createPersion"));
+                info.setCreateTime(jsonObject.getString("createTime"));
+                info.setAlterpersion(jsonObject.getString("alterpersion"));
+                info.setAlterTime(jsonObject.getString("alterTime"));
+                info.setDeleteFlag(jsonObject.getString("deleteFlag"));
+                info.setDis(jsonObject.getString("dis"));
+                list.add(info);
+            }
+        }catch(Exception e){
+            Log.e("err","json to list fail\n"+e.toString());
+            return list;
+        }
+        return list;
+    }
+
+
+    public static List<information> jsonToListForWeakQuery(String str){
+        List<information> list = new ArrayList<information>();
+        try{
+            JSONArray jsonArray=new JSONArray(str);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                information info=new information();
+                info.setID(jsonObject.getString( "ID"));
+                info.setAddress(jsonObject.getString( "address"));
+                info.setBSSS(jsonObject.getInt( "BSSS"));
+                info.setCollTime(jsonObject.getString( "collTime"));
+                info.setDistrict(jsonObject.getString( "district"));
+                info.setECI(jsonObject.getString( "ECI"));
+
                 info.setNetworkOperatorName(jsonObject.getString( "NetworkOperatorName"));
                 info.setOverlayScene(jsonObject.getString( "overlayScene"));
                 info.setTAC(jsonObject.getString( "TAC"));

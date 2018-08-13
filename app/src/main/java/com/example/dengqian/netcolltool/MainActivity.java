@@ -39,7 +39,7 @@ import java.net.URL;
 
 
 //实现所有的Fragment的监听接口
-public class MainActivity extends AppCompatActivity implements historyFragment.OnFragmentInteractionListener,netCollFragment.OnFragmentInteractionListener,personFragment.OnFragmentInteractionListener,dealStatusFragment.OnFragmentInteractionListener   {
+public class MainActivity extends AppCompatActivity implements signTestingFragment.OnFragmentInteractionListener,historyFragment.OnFragmentInteractionListener,netCollFragment.OnFragmentInteractionListener,personFragment.OnFragmentInteractionListener,dealStatusFragment.OnFragmentInteractionListener   {
     ProgressDialog progressDialog=null;
     Context context=null;
 
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity implements historyFragment.O
     public void onFragmentInteraction(Uri uri) {
 
     }
+
+
 
     private TextView mTextMessage;
 
@@ -69,17 +71,12 @@ public class MainActivity extends AppCompatActivity implements historyFragment.O
             dealStatusFragment f4=new dealStatusFragment();
             signTestingFragment f5=new signTestingFragment();
 
-            switch (item.getItemId()) {
 
+            switch (item.getItemId()) {
                 case R.id.navigation_home:{
                     //向容器内加入Fragment，一般使用add或者replace方法实现，需要传入容器的id和Fragment的实例。
                     MfragmentTransaction.replace(R.id.container,f1);
                     //提交事务，调用commit方法提交。
-                    MfragmentTransaction.commit();
-                    return true;
-                }
-                case R.id.SignalTesting:{
-                    MfragmentTransaction.replace(R.id.container,f5);
                     MfragmentTransaction.commit();
                     return true;
                 }
@@ -100,6 +97,12 @@ public class MainActivity extends AppCompatActivity implements historyFragment.O
                 case R.id.deal_status:
                 {
                     MfragmentTransaction.replace(R.id.container,f4);
+                    MfragmentTransaction.commit();
+                    return true;
+                }
+                case R.id.SignalTesting:
+                {
+                    MfragmentTransaction.replace(R.id.container,f5);
                     MfragmentTransaction.commit();
                     return true;
                 }

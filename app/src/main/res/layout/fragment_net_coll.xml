@@ -21,7 +21,6 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:focusableInTouchMode="true">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
@@ -29,7 +28,6 @@
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="县市名称：" />
-
             <Spinner
                 android:id="@+id/districtC"
                 android:layout_width="0dp"
@@ -112,6 +110,29 @@
                 android:hint="请输入详细地址"
                 android:textSize="14dp" />
         </LinearLayout>
+        <!--<LinearLayout-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal"-->
+            <!--android:focusable="true"-->
+            <!--android:paddingBottom="5dp"-->
+            <!--android:focusableInTouchMode="true">-->
+            <!--<TextView-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="1"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:gravity="center"-->
+                <!--android:paddingRight="5dp"-->
+                <!--android:text="GPS定位地址：" />-->
+            <!--<TextView-->
+                <!--android:id="@+id/GPSaddress"-->
+                <!--android:layout_width="0dp"-->
+                <!--android:layout_weight="2"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:singleLine="true"-->
+                <!--android:hint=""-->
+                <!--android:textSize="14dp" />-->
+        <!--</LinearLayout>-->
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

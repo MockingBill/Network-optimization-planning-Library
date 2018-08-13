@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -38,6 +39,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.dengqian.netcolltool.bean.BaiDuLoactionDeal;
 import com.example.dengqian.netcolltool.bean.SystemUtil;
 import com.example.dengqian.netcolltool.bean.connNetReq;
 import com.example.dengqian.netcolltool.bean.informDBHelper;
@@ -115,6 +117,12 @@ public class netCollFragment extends Fragment {
     //位置信息管理者
     private LocationManager locationManager;
 
+    //位置信息提供者
+    private String locationProvider;
+
+    //地理定位显示框
+    public TextView GpsAddress;
+
     //一级场景
     private String[] overlay1 = new String[] {"","城区", "乡镇","农村","交通"};
     //二级场景
@@ -181,7 +189,6 @@ public class netCollFragment extends Fragment {
         @Override
         public void onClick(View v) {
             if(information.checkData()){
-
                 new Thread() {
                     public void run() {
                         boolean is2G=false;
@@ -460,6 +467,14 @@ public class netCollFragment extends Fragment {
                 Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
         }
 
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        locationProvider=LocationManager.GPS_PROVIDER;
+//        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+//        {
+//            locationManager.requestLocationUpdates(locationProvider, 3000, 100, locationListener);
+//        }
+//        GpsAddress=view.findViewById(R.id.GPSaddress);
+
         return view;
     }
 
@@ -669,7 +684,7 @@ public class netCollFragment extends Fragment {
      */
     private String getLocation(Context context) {
         //1.获取位置管理器
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
         String locationProvider="";
         //2.获取位置提供器，GPS或是NetWork
         List<String> providers = locationManager.getProviders(true);
@@ -689,7 +704,7 @@ public class netCollFragment extends Fragment {
         }
         Location location=null;
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        location = locationManager.getLastKnownLocation(locationProvider);
+            location = locationManager.getLastKnownLocation(locationProvider);
         if (location != null) {
             return "("+String.valueOf(location.getLongitude())+","+String.valueOf(location.getLatitude())+")";
 
@@ -755,6 +770,75 @@ public class netCollFragment extends Fragment {
         }
     }
 
+
+
+    private LocationListener locationListener=new LocationListener() {
+
+        /**
+         * 位置信息变化时触发
+         */
+        public void onLocationChanged(Location location) {
+            setGpsView(getLocation(context));
+        }
+
+        /**
+         * GPS状态变化时触发
+         */
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            setGpsView(getLocation(context));
+
+        }
+
+        /**
+         * GPS开启时触发
+         */
+        public void onProviderEnabled(String provider) {
+            setGpsView(getLocation(context));
+
+
+        }
+
+        /**
+         * GPS禁用时触发
+         */
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(activity, "请放开权限以保证应用使用正常！", Toast.LENGTH_LONG).show();
+        }
+    };
+
+
+    public void setGpsView(String gps){
+
+
+
+
+            new Thread(){
+                @Override
+                public void run() {
+                    try{
+                        String res=BaiDuLoactionDeal.getRequest("","");
+                        Log.e("",res);
+                    }catch(Exception e){
+                        Log.e("",e.toString());
+                    }
+
+                    Looper.prepare();
+                    new Handler(context.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            GpsAddress.setText("我去玩邓千我邓千王丹我去单位");
+                            Looper.loop();
+                        }
+                    });
+
+                }
+            }.start();
+
+
+
+
+
+    }
 
 
 

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:orientation="horizontal"
+    android:paddingBottom="1dip"
+    android:paddingLeft="0dip"
+    android:paddingRight="0dip"
+    android:paddingTop="1dip">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/znntitle"
+        android:orientation="vertical"
+        android:paddingBottom="1dip"
+        android:paddingLeft="0dip"
+        android:paddingRight="0dip"
+        android:paddingTop="1dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:orientation="horizontal"
+            android:paddingBottom="1dip"
+            android:paddingLeft="0dip"
+            android:paddingRight="0dip"
+            android:paddingTop="1dip">
+
+            <TextView
+                android:id="@+id/row_weak_city"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="#ffb300"
+                android:singleLine="true"
+                android:text="凯里市"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_weak_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="#00ff00"
+                android:gravity="right"
+                android:singleLine="true"
+                android:text="三穗县八弓镇书香明苑1栋2单元"
+                android:textSize="5pt" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:orientation="horizontal"
+            android:paddingBottom="1dip"
+            android:paddingLeft="0dip"
+            android:paddingRight="0dip"
+            android:paddingTop="1dip">
+
+            <TextView
+                android:id="@+id/row_weak_bsss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#57ceec"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="信号强度:-132"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_weak_network_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#08a475"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="网络制式: 4G"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_weak_collect_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#b686d2"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="采集时间:2018-6-27"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_weak_dis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#edcf07"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="距离:8 Km"
+                android:textSize="5pt" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>
