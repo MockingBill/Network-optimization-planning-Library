@@ -15,8 +15,11 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -56,10 +59,20 @@ public class connNetReq {
     }
 
 
-    public static String weakQueryToJson(String collTime,String address,String district,String lon,String lat){
+    public static String weakQueryToJson(String collTime1,String collTime2,String address,String district,String lon,String lat){
         JSONObject json =new JSONObject();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
         try{
-            json.put("collTime",collTime);
+            Date d1=sdf.parse(collTime1);
+            Date d2=sdf.parse(collTime2);
+            if(d1.getTime()>d2.getTime()){
+                String zj="";
+                zj=collTime1;
+                collTime1=collTime2;
+                collTime2=zj;
+            }
+            json.put("collTime1",collTime1);
+            json.put("collTime2",collTime2);
             json.put("address",address);
             json.put("district",district);
             json.put("lon",lon);

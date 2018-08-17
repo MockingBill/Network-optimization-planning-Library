@@ -36,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:background="#ffb300"
+                android:background="#92ce50"
                 android:singleLine="true"
                 android:text="凯里市"
                 android:textSize="5pt" />
@@ -46,7 +46,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
-                android:background="#00ff00"
+                android:background="#00b0f0"
                 android:gravity="right"
                 android:singleLine="true"
                 android:text="三穗县八弓镇书香明苑1栋2单元"
@@ -70,10 +70,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#57ceec"
+                android:background="#ffc000"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="信号强度:-132"
+                android:text="-132"
                 android:textSize="5pt" />
 
             <TextView
@@ -81,10 +81,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#08a475"
+                android:background="#64f7e6"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="网络制式: 4G"
+                android:text="4G"
                 android:textSize="5pt" />
 
             <TextView
@@ -92,10 +92,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#b686d2"
+                android:background="#4af491"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="采集时间:2018-6-27"
+                android:text="2018-6-27"
                 android:textSize="5pt" />
 
             <TextView
@@ -103,10 +103,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#edcf07"
+                android:background="#7b85f2"
                 android:gravity="center"
                 android:singleLine="true"
-                android:text="距离:8 Km"
+                android:text="8 Km"
                 android:textSize="5pt" />
         </LinearLayout>
 

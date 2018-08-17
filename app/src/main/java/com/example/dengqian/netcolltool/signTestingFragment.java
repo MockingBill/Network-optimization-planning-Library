@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -28,13 +29,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.dengqian.netcolltool.bean.AesAndToken;
+import com.example.dengqian.netcolltool.bean.MyApplication;
 import com.example.dengqian.netcolltool.bean.connNetReq;
+import com.example.dengqian.netcolltool.bean.information;
 import com.example.dengqian.netcolltool.bean.weakInformation;
 import com.example.dengqian.netcolltool.widget.CustomDatePicker;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,13 +64,21 @@ public class signTestingFragment extends ListFragment {
 
     private LinearLayout selectDate;
     private TextView currentDate;
+    private TextView currentDate2;
     private CustomDatePicker customDatePicker1;
+    private CustomDatePicker customDatePicker2;
     private Button weak_query_button;
+    private Button weak_save_button;
     private EditText collTime;
     private Spinner distract;
     private EditText address;
     private LocationManager locationManager;
     private String locationProvider;
+    private HashMap map=null;
+
+    private MyApplication application=null;
+    private List<weakInformation> weakList=new ArrayList<weakInformation>();
+
 
     public signTestingFragment() {
         // Required empty public constructor
@@ -99,6 +111,7 @@ public class signTestingFragment extends ListFragment {
 
         selectDate = (LinearLayout)  view.findViewById(R.id.selectDate);
         currentDate = (TextView) view.findViewById(R.id.currentDate);
+        currentDate2=(TextView) view.findViewById(R.id.currentDate2);
 
         //设置当前GPS的值
         setGpsView(getLocation(context));
@@ -111,25 +124,31 @@ public class signTestingFragment extends ListFragment {
 
 
         initDatePicker();
-        selectDate.setOnClickListener(new View.OnClickListener() {
+        currentDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 customDatePicker1.show(currentDate.getText().toString());
+            }
+        });
+        currentDate2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                customDatePicker2.show(currentDate.getText().toString());
             }
         });
 
 
 
         list=new ArrayList<HashMap<String,String>>();
-        for(int i =0;i<=3;i++){
+        for(int i =0;i<=0;i++){
 
-            HashMap map=new HashMap<String,String>();
-            map.put("row_weak_address","三穗县八弓镇书香明苑1栋2单元");
-            map.put("row_weak_city","凯里市");
-            map.put("row_weak_bsss","-130");
-            map.put("row_weak_collect_time","2018-07-24 14:33:22");
-            map.put("row_weak_network_type","4G");
-            map.put("row_weak_dis","20Km");
+            map=new HashMap<String,String>();
+            map.put("row_weak_address","详细地址");
+            map.put("row_weak_city","地市");
+            map.put("row_weak_bsss","信号强度");
+            map.put("row_weak_collect_time","采集时间");
+            map.put("row_weak_network_type","网络制式");
+            map.put("row_weak_dis","距离");
             list.add(map);
         }
 
@@ -160,10 +179,54 @@ public class signTestingFragment extends ListFragment {
         weak_query_button=(Button) view.findViewById(R.id.weak_query);
         weak_query_button.setOnClickListener(new QueryListener());
 
+        weak_save_button=(Button)view.findViewById(R.id.weak_save);
+        weak_save_button.setOnClickListener(new SaveListener());
 
-
+        application=(MyApplication) activity.getApplication();
+        if(application.getGlobalWeakList()!=null&&application.getGlobalWeakList().size()!=0){
+            refreshList(application.getGlobalWeakList());
+        }
         return view;
     }
+
+
+    public void refreshList(List<weakInformation> infoList){
+        list.clear();
+        DecimalFormat df = new DecimalFormat("#.00");
+        for(weakInformation info : infoList){
+            map=new HashMap<String,String>();
+            map.put("row_weak_address",info.getAddress());
+            map.put("row_weak_city",info.getDistrict());
+            map.put("row_weak_bsss",info.getBSSS());
+            map.put("row_weak_collect_time",info.getCollTime());
+            map.put("row_weak_network_type",info.getNetWorkType());
+            double dis=Double.valueOf(info.getDis());
+            if(dis>=1000){
+                map.put("row_weak_dis",df.format(dis/1000)+"公里");
+            }else{
+                map.put("row_weak_dis",dis+"米");
+            }
+
+            list.add(map);
+        }
+        listAdapter.notifyDataSetChanged();
+    }
+    public class SaveListener implements View.OnClickListener{
+        @Override
+        public void onClick(View v) {
+            for(weakInformation wi:weakList){
+                Log.e("",wi.show());
+            }
+            MyApplication application = (MyApplication)activity.getApplication();
+            application.setGlobalWeakList(weakList);
+            Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+
+
 
 
     /**
@@ -173,34 +236,46 @@ public class signTestingFragment extends ListFragment {
         @Override
         public void onClick(View v) {
             new Thread(){
+
+                String warmText="刷新成功";
                 @Override
                 public void run() {
                     try{
                         String []gps=getLocation(context);
                         String res = connNetReq.post(getString(R.string.getWeakForConfirm),
-                                connNetReq.weakQueryToJson(currentDate.getText().toString(),
+                                connNetReq.weakQueryToJson(currentDate.getText().toString(),currentDate2.getText().toString(),
                                         address.getText().toString(), distract.getSelectedItem().toString(),gps[0],gps[1]));
 
+
                         res= AesAndToken.decrypt(res,AesAndToken.KEY);
-                        List<weakInformation> weakList=connNetReq.jsonToWeakInf(res);
-                        for(weakInformation wi:weakList){
-                            Log.e("",wi.show());
+                        if("0".equals(res)){
+                            warmText="网络异常";
+                        }else{
+                            weakList=connNetReq.jsonToWeakInf(res);
+                            if(weakList.size()==0){
+                                warmText="未找到满足的数据";
+                            }
                         }
+
 
 
                     }catch (Exception e){
                         e.printStackTrace();
+                        warmText="网络错误";
+                    }finally {
+                        //上传后的UI操作放在UI线程中
+                        Looper.prepare();
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                refreshList(weakList);
+                                Toast.makeText(context, warmText, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                        });
                     }
 
-                    //上传后的UI操作放在UI线程中
-                    Looper.prepare();
-                    new Handler(context.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(context, "刷新成功", Toast.LENGTH_SHORT).show();
-                            Looper.loop();
-                        }
-                    });
+
 
                 }
             }.start();
@@ -208,17 +283,7 @@ public class signTestingFragment extends ListFragment {
         }
     }
 
-    public void refreshList(){
 
-        list.clear();
-        for(int i =0;i<=3;i++){
-            HashMap map=new HashMap<String,String>();
-            map.put("row_address","name:"+i+10);
-            map.put("CollTime","age"+i+10);
-            list.add(map);
-        }
-        listAdapter.notifyDataSetChanged();
-    }
 
     private LocationListener locationListener=new LocationListener() {
 
@@ -275,10 +340,16 @@ public class signTestingFragment extends ListFragment {
         }
     }
     private void initDatePicker() {
+        Calendar c = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CHINA);
-        String now = sdf.format(new Date());
-        currentDate.setText(now.split(" ")[0]);
+        c.add(Calendar.MONTH, -1);
+        Date m = c.getTime();
+        String day30pre = sdf.format(m);
 
+        String now = sdf.format(new Date());
+
+        currentDate.setText(day30pre.split(" ")[0]);
+        currentDate2.setText(now.split(" ")[0]);
 
         customDatePicker1 = new CustomDatePicker(activity, new CustomDatePicker.ResultHandler() {
             @Override
@@ -286,8 +357,19 @@ public class signTestingFragment extends ListFragment {
                 currentDate.setText(time.split(" ")[0]);
             }
         }, "2010-01-01 00:00", now); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
+        customDatePicker2 = new CustomDatePicker(activity, new CustomDatePicker.ResultHandler() {
+            @Override
+            public void handle(String time) { // 回调接口，获得选中的时间
+                currentDate2.setText(time.split(" ")[0]);
+            }
+        }, "2010-01-01 00:00", now);
+
+
         customDatePicker1.showSpecificTime(false); // 不显示时和分
         customDatePicker1.setIsLoop(false); // 不允许循环滚动
+
+        customDatePicker2.showSpecificTime(false); // 不显示时和分
+        customDatePicker2.showSpecificTime(false); // 不显示时和分
 
     }
 

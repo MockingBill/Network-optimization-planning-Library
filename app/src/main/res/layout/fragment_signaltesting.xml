@@ -11,62 +11,7 @@
     tools:context="com.example.dengqian.netcolltool.signTestingFragment"
     >
 
-    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@color/color1"-->
-        <!--android:orientation="vertical">-->
 
-        <!--<LinearLayout-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:background="@color/color1"-->
-            <!--android:gravity="center_vertical"-->
-            <!--android:orientation="vertical">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_marginStart="15dp"-->
-                <!--android:background="@null"-->
-                <!--android:gravity="center"-->
-                <!--android:text="@string/select_date"-->
-                <!--android:textColor="@color/color3"-->
-                <!--android:textSize="15sp" />-->
-
-        <!--</LinearLayout>-->
-
-        <!--<RelativeLayout-->
-            <!--android:id="@+id/selectDate"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="50dp"-->
-            <!--android:background="@color/color2"-->
-            <!--android:gravity="center_vertical">-->
-
-            <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_marginStart="15dp"-->
-                <!--android:background="@null"-->
-                <!--android:gravity="center"-->
-                <!--android:text="@string/current_date"-->
-                <!--android:textColor="@color/color4"-->
-                <!--android:textSize="15sp" />-->
-
-            <!--<TextView-->
-                <!--android:id="@+id/currentDate"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:layout_alignParentEnd="true"-->
-                <!--android:background="@null"-->
-                <!--android:gravity="center"-->
-                <!--android:paddingEnd="15dp"-->
-                <!--android:paddingStart="15dp"-->
-                <!--android:textColor="@color/color5"-->
-                <!--android:textSize="15sp" />-->
-
-        <!--</RelativeLayout>-->
-    <!--</LinearLayout>-->
 
 
 
@@ -89,8 +34,8 @@
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:padding="3dp"
-                android:text="时间"
+                android:padding="0dp"
+                android:text="时间范围"
                 android:textSize="15dp" />
 
             <TextView
@@ -106,30 +51,23 @@
                 android:paddingEnd="15dp"
                 android:paddingStart="15dp"
                 android:textSize="15dp" />
-
             <TextView
-                android:id="@+id/weakQuery_district"
+                android:id="@+id/currentDate2"
                 android:layout_width="match_parent"
-                android:layout_weight="1"
-                android:padding="3dp"
-                android:layout_marginTop="5dp"
-                android:gravity="center"
-                android:text="县市:"
-                android:textSize="15sp"
-                android:layout_height="35dp" />
-
-            <Spinner
-                android:id="@+id/weakQuery_district_value"
-                android:layout_width="match_parent"
-                android:layout_weight="0.8"
-                android:padding="3dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginRight="3dp"
+                android:layout_weight="0.8"
                 android:background="@drawable/znnsign"
-                android:entries="@array/disDataForColl"
-                android:textSize="15dp"
-                android:text=""
-                android:layout_height="35dp" />
+                android:gravity="center"
+                android:padding="3dp"
+                android:paddingEnd="15dp"
+                android:paddingStart="15dp"
+                android:textSize="15dp" />
+
+
         </LinearLayout>
 
         <TextView
@@ -146,25 +84,48 @@
             android:layout_height="50dp"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/weakQuery_district"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:padding="3dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:text="县市:"
+                android:textSize="14sp"
+                android:layout_height="35dp" />
+
+            <Spinner
+                android:id="@+id/weakQuery_district_value"
+                android:layout_width="match_parent"
+                android:layout_weight="0.9"
+                android:padding="1dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/znnsign"
+                android:entries="@array/disDataForColl"
+                android:textSize="11dp"
+                android:text=""
+                android:layout_height="35dp" />
+            <TextView
                 android:id="@+id/weakQuery_address"
                 android:layout_width="match_parent"
-                android:layout_weight="1.5"
+                android:layout_weight="1"
                 android:padding="3dp"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
                 android:text="详细地址:"
-                android:textSize="15dp"
+                android:textSize="12dp"
                 android:layout_height="35dp" />
 
             <EditText
                 android:id="@+id/weakQuery_address_value"
                 android:layout_width="match_parent"
-                android:layout_weight="0.5"
+                android:layout_weight="0.7"
                 android:padding="3dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="8dp"
                 android:background="@drawable/znnsign"
-                android:textSize="16dp"
+                android:textSize="11dp"
                 android:text=""
                 android:layout_height="35dp" />
         </LinearLayout>
@@ -258,6 +219,7 @@
         android:layout_margin="10dp"
         android:background="@drawable/znntitle"
         android:orientation="vertical">
+
         <ListView android:id="@id/android:list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

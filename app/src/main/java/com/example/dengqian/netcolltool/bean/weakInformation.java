@@ -63,6 +63,41 @@ public class weakInformation {
         return sb.toString();
     }
 
+    public weakInformation(){}
+
+
+
+    public weakInformation(weakInformation in) {
+        this.ID=in.getID();
+        this.address=in.getAddress();
+        this.collTime=in.getCollTime();
+        this.GpsLon=in.getGpsLon();
+        this.GpsLat=in.getGpsLat();
+        this.ECI=in.getECI();
+        this.TAC=in.getTAC();
+        this.BSSS=in.getBSSS();
+        this.city=in.getCity();
+        this.collectUsername=in.getCollectUsername();
+        this.phoneNumber=in.getPhoneNumber();
+        this.FromDepartment=in.getFromDepartment();
+        this.phoneType=in.getPhoneType();
+        this.overlayScene=in.getOverlayScene();
+        this.district=in.getDistrict();
+        this.NetworkOperatorName=in.getNetworkOperatorName();
+        this.netWorkType=in.getNetWorkType();
+        this.solveStatus=in.getSolveStatus();
+        this.solveTime=in.getSolveTime();
+        this.createPersion=in.getCreatePersion();
+        this.createTime=in.getCreateTime();
+        this.alterpersion=in.getAlterpersion();
+        this.alterTime=in.getAlterTime();
+        this.deleteFlag=in.getDeleteFlag();
+        this.dis=in.getDis();
+        this.isUpload=in.getIsUpload();
+
+    }
+
+
     public void setIsUpload(String isUpload) {
         this.isUpload = isUpload;
     }
