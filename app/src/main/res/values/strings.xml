@@ -75,7 +75,6 @@
     </string-array>
 
 
-
     <string-array name="upload">
         <item>未上传</item>
         <item>已上传</item>
@@ -102,12 +101,21 @@
     <!--<string name="getWeakForConfirm">http://117.187.6.14:5528/getWeakForConfirm</string>-->
     <!--<string name="host">117.187.6.14</string>-->
 
-    <string name="singleObjUpload">http://10.196.127.46:4000/getSingleNetColl</string>
-    <string name="allObjUpload">http://10.196.127.46:4000/getAllNetColl</string>
-    <string name="getStatusData">http://10.196.127.46:4000/getStatusData</string>
-    <string name="getCheckVersion">http://10.196.127.46:4000/getCheckVersion</string>
-    <string name="getWeakForConfirm">http://10.196.127.46:4000/getWeakForConfirm</string>
-    <string name="host">10.196.127.46</string>
+    <!--<string name="singleObjUpload">http://10.196.127.46:4000/getSingleNetColl</string>-->
+    <!--<string name="allObjUpload">http://10.196.127.46:4000/getAllNetColl</string>-->
+    <!--<string name="getStatusData">http://10.196.127.46:4000/getStatusData</string>-->
+    <!--<string name="getCheckVersion">http://10.196.127.46:4000/getCheckVersion</string>-->
+    <!--<string name="getWeakForConfirm">http://10.196.127.46:4000/getWeakForConfirm</string>-->
+    <!--<string name="host">10.196.127.46</string>-->
+
+
+    <string name="singleObjUpload">http://172.20.10.2:4000/getSingleNetColl</string>
+    <string name="allObjUpload">http://172.20.10.2:4000/getAllNetColl</string>
+    <string name="getStatusData">http://172.20.10.2:4000/getStatusData</string>
+    <string name="getCheckVersion">http://172.20.10.2:4000/getCheckVersion</string>
+    <string name="getWeakForConfirm">http://172.20.10.2:4000/getWeakForConfirm</string>
+    <string name="host">172.20.10.2</string>
+
 
     <string name="currentVersion">2.00</string>
     <string name="BSSS4GMin">-130</string>

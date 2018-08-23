@@ -27,22 +27,18 @@ import java.util.Map;
 import java.util.regex.*;
 
 public class BaiDuLoactionDeal {
-    public  static String url="http://api.map.baidu.com/geocoder/v2/?callback=renderReverse&location=26.6376190,106.6087970&output=json&pois=1&ak=y5pwBnfPdgA6dbN6ws0i34Hefk0zD35v";
-
     public static String getRequest(String lon,String lat) throws Exception {
-
-        //info = URLEncoder.encode(info);
-
-
-        URL url = new URL(BaiDuLoactionDeal.url);
+//        String p1="^-?((0|1?[0-7]?[0-9]?)(([.][0-9]{1,4})?)|180(([.][0]{1,4})?))$";
+//        String p2="^-?((0|[1-8]?[0-9]?)(([.][0-9]{1,4})?)|90(([.][0]{1,4})?))$";
+        String surl="http://api.map.baidu.com/geocoder/v2/?location="+lat+","+lon+"&output=json&pois=1&ak=y5pwBnfPdgA6dbN6ws0i34Hefk0zD35v";
+        URL url = new URL(surl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(3000);
         //这是请求方式为POST
         conn.setRequestMethod("GET");
         //设置post请求必要的请求头
-        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded"); // 请求头, 必须设置
+        conn.setRequestProperty("Content-Type", "application/json"); // 请求头, 必须设置
         conn.setDoOutput(true); // 准备写出
-
         Log.w("resp：",conn.getResponseMessage());
         InputStream inptStream=conn.getInputStream();
         String resultData = null;      //存储处理结果
@@ -57,8 +53,6 @@ public class BaiDuLoactionDeal {
             e.printStackTrace();
         }
         resultData = new String(byteArrayOutputStream.toByteArray());
-
-
         if(conn.getResponseCode() == 200)
             return resultData;
         else
@@ -66,17 +60,10 @@ public class BaiDuLoactionDeal {
     }
 
 
-    public String formatAddress(String resultData){
-
-        String pattern = "(.*)";
-
-        Pattern p = Pattern.compile(pattern);
-        String []a=p.split("");
-
-
-
-        return "";
-
+    public static String formatAddress(String resultData) throws Exception{
+        JSONObject jsonObject=new JSONObject(resultData);
+        JSONObject formatted_address=new JSONObject(jsonObject.get("result").toString());
+        return formatted_address.get("formatted_address").toString();
     }
 
 }

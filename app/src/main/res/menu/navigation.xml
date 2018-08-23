@@ -7,7 +7,7 @@
         android:title="网络测试" />
     <item
         android:id="@+id/SignalTesting"
-        android:icon="@drawable/net_coll_log"
+        android:icon="@drawable/ic_weak_confim"
         android:title="弱覆盖核查" />
 
     <item

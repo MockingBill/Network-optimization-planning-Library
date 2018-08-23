@@ -54,6 +54,8 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static com.example.dengqian.netcolltool.signTestingFragment.formatDecimalWithZero;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,13 +70,10 @@ public class netCollFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
-
     //显示组件
     private TextView disp;
     //当前界面-用于获取其他组件
@@ -83,7 +82,6 @@ public class netCollFragment extends Fragment {
     private Context context;
     //采集信息类
     private information information;
-
     //下拉列表适配器
     private ArrayAdapter<String> adapter ;
     private ArrayAdapter<String> adapter2;
@@ -364,7 +362,6 @@ public class netCollFragment extends Fragment {
                 }else{
                     information.setNetworkOperatorName("未知网络 "+currentNetType);
                 }
-
                 //手机品牌类型
                 StringBuffer phoneType=new StringBuffer();
                 phoneType.append(SystemUtil.getDeviceBrand()+";");
@@ -405,8 +402,6 @@ public class netCollFragment extends Fragment {
             }
         }
     }
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -418,9 +413,7 @@ public class netCollFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -436,7 +429,6 @@ public class netCollFragment extends Fragment {
         spForAddress=context.getSharedPreferences ("address",Context.MODE_PRIVATE);
         addressText.setText(spForAddress.getString("lastAddress",""));
         /** 二级联动*/
-
         sp = (Spinner) view.findViewById(R.id.overlayScene1C);
         sp2=(Spinner)view.findViewById(R.id.overlayScene2C);
         sp3=(Spinner)view.findViewById(R.id.districtC);
@@ -448,14 +440,9 @@ public class netCollFragment extends Fragment {
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp2.setAdapter(adapter2);
         /** */
-
         collButton=view.findViewById(R.id.collButton);
         collButton.setOnClickListener(new collButtonListener());
-
         uploadButton.setOnClickListener(new uploadButtonListener());
-
-
-
         /**监听当前信号*/
         TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
         boolean isSIM=hasSimCard(tmm);
@@ -466,7 +453,6 @@ public class netCollFragment extends Fragment {
                 collButton.setEnabled(false);
                 Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
         }
-
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         locationProvider=LocationManager.GPS_PROVIDER;
 //        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -474,23 +460,18 @@ public class netCollFragment extends Fragment {
 //            locationManager.requestLocationUpdates(locationProvider, 3000, 100, locationListener);
 //        }
 //        GpsAddress=view.findViewById(R.id.GPSaddress);
+        String []gps=getLocation2(context);
+
+        getLocalion(gps[0],gps[1]);
 
         return view;
     }
-
-
-
-
-
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
-
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -504,7 +485,6 @@ public class netCollFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
-
     @Override
     public void onDetach() {
         super.onDetach();
@@ -525,6 +505,33 @@ public class netCollFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+    public void getLocalion(String lon, final String lat){
+        final String latt=lat;
+        final String lonn=lon;
+        new Thread() {
+            public String res="";
+            @Override
+            public void run() {
+                super.run();
+                try{
+                    String jj=BaiDuLoactionDeal.getRequest(lonn,latt);
+                    res=BaiDuLoactionDeal.formatAddress(jj);
+
+                }catch(Exception e){
+                    res="未知地址";
+                }finally {
+                    Looper.prepare();
+                    new Handler(context.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            addressText.setText(res);
+                            Looper.loop();
+                        }
+                    });
+                }
+            }
+        }.start();
     }
 
 
@@ -711,6 +718,39 @@ public class netCollFragment extends Fragment {
 
         } else {
             return "no GPS.";
+        }
+    }
+
+    private String[] getLocation2(Context context) {
+        //1.获取位置管理器
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        String locationProvider="";
+        //2.获取位置提供器，GPS或是NetWork
+        List<String> providers = locationManager.getProviders(true);
+        if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
+            //如果是网络定位
+            locationProvider = LocationManager.NETWORK_PROVIDER;
+        } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
+            //如果是GPS定位
+            locationProvider = LocationManager.GPS_PROVIDER;
+        } else if (providers.contains(LocationManager.PASSIVE_PROVIDER)) {
+            //如果是PASSIVE定位
+            locationProvider = LocationManager.PASSIVE_PROVIDER;
+        }
+        else {
+            Toast.makeText(activity, "请放开权限以保证应用使用正常！", Toast.LENGTH_LONG).show();
+            return new String[]{"-1","-1"};
+        }
+        Location location=null;
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            location = locationManager.getLastKnownLocation(locationProvider);
+        if (location != null) {
+            String []lonlat={formatDecimalWithZero(String.valueOf(location.getLongitude()),7),formatDecimalWithZero(String.valueOf(location.getLatitude()),7)};
+            return lonlat;
+
+
+        } else {
+            return new String[]{"-1","-1"};
         }
     }
 

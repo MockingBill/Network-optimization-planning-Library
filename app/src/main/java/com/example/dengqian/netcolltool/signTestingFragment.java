@@ -17,12 +17,16 @@ import android.os.Looper;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -78,6 +82,12 @@ public class signTestingFragment extends ListFragment {
 
     private MyApplication application=null;
     private List<weakInformation> weakList=new ArrayList<weakInformation>();
+    //弹窗view对象，用于获取弹窗对象
+    private View contentView;
+    //弹出窗对象
+    private PopupWindow mPopWindow;
+
+    private weakInformation inf;
 
 
     public signTestingFragment() {
@@ -224,10 +234,59 @@ public class signTestingFragment extends ListFragment {
     }
 
 
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+        if(weakList!=null&&weakList.size()!=0){
+            showPopupWindow(position);
+        }
+
+    }
+
+
+
+    public void showPopupWindow(int position){
+        contentView = LayoutInflater.from(activity).inflate(R.layout.window_weak_query_layout, null);
+        mPopWindow = new PopupWindow(contentView,
+                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
+        inf = weakList.get(position);
+        ((TextView)contentView.findViewById(R.id.weak_win_address)).setText(inf.getAddress());
+        ((TextView)contentView.findViewById(R.id.weak_win_bsss)).setText(String.valueOf(inf.getBSSS()));
+        ((TextView)contentView.findViewById(R.id.weak_win_city)).setText(inf.getCity());
+        ((TextView)contentView.findViewById(R.id.weak_win_collectName)).setText(inf.getCollectUsername());
+        ((TextView)contentView.findViewById(R.id.weak_win_collectTime)).setText(inf.getCollTime());
+        ((TextView)contentView.findViewById(R.id.weak_win_departmentName)).setText(inf.getFromDepartment());
+        ((TextView)contentView.findViewById(R.id.weak_win_dirct)).setText(inf.getDistrict());
+        ((TextView)contentView.findViewById(R.id.weak_win_ECI)).setText(inf.getECI());
+        ((TextView)contentView.findViewById(R.id.weak_win_lat)).setText(String.valueOf(inf.getGpsLat()));
+        ((TextView)contentView.findViewById(R.id.weak_win_lon)).setText(String.valueOf(inf.getGpsLon()));
+        ((TextView)contentView.findViewById(R.id.weak_win_networkType)).setText(inf.getNetWorkType());
+        ((TextView)contentView.findViewById(R.id.weak_win_overlayScene)).setText(inf.getOverlayScene());
+        ((TextView)contentView.findViewById(R.id.weak_win_OperatorName)).setText(inf.getNetworkOperatorName());
+        ((TextView)contentView.findViewById(R.id.weak_win_phoneNumber)).setText(inf.getPhoneNumber());
+        ((TextView)contentView.findViewById(R.id.weak_win_phonetype)).setText(inf.getPhoneType());
+        ((TextView)contentView.findViewById(R.id.weak_win_TAC)).setText(inf.getTAC());
 
 
 
 
+
+
+
+
+        Button buttonDelete=(Button)contentView.findViewById(R.id.weak_return_button);
+        buttonDelete.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                mPopWindow.dismiss();
+            }
+        });
+        View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_query_layout, null);
+        mPopWindow.showAtLocation(rootview, Gravity.TOP, 0, 30);
+
+
+
+    }
 
     /**
      * 弱覆盖查询按钮点击事件
