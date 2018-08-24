@@ -40,18 +40,46 @@
         <TextView
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
             android:textSize="20dp"
             android:gravity="center"
             android:text="上传状态:" />
         <Spinner
             android:id="@+id/isUpload"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
             android:layout_weight="1"
             android:layout_marginBottom="4dp"
             android:background="@drawable/znns"
             android:entries="@array/upload" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/znntitle"
+        android:layout_margin="3dp"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="30dp"
+            android:layout_marginBottom="5dp"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:text="详细地址:" />
+        <EditText
+            android:id="@+id/his_address_query"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="40dp" />
+        <Button
+            android:id="@+id/his_botton_address"
+            android:layout_weight="0.3"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="5dp"
+            android:text="查询"/>
     </LinearLayout>
     <LinearLayout android:id="@+id/listLinearLayout"
         android:layout_width="fill_parent"

@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -70,6 +71,8 @@ public class historyFragment extends ListFragment {
     private  Spinner sp3;
     //上传状态下拉框
     private  Spinner sp4;
+
+    private Button his_botton_address;
 
     private  Context context;
     //一级场景
@@ -315,7 +318,8 @@ public class historyFragment extends ListFragment {
 
         sp4=(Spinner)view.findViewById(R.id.isUpload);
 
-
+        his_botton_address=(Button) view.findViewById(R.id.his_botton_address);
+        his_address_query=(EditText) view.findViewById(R.id.his_address_query);
 
 
 
@@ -438,9 +442,20 @@ public class historyFragment extends ListFragment {
             }
         });
         refreshList();
+
+
+
+        his_botton_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshListForAddressquery(his_address_query.getText().toString());
+            }
+        });
         return view;
     }
 
+
+    private EditText his_address_query;
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -494,10 +509,38 @@ public class historyFragment extends ListFragment {
 
         String di=sp3.getSelectedItem().toString();
         String up=sp4.getSelectedItem().toString().equals("未上传")?"0":"1";
+        String addressvalue=his_address_query.getText().toString();
+        if("".equals(addressvalue)){
+            addressvalue="%";
+        }
         if(di.equals("全部"))
             di="%";
-        String querySql="select * from  NetWorkInfor where overlayScene like '"+sc+"' and district like '"+di+"' and isUpload="+up+"";
+        String querySql="select * from  NetWorkInfor where address like '%"+addressvalue+"%' and overlayScene like  '"+sc+"' and district like '"+di+"' and isUpload="+up+"";
         String []arr={sc,di,up};
+        infoList=sqLiteOpenHelper.query(db,querySql,null);
+        HashMap<String,String> map;
+        list.clear();
+        for(information info : infoList){
+            map=new HashMap<String,String>();
+            map.put("row_address",info.getAddress());
+            /*map.put("ECI",info.getECI());
+            map.put("BSSS",String.valueOf(info.getBSSS()));*/
+            map.put("CollTime",info.getCollTime());
+            list.add(map);
+        }
+        listAdapter.notifyDataSetChanged();
+    }
+
+
+
+    public void refreshListForAddressquery(String addressvalue){
+        String up=sp4.getSelectedItem().toString().equals("未上传")?"0":"1";
+        if("".equals(addressvalue)){
+            addressvalue="%";
+        }
+
+        String querySql="select * from  NetWorkInfor where address like '%"+addressvalue+"%' and isUpload="+up+"";
+
         infoList=sqLiteOpenHelper.query(db,querySql,null);
         HashMap<String,String> map;
         list.clear();
