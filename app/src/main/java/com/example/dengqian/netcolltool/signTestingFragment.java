@@ -274,15 +274,49 @@ public class signTestingFragment extends ListFragment {
 
 
 
-        Button buttonDelete=(Button)contentView.findViewById(R.id.weak_return_button);
-        buttonDelete.setOnClickListener(new View.OnClickListener(){
+        Button buttonReturn=(Button)contentView.findViewById(R.id.weak_return_button);
+        buttonReturn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 mPopWindow.dismiss();
             }
         });
+        Button buttonConfirm=(Button)contentView.findViewById(R.id.weak_confirm_button);
+        buttonConfirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindow.dismiss();
+                showConfirmWindow();
+            }
+        });
+
+
         View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_query_layout, null);
-        mPopWindow.showAtLocation(rootview, Gravity.TOP, 0, 30);
+        mPopWindow.showAtLocation(rootview, Gravity.TOP, 0, 20);
+
+
+
+
+
+
+    }
+
+
+
+
+    //弹窗view对象，用于获取弹窗对象
+    private View contentView2;
+    //弹出窗对象
+    private PopupWindow mPopWindow2;
+
+    public void showConfirmWindow(){
+        contentView2 = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
+        mPopWindow2 = new PopupWindow(contentView2,
+                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
+
+        View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
+        mPopWindow2.showAtLocation(rootview, Gravity.TOP, 0, 20);
+
 
 
 
