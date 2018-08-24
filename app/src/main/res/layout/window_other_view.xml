@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="5dp">
+<EditText
+    android:id="@+id/weak_fault_info"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:hint="请填写本次弱覆盖，是由什么故障引起、或者已通过什么手段解决"
+    />
+
+
+</LinearLayout>

@@ -5,7 +5,6 @@ import android.Manifest;
 import android.app.Activity;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,6 +15,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
+import android.telephony.PhoneStateListener;
+import android.telephony.SignalStrength;
+import android.telephony.TelephonyManager;
+import android.telephony.cdma.CdmaCellLocation;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -35,10 +39,10 @@ import android.widget.Toast;
 import com.example.dengqian.netcolltool.bean.AesAndToken;
 import com.example.dengqian.netcolltool.bean.MyApplication;
 import com.example.dengqian.netcolltool.bean.connNetReq;
-import com.example.dengqian.netcolltool.bean.information;
 import com.example.dengqian.netcolltool.bean.weakInformation;
 import com.example.dengqian.netcolltool.widget.CustomDatePicker;
 
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,6 +84,9 @@ public class signTestingFragment extends ListFragment {
     private String locationProvider;
     private HashMap map=null;
 
+    private int currentPosition=0;
+
+
     private MyApplication application=null;
     private List<weakInformation> weakList=new ArrayList<weakInformation>();
     //弹窗view对象，用于获取弹窗对象
@@ -88,6 +95,27 @@ public class signTestingFragment extends ListFragment {
     private PopupWindow mPopWindow;
 
     private weakInformation inf;
+
+
+    /**
+     * window_weak_confirm_layout界面组件
+     */
+
+    private TextView netcoll_confirm_district;
+    private TextView netcoll_confirm_overlayScene;
+    private TextView netcoll_confirm_address;
+    private TextView netcoll_confirm_weak_eci;
+    private TextView netcoll_confirm_weak_tac;
+    private TextView netcoll_confirm_weak_networkType;
+    private TextView netcoll_confirm_weak_bsss;
+    private EditText netcoll_confirm_eci;
+    private EditText netcoll_confirm_tac;
+    private EditText netcoll_confirm_networktype;
+    private EditText netcoll_confirm_bsss;
+    private  Button confirm_last_step_button;
+    private  Button confirm_refresh_button;
+    private  Button confirm_fault_button;
+    private  Button confirm_demand_button;
 
 
     public signTestingFragment() {
@@ -122,6 +150,8 @@ public class signTestingFragment extends ListFragment {
         selectDate = (LinearLayout)  view.findViewById(R.id.selectDate);
         currentDate = (TextView) view.findViewById(R.id.currentDate);
         currentDate2=(TextView) view.findViewById(R.id.currentDate2);
+
+
 
         //设置当前GPS的值
         setGpsView(getLocation(context));
@@ -238,10 +268,13 @@ public class signTestingFragment extends ListFragment {
     public void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         if(weakList!=null&&weakList.size()!=0){
+            currentPosition=position;
             showPopupWindow(position);
+
         }
 
     }
+
 
 
 
@@ -286,7 +319,7 @@ public class signTestingFragment extends ListFragment {
             @Override
             public void onClick(View v) {
                 mPopWindow.dismiss();
-                showConfirmWindow();
+                showConfirmWindow(inf);
             }
         });
 
@@ -309,19 +342,253 @@ public class signTestingFragment extends ListFragment {
     //弹出窗对象
     private PopupWindow mPopWindow2;
 
-    public void showConfirmWindow(){
+    private LinearLayout dynamic_content;
+    private View otherView;
+
+
+    public void showConfirmWindow(final weakInformation inf){
         contentView2 = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
-        mPopWindow2 = new PopupWindow(contentView2,
-                FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
+        mPopWindow2 = new PopupWindow(contentView2,FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
+        otherView = LayoutInflater.from(activity).inflate(R.layout.window_other_view, null);
+        /**
+         * window_weak_confirm_layout组件初始化
+         */
+        netcoll_confirm_district=(TextView) contentView2.findViewById(R.id.netcoll_confirm_district);
+        netcoll_confirm_overlayScene=(TextView)contentView2.findViewById(R.id.netcoll_confirm_overlayScene);
+        netcoll_confirm_address=(TextView)contentView2.findViewById(R.id.netcoll_confirm_address);
+        netcoll_confirm_weak_eci=(TextView)contentView2.findViewById(R.id.netcoll_confirm_weak_eci);
+        netcoll_confirm_weak_tac=(TextView)contentView2.findViewById(R.id.netcoll_confirm_weak_tac);
+        netcoll_confirm_weak_networkType=(TextView)contentView2.findViewById(R.id.netcoll_confirm_weak_networkType);
+        netcoll_confirm_weak_bsss=(TextView)contentView2.findViewById(R.id.netcoll_confirm_weak_bsss);
+        netcoll_confirm_eci=(EditText) contentView2.findViewById(R.id.netcoll_confirm_eci);
+        netcoll_confirm_tac=(EditText)contentView2.findViewById(R.id.netcoll_confirm_tac);
+        netcoll_confirm_networktype=(EditText)contentView2.findViewById(R.id.netcoll_confirm_networktype);
+        netcoll_confirm_bsss=(EditText)contentView2.findViewById(R.id.netcoll_confirm_bsss);
+
+        confirm_last_step_button=(Button)contentView2.findViewById(R.id.confirm_last_step_button);
+        confirm_refresh_button=(Button)contentView2.findViewById(R.id.confirm_refresh_button);
+        confirm_fault_button=(Button)contentView2.findViewById(R.id.confirm_fault_button);
+        confirm_demand_button=(Button)contentView2.findViewById(R.id.confirm_demand_button);
+        dynamic_content=(LinearLayout)contentView2.findViewById(R.id.dynamic_content);
+
+        /**
+         * 上一步
+         */
+        confirm_last_step_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindow2.dismiss();
+                showPopupWindow(currentPosition);
+
+            }
+        });
+
+
+        /**
+         * 刷新按钮
+         */
+        confirm_refresh_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindow2.dismiss();
+                showConfirmWindow(inf);
+            }
+        });
+
+        /**
+         * 填写备注信息
+         */
+        confirm_fault_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText faultview=(EditText) otherView.findViewById(R.id.weak_fault_info);
+                dynamic_content.addView(faultview);
+            }
+        });
+
+        netcoll_confirm_district.setText(inf.getDistrict());
+        netcoll_confirm_overlayScene.setText(inf.getOverlayScene());
+        netcoll_confirm_address.setText(inf.getAddress());
+        netcoll_confirm_weak_eci.setText(inf.getECI());
+        netcoll_confirm_weak_tac.setText(inf.getTAC());
+        netcoll_confirm_weak_networkType.setText(inf.getNetWorkType());
+        netcoll_confirm_weak_bsss.setText(String.valueOf(inf.getBSSS()));
+
+        String Eci="-1";
+        String Tac="-1";
+        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+        {
+            TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+            TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+            if(tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA){
+                CdmaCellLocation cdmacelllocation = (CdmaCellLocation)tm.getCellLocation();
+                Tac=String.valueOf(cdmacelllocation.getNetworkId());
+                Eci=String.valueOf(cdmacelllocation.getBaseStationId());
+            }else{
+                GsmCellLocation gsmCellLocation = (GsmCellLocation) mTelephonyManager.getCellLocation();
+                Tac=String.valueOf(gsmCellLocation.getLac());
+                Eci=String.valueOf(gsmCellLocation.getCid());
+            }
+        }
+        TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+
+        currentNetType=getNetWorkType(mTelephonyManager);
+
+
+        /**监听当前信号*/
+        TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+        boolean isSIM=hasSimCard(tmm);
+        if(isSIM ){
+            signTestingFragment.mylistener listener=new signTestingFragment.mylistener();
+            tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }else{
+            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
+        }
+        netcoll_confirm_eci.setText(Eci);
+        netcoll_confirm_tac.setText(Tac);
+
+
+
 
         View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
         mPopWindow2.showAtLocation(rootview, Gravity.TOP, 0, 20);
-
-
-
-
     }
 
+
+
+
+private String currentNetType="无网络";
+private String currentDbmValue="-130";
+    class mylistener extends PhoneStateListener {
+        @Override
+        public void onSignalStrengthsChanged(SignalStrength signalStrength) {
+            super.onSignalStrengthsChanged(signalStrength);
+
+            TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+
+
+            try{
+                Method method1 = null;
+
+                method1 = signalStrength.getClass().getMethod("getDbm");
+                String dbm = method1.invoke(signalStrength).toString();
+
+                method1 = signalStrength.getClass().getMethod("getGsmDbm");
+                String dbm2 = method1.invoke(signalStrength).toString();
+
+                method1 = signalStrength.getClass().getMethod("getLteDbm");
+                String dbm3 = method1.invoke(signalStrength).toString();
+
+                method1 = signalStrength.getClass().getMethod("getTdScdmaDbm");
+                String dbm4 = method1.invoke(signalStrength).toString();
+
+
+                if(getNetWorkType(mTelephonyManager).equals("无网络")){
+                    currentNetType="无网络";
+                    netcoll_confirm_bsss.setText(String.valueOf(-130));
+                    currentDbmValue="-130";
+                }else{
+                    if(Integer.valueOf(dbm2)>=-130&&Integer.valueOf(dbm2)<-1&&dbm.equals(dbm2)){
+                        currentNetType="2G";
+                    }
+                    else if(Integer.valueOf(dbm3)>=-130&&Integer.valueOf(dbm3)<-1&&dbm.equals(dbm3)){
+                        currentNetType="4G";
+                    }
+                    else if(Integer.valueOf(dbm4)>=-130&&Integer.valueOf(dbm4)<-1&&dbm.equals(dbm4)){
+                        currentNetType="3G";
+                    }else{
+                        currentNetType=getNetWorkType(mTelephonyManager);
+                    }
+                    netcoll_confirm_bsss.setText(dbm);
+                    currentDbmValue=dbm;
+                }
+            }catch (Exception e){
+                currentNetType="无网络";
+                currentDbmValue="-1";
+                netcoll_confirm_bsss.setText("-1");
+            }
+        }
+    }
+    /**
+     * 查看当前是否存在SIM卡
+     * @param telMgr
+     * @return
+     */
+    public  boolean hasSimCard(TelephonyManager telMgr) {
+        int simState = telMgr.getSimState();
+        boolean result = true;
+        switch (simState) {
+            case TelephonyManager.SIM_STATE_ABSENT:
+                result = false; // 没有SIM卡
+                break;
+            case TelephonyManager.SIM_STATE_UNKNOWN:
+                result = false;
+                break;
+        }
+        return result;
+    }
+
+
+    /**
+     * 获取当前网络类型
+     * @param mTelephonyManager
+     * @return
+     */
+
+
+    private String getNetWorkType(TelephonyManager mTelephonyManager){
+//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE); // 获取网络服务
+//        if (null == connManager) { // 为空则认为无网络
+//            return "无网络";
+//        }
+//
+//        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
+//        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
+//            return "无网络";
+//        }
+//
+//
+//        NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+//        if (null != wifiInfo) {
+//            NetworkInfo.State state = wifiInfo.getState();
+//            if (null != state) {
+//                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
+//                    return "WIFI";
+//                }
+//            }
+//        }
+
+
+        int networkType = mTelephonyManager.getNetworkType();
+        switch (networkType) {
+
+            // 2G网络
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return "2G";
+            // 3G网络
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return "3G";
+            // 4G网络
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return "4G";
+            default:
+                return "无网络";
+        }
+    }
     /**
      * 弱覆盖查询按钮点击事件
      */

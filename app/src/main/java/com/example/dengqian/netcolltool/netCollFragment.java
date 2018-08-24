@@ -333,8 +333,7 @@ public class netCollFragment extends Fragment {
                     information.setECI(String.valueOf(gsmCellLocation.getCid()));
                 }
 
-//                information.setTAC("0");
-//                information.setECI("0");
+
                 if(currentNetType.equals("无网络")){
                     information.setBSSS(-130);
                 }else{

@@ -10,7 +10,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="170dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -26,7 +26,7 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -52,16 +52,16 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="right"
+                android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="县市:" />
 
             <TextView
-                android:id="@+id/weak_confirm_district"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_district"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
@@ -70,16 +70,16 @@
 
             <TextView
 
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="right"
+                android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="场景:" />
 
             <TextView
-                android:id="@+id/weak_confirm_overlayScene"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_overlayScene"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
@@ -100,25 +100,129 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:orientation="horizontal">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="详细地址:" />
 
             <TextView
-                android:id="@+id/weak_confirm_address"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_address"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:layout_weight="2.6"
                 android:text="黔东南天柱县邦洞镇三团村长冲"
                 android:textSize="12dp" />
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#4e4444"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="CID/ECI:" />
+
+            <TextView
+                android:id="@+id/netcoll_confirm_weak_eci"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="121"
+                android:textSize="14dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="LAC/TAC:" />
+
+            <TextView
+                android:id="@+id/netcoll_confirm_weak_tac"
+                android:layout_width="0dp"
+                android:focusable="false"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="32323"
+                android:textSize="14dp" />
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:background="#4e4444"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_height="1dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="4dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="网络制式:" />
+
+            <TextView
+                android:id="@+id/netcoll_confirm_weak_networkType"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="4G"
+                android:textSize="14dp" />
+
+            <TextView
+
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="信号强度:" />
+
+            <TextView
+                android:id="@+id/netcoll_confirm_weak_bsss"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="-99"
+                android:textSize="14dp" />
+        </LinearLayout>
 
     </LinearLayout>
     <LinearLayout
@@ -161,11 +265,10 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -173,8 +276,8 @@
                 android:text="CID/ECI:" />
 
             <EditText
-                android:id="@+id/weak_confirm_ECI"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_eci"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:layout_weight="1"
@@ -183,7 +286,7 @@
                 android:textSize="14dp" />
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -191,8 +294,8 @@
                 android:text="LAC/TAC:" />
 
             <EditText
-                android:id="@+id/weak_confirm_TAC"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_tac"
+                android:layout_width="0dp"
                 android:focusable="false"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -200,24 +303,16 @@
                 android:text="32323"
                 android:textSize="14dp" />
         </LinearLayout>
-        <TextView
-            android:layout_width="match_parent"
-            android:background="#4e4444"
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_height="1dp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -225,8 +320,8 @@
                 android:text="网络制式:" />
 
             <EditText
-                android:id="@+id/weak_confirm_networkType"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_networktype"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:layout_weight="1"
@@ -236,16 +331,15 @@
 
             <TextView
 
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:paddingRight="5dp"
                 android:text="信号强度:" />
 
             <EditText
-                android:id="@+id/weak_confirm_bsss"
-                android:layout_width="wrap_content"
+                android:id="@+id/netcoll_confirm_bsss"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:layout_weight="1"
@@ -254,16 +348,17 @@
                 android:textSize="14dp" />
         </LinearLayout>
         <LinearLayout
-            android:layout_width="match_parent"
+            android:id="@+id/dynamic_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            android:orientation="horizontal">
+            android:orientation="vertical">
             <TextView
-
+                android:id="@+id/hint_info"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -273,7 +368,7 @@
     </LinearLayout>
 
 
-
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -283,12 +378,14 @@
         android:layout_marginTop="0dp"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/confirm_last_step_button"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="上一步"
             android:textSize="12dp"/>
         <Button
+            android:id="@+id/confirm_refresh_button"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -307,18 +404,19 @@
         android:layout_marginTop="0dp"
         android:orientation="horizontal">
         <Button
+            android:id="@+id/confirm_fault_button"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="填写故障或网优信息"
             android:textSize="12dp"/>
         <Button
+            android:id="@+id/confirm_demand_button"
             android:layout_width="20dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="填写建站需求信息"
             android:textSize="12dp"/>
-    </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
