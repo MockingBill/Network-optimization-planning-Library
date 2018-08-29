@@ -376,6 +376,47 @@ public class signTestingFragment extends ListFragment {
     private LinearLayout conform_demand_list;
     private ListView demand_list;
     private SimpleAdapter listAdapter2;
+    private List<weakCoverageDemand>  demandList;
+
+
+    public void refreshDemandList(){
+
+        demandList =dbforweak.query(db,"select * from bu_weak_coverage_demand where preStName !='null' and preStName IS NOT NULL;",null);
+        List<Map<String,String>> infoList=new ArrayList<>();
+
+
+        for(weakCoverageDemand demandinfo:demandList){
+            HashMap<String,String> map=new HashMap<>();
+            map.put("Stname",demandinfo.getPreStName());
+            map.put("Staddress",demandinfo.getStAddress());
+            map.put("netmodel",demandinfo.getNetModel());
+            map.put("prope",demandinfo.getStPrope());
+            map.put("buildtype",demandinfo.getBuildType());
+            map.put("cellnum",demandinfo.getReqCellNum());
+            infoList.add(map);
+        }
+
+
+        listAdapter2=new SimpleAdapter(activity,infoList,R.layout.list_view_demand,
+                new String[]{"Stname","Staddress","netmodel","prope","buildtype","cellnum"},
+                new int[]{
+                        R.id.row_demand_Stname,
+                        R.id.row_demand_Staddress,
+                        R.id.row_demand_netmodel,
+                        R.id.row_demand_prope,
+                        R.id.row_demand_buildtype,
+                        R.id.row_demand_cellnum
+                });
+        demand_list.setAdapter(listAdapter2);
+        demand_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPopWindow2.dismiss();
+                showDemandWin(demandList.get(position));
+            }
+        });
+        listAdapter2.notifyDataSetChanged();
+    }
 
 
     public void showConfirmWindow(final weakInformation inf){
@@ -470,31 +511,35 @@ public class signTestingFragment extends ListFragment {
          */
 
         Button weak_fault_last_step= contentView2.findViewById(R.id.weak_fault_last_step);
-        Button weak_fault_upload=contentView2.findViewById(R.id.weak_fault_upload);
         Button weak_fault_save=contentView2.findViewById(R.id.weak_fault_save);
 
         /**
          * 建站需求按钮初始化
          */
         Button weak_demand_last_step=contentView2.findViewById(R.id.weak_demand_last_step);
-        Button weak_demand_upload=contentView2.findViewById(R.id.weak_demand_upload);
         Button weak_demand_save=contentView2.findViewById(R.id.weak_demand_save);
 
 
+        /**
+         * 获取数据库信息
+         */
+        demandList =dbforweak.query(db,"select * from bu_weak_coverage_demand where preStName !='null' and preStName IS NOT NULL;",null);
         /**
          * 列表信息初始化
          */
 
         demand_list=(ListView) contentView2.findViewById(R.id.demand_list);
         List<Map<String,String>> infoList=new ArrayList<>();
-        for(int i=0;i<=10;i++){
+
+
+        for(weakCoverageDemand demandinfo:demandList){
             HashMap<String,String> map=new HashMap<>();
-            map.put("Stname","5JP-锦屏平略果丛拉远田坝LHHV");
-            map.put("Staddress","锦屏县平略镇果丛拉远田坝");
-            map.put("netmodel","TDD-LTE");
-            map.put("prope","宏站");
-            map.put("buildtype","新建");
-            map.put("cellnum",""+i+1);
+            map.put("Stname",demandinfo.getPreStName());
+            map.put("Staddress",demandinfo.getStAddress());
+            map.put("netmodel",demandinfo.getNetModel());
+            map.put("prope",demandinfo.getStPrope());
+            map.put("buildtype",demandinfo.getBuildType());
+            map.put("cellnum",demandinfo.getReqCellNum());
             infoList.add(map);
         }
 
@@ -513,7 +558,8 @@ public class signTestingFragment extends ListFragment {
         demand_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(activity, "当前点击"+String.valueOf(position), Toast.LENGTH_LONG).show();
+                mPopWindow2.dismiss();
+                showDemandWin(demandList.get(position));
             }
         });
 
@@ -530,11 +576,18 @@ public class signTestingFragment extends ListFragment {
                 if(wd==null){
                     Toast.makeText(activity, "请检查数据完整性。", Toast.LENGTH_LONG).show();
                 }else{
-                    boolean flag=dbforweak.save(db,wd,context);
-                    if(flag){
-                        Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                    String checkWeakisconfirm="select * from bu_weak_coverage_demand where weakCollID='"+wd.getWeakCollID()+"';";
+                    List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
+
+                    if(kk.size()==0){
+                        boolean flag=dbforweak.save(db,wd,context);
+                        if(flag){
+                            Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                        }
                     }else{
-                        Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "该弱覆盖记录已经被核查确认。", Toast.LENGTH_LONG).show();
                     }
 
                 }
@@ -551,11 +604,18 @@ public class signTestingFragment extends ListFragment {
                 if(wd==null){
                     Toast.makeText(activity, "请检查数据完整性与正确性。", Toast.LENGTH_LONG).show();
                 }else{
-                    boolean flag=dbforweak.save(db,wd,context);
-                    if(flag){
-                        Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                    String checkWeakisconfirm="select * from bu_weak_coverage_demand where weakCollID='"+wd.getWeakCollID()+"';";
+                    List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
+
+                    if(kk.size()==0){
+                        boolean flag=dbforweak.save(db,wd,context);
+                        if(flag){
+                            Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                        }
                     }else{
-                        Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "该弱覆盖记录已经被核查确认。", Toast.LENGTH_LONG).show();
                     }
                 }
 
@@ -650,7 +710,7 @@ public class signTestingFragment extends ListFragment {
                 conform_demand_list.setVisibility(View.VISIBLE);
                 ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array1)).setVisibility(View.GONE);
                 ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array2)).setVisibility(View.GONE);
-
+                refreshDemandList();
             }
         });
 
@@ -675,15 +735,80 @@ public class signTestingFragment extends ListFragment {
         netcoll_confirm_weak_networkType.setText(inf.getNetWorkType());
         netcoll_confirm_weak_bsss.setText(String.valueOf(inf.getBSSS()));
 
-
-
-
         refershWin();
 
 
 
         View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
         mPopWindow2.showAtLocation(rootview, Gravity.TOP, 0, 20);
+    }
+
+
+    private View contentView3;
+    private PopupWindow mPopWindow3;
+    private weakCoverageDemand currentWcdemandInfo;
+    public void showDemandWin(weakCoverageDemand wcdemandInfo){
+        currentWcdemandInfo=wcdemandInfo;
+        contentView3 = LayoutInflater.from(activity).inflate(R.layout.window_demand_layout, null);
+        mPopWindow3 = new PopupWindow(contentView3,FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
+
+        ((TextView)contentView3.findViewById(R.id.win_demand_buildtype)).setText(wcdemandInfo.getBuildType());
+        ((TextView)contentView3.findViewById(R.id.win_demand_cellnum)).setText(wcdemandInfo.getReqCellNum());
+        ((TextView)contentView3.findViewById(R.id.win_demand_charge)).setText(wcdemandInfo.getPersonCharge());
+        ((TextView)contentView3.findViewById(R.id.win_demand_netmodel)).setText(wcdemandInfo.getNetModel());
+        ((TextView)contentView3.findViewById(R.id.win_demand_phoneTel)).setText(wcdemandInfo.getPersonTel());
+        ((TextView)contentView3.findViewById(R.id.win_demand_staddress)).setText(wcdemandInfo.getStAddress());
+        ((TextView)contentView3.findViewById(R.id.win_demand_stname)).setText(wcdemandInfo.getPreStName());
+        ((TextView)contentView3.findViewById(R.id.win_demand_stprop)).setText(wcdemandInfo.getStPrope());
+
+
+        Button win_demand_relation=(Button)contentView3.findViewById(R.id.win_demand_relation);
+        Button win_demand_return=(Button)contentView3.findViewById(R.id.win_demand_return);
+
+        /**
+         * 查看需求详情后返回
+         */
+        win_demand_return.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopWindow3.dismiss();
+                showConfirmWindow(currentWeakInf);
+            }
+        });
+
+        /**
+         * 确认关联
+         */
+        win_demand_relation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weakCoverageDemand wd=relationDemandData(currentWcdemandInfo);
+                if(wd==null){
+                    Toast.makeText(activity, "请检查数据完整性。", Toast.LENGTH_LONG).show();
+                }else{
+                    String checkWeakisconfirm="select * from bu_weak_coverage_demand where weakCollID='"+wd.getWeakCollID()+"';";
+                    List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
+
+                    if(kk.size()==0){
+                        boolean flag=dbforweak.save(db,wd,context);
+                        if(flag){
+                            Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                        }
+                    }else{
+                        Toast.makeText(activity, "该弱覆盖记录已经被核查确认。", Toast.LENGTH_LONG).show();
+                    }
+
+
+
+                }
+            }
+        });
+
+
+        View rootview = LayoutInflater.from(activity).inflate(R.layout.window_demand_layout, null);
+        mPopWindow3.showAtLocation(rootview, Gravity.TOP, 0, 300);
     }
 
 
@@ -1072,6 +1197,36 @@ private String currentDbmValue="-130";
         return df.format(Double.valueOf(d));
     }
 
+    public  weakCoverageDemand relationDemandData(weakCoverageDemand reled){
+        weakCoverageDemand wd=new weakCoverageDemand();
+        /**
+         * 确认后采集参数
+         */
+        wd.setWeakCollID(currentWeakInf.getID());
+        wd.setDemandID(reled.getDemandID());
+        wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
+        wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());
+        wd.setConfirm_networktype(netcoll_confirm_networktype.getText().toString());
+        wd.setConfirm_bsss(currentDbmValue);
+
+        String []gps=getLocation(context);
+        wd.setConfirm_lon(gps[0]);
+        wd.setConfirm_lat(gps[1]);
+
+
+        wd.setRemark(reled.getRemark());
+        wd.setPersonTel(reled.getPersonTel());
+        wd.setPersonCharge(reled.getPersonCharge());
+        wd.setReqCellNum(reled.getReqCellNum());
+        wd.setStAddress(reled.getStAddress());
+        wd.setPreStName(reled.getPreStName());
+        wd.setStPrope(reled.getStPrope());
+        wd.setBuildType(reled.getBuildType());
+        wd.setIsPass(reled.getIsPass());
+        wd.setNetModel(reled.getNetModel());
+
+        return wd;
+    }
 
 
     public weakCoverageDemand getDemandData(int getType){
@@ -1086,6 +1241,7 @@ private String currentDbmValue="-130";
                 return null;
             }
             else{
+                wd.setWeakCollID(currentWeakInf.getID());
                 wd.setRemark(fault_remark);
                 wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
                 wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());

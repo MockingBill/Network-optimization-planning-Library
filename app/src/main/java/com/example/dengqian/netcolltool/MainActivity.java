@@ -71,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
             dealStatusFragment f4=new dealStatusFragment();
             signTestingFragment f5=new signTestingFragment();
 
+//            confirmHistoryFragment f6=new confirmHistoryFragment();
+
 
             switch (item.getItemId()) {
                 case R.id.navigation_home:{
@@ -80,14 +82,18 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
                     MfragmentTransaction.commit();
                     return true;
                 }
+//                case R.id.confirm_demand_fragment:
+//                {
+//                    MfragmentTransaction.replace(R.id.container,f6);
+//                    MfragmentTransaction.commit();
+//                    return true;
+//                }
 
                 case R.id.navigation_dashboard:{
                     MfragmentTransaction.replace(R.id.container,f2);
                     MfragmentTransaction.commit();
                     return true;
                 }
-
-
                 case R.id.navigation_notifications:
                 {
                     MfragmentTransaction.replace(R.id.container,f3);
@@ -106,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
                     MfragmentTransaction.commit();
                     return true;
                 }
+
             }
             return false;
         }

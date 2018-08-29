@@ -101,29 +101,29 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
 
 
     public boolean save(SQLiteDatabase db,weakCoverageDemand info,Context context){
-        String sql="INSERT INTO 'bu_weak_coverage_demand' (weakCollID,demandID,preStName,stAddress,netModel,stPrope,buildType,reqCellNum,isPass,personCharge,personTel,remark,confirm_eci,confirm_tac,confirm_bsss,confirm_networktype,confirm_lon,confirm_lat) VALUES " +
-        "('"+info.getWeakCollID()+"', " +
-        "'"+info.getDemandID()+"', " +
-        "'"+info.getPreStName()+"', " +
-        "'"+info.getStAddress()+"', " +
-        "'"+info.getNetModel()+"', " +
-        "'"+info.getStPrope()+"', " +
-        "'"+info.getBuildType()+"', " +
-        "'"+info.getReqCellNum()+"', " +
-        "'"+info.getIsPass()+"', " +
-        "'"+info.getPersonCharge()+"', " +
-        "'"+info.getPersonTel()+"', " +
-        "'"+info.getRemark()+"',"+
-        "'"+info.getConfirm_eci()+"',"+
-        "'"+info.getConfirm_tac()+"',"+
-        "'"+info.getConfirm_bsss()+"',"+
-        "'"+info.getConfirm_networktype()+"',"+
-        "'"+info.getConfirm_lon()+"',"+
-        "'"+info.getConfirm_lat()+"');";
-        Log.e("demandSql:",sql);
         try{
-            db.execSQL(sql);
-            return true;
+            String sql="INSERT INTO 'bu_weak_coverage_demand' (weakCollID,demandID,preStName,stAddress,netModel,stPrope,buildType,reqCellNum,isPass,personCharge,personTel,remark,confirm_eci,confirm_tac,confirm_bsss,confirm_networktype,confirm_lon,confirm_lat) VALUES " +
+                    "('"+info.getWeakCollID()+"', " +
+                    "'"+info.getDemandID()+"', " +
+                    "'"+info.getPreStName()+"', " +
+                    "'"+info.getStAddress()+"', " +
+                    "'"+info.getNetModel()+"', " +
+                    "'"+info.getStPrope()+"', " +
+                    "'"+info.getBuildType()+"', " +
+                    "'"+info.getReqCellNum()+"', " +
+                    "'"+info.getIsPass()+"', " +
+                    "'"+info.getPersonCharge()+"', " +
+                    "'"+info.getPersonTel()+"', " +
+                    "'"+info.getRemark()+"',"+
+                    "'"+info.getConfirm_eci()+"',"+
+                    "'"+info.getConfirm_tac()+"',"+
+                    "'"+info.getConfirm_bsss()+"',"+
+                    "'"+info.getConfirm_networktype()+"',"+
+                    "'"+info.getConfirm_lon()+"',"+
+                    "'"+info.getConfirm_lat()+"');";
+            Log.e("demandSql:",sql);
+        db.execSQL(sql);
+        return true;
         }catch (Exception e){
             return false;
         }

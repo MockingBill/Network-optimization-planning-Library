@@ -7,6 +7,10 @@
         android:title="网络测试" />
     <item
         android:id="@+id/SignalTesting"
+        android:icon="@drawable/ic_mark"
+        android:title="弱覆盖核查" />
+    <item
+        android:id="@+id/confirm_demand_fragment"
         android:icon="@drawable/ic_weak_confim"
         android:title="弱覆盖核查" />
 
