@@ -6,6 +6,8 @@ import android.app.Activity;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,6 +15,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.INotificationSideChannel;
 import android.support.v4.app.ListFragment;
 import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneStateListener;
@@ -25,6 +28,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -39,6 +44,10 @@ import android.widget.Toast;
 import com.example.dengqian.netcolltool.bean.AesAndToken;
 import com.example.dengqian.netcolltool.bean.MyApplication;
 import com.example.dengqian.netcolltool.bean.connNetReq;
+import com.example.dengqian.netcolltool.bean.informDBHelperForWeakConfirm;
+import com.example.dengqian.netcolltool.bean.information;
+import com.example.dengqian.netcolltool.bean.simpleWeakDemandArrayAdapter;
+import com.example.dengqian.netcolltool.bean.weakCoverageDemand;
 import com.example.dengqian.netcolltool.bean.weakInformation;
 import com.example.dengqian.netcolltool.widget.CustomDatePicker;
 
@@ -51,6 +60,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 
 public class signTestingFragment extends ListFragment {
@@ -93,7 +104,6 @@ public class signTestingFragment extends ListFragment {
     private View contentView;
     //弹出窗对象
     private PopupWindow mPopWindow;
-
     private weakInformation inf;
 
 
@@ -225,7 +235,10 @@ public class signTestingFragment extends ListFragment {
         application=(MyApplication) activity.getApplication();
         if(application.getGlobalWeakList()!=null&&application.getGlobalWeakList().size()!=0){
             refreshList(application.getGlobalWeakList());
+
         }
+
+
         return view;
     }
 
@@ -249,6 +262,9 @@ public class signTestingFragment extends ListFragment {
 
             list.add(map);
         }
+        if(weakList==null||weakList.size()==0){
+            weakList=application.getGlobalWeakList();
+        }
         listAdapter.notifyDataSetChanged();
     }
     public class SaveListener implements View.OnClickListener{
@@ -270,9 +286,7 @@ public class signTestingFragment extends ListFragment {
         if(weakList!=null&&weakList.size()!=0){
             currentPosition=position;
             showPopupWindow(position);
-
         }
-
     }
 
 
@@ -299,11 +313,6 @@ public class signTestingFragment extends ListFragment {
         ((TextView)contentView.findViewById(R.id.weak_win_phoneNumber)).setText(inf.getPhoneNumber());
         ((TextView)contentView.findViewById(R.id.weak_win_phonetype)).setText(inf.getPhoneType());
         ((TextView)contentView.findViewById(R.id.weak_win_TAC)).setText(inf.getTAC());
-
-
-
-
-
 
 
 
@@ -343,13 +352,95 @@ public class signTestingFragment extends ListFragment {
     private PopupWindow mPopWindow2;
 
     private LinearLayout dynamic_content;
-    private View otherView;
+
+    private LinearLayout faultview;
+    private LinearLayout demand;
+    private TextView hint_info;
+    private weakInformation currentWeakInf;
+    private EditText weak_fault_remark;
+    private EditText weak_demand_remark;
+    private EditText weak_demand_personTel;
+    private EditText weak_demand_personCharge;
+    private EditText weak_demand_reqCellNum;
+    private EditText weak_demand_stAddress;
+    private EditText weak_demand_preStName;
+    private Spinner sp1;
+    private Spinner sp2;
+    private Spinner sp3;
+    private Spinner sp4;
+
+    private informDBHelperForWeakConfirm dbforweak;
+    private SQLiteDatabase db;
+
+    private Button confirm_relation_demand_button;
+    private LinearLayout conform_demand_list;
+    private ListView demand_list;
+    private SimpleAdapter listAdapter2;
 
 
     public void showConfirmWindow(final weakInformation inf){
+
+        /**
+         * 数据库组件初始化
+         */
+        currentWeakInf=new weakInformation(inf);
+        dbforweak=new informDBHelperForWeakConfirm(context);
+        db=dbforweak.getReadableDatabase();
+
+        /**
+         * 弹窗界面View
+         */
         contentView2 = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
         mPopWindow2 = new PopupWindow(contentView2,FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
-        otherView = LayoutInflater.from(activity).inflate(R.layout.window_other_view, null);
+
+
+        /**
+         * 动态界面填写区域初始化
+         */
+        faultview=(LinearLayout) contentView2.findViewById(R.id.weak_fault_info);
+        demand=(LinearLayout)contentView2.findViewById(R.id.weak_demand_info);
+        conform_demand_list=(LinearLayout)contentView2.findViewById(R.id.conform_demand_list);
+
+        /**
+         * 动态界面组件初始化(预建站点名、地址、负责人...)
+         */
+
+        weak_fault_remark=(EditText)contentView2.findViewById(R.id.weak_fault_remark);
+        weak_demand_remark=(EditText)contentView2.findViewById(R.id.weak_demand_remark);
+        weak_demand_personTel=(EditText)contentView2.findViewById(R.id.weak_demand_personTel);
+        weak_demand_personCharge=(EditText)contentView2.findViewById(R.id.weak_demand_personCharge);
+        weak_demand_reqCellNum=(EditText)contentView2.findViewById(R.id.weak_demand_reqCellNum);
+        weak_demand_stAddress=(EditText)contentView2.findViewById(R.id.weak_demand_stAddress);
+        weak_demand_preStName=(EditText)contentView2.findViewById(R.id.weak_demand_preStName);
+
+
+        /**
+         * view被创建时候隐藏故障信息与需求信息填写区域
+         */
+
+        faultview.setVisibility(View.GONE);
+        demand.setVisibility(View.GONE);
+        conform_demand_list.setVisibility(View.GONE);
+
+        /**
+         * 动态界面下拉框初始化
+         */
+
+        sp1=((Spinner)contentView2.findViewById(R.id.weak_demand_baseSationPro));
+        sp2=((Spinner)contentView2.findViewById(R.id.weak_demand_buildType));
+        sp3=((Spinner)contentView2.findViewById(R.id.weak_demand_ispass));
+        sp4=((Spinner)contentView2.findViewById(R.id.weak_demand_networkType));
+        sp1.setAdapter(new simpleWeakDemandArrayAdapter<String>(context,android.R.layout.simple_spinner_item,getArrayToList(R.array.disBaseStationProperty)));
+        sp2.setAdapter(new simpleWeakDemandArrayAdapter<String>(context,android.R.layout.simple_spinner_item,getArrayToList(R.array.disBuildType)));
+        sp3.setAdapter(new simpleWeakDemandArrayAdapter<String>(context,android.R.layout.simple_spinner_item,getArrayToList(R.array.disIsPass)));
+        sp4.setAdapter(new simpleWeakDemandArrayAdapter<String>(context,android.R.layout.simple_spinner_item,getArrayToList(R.array.disNetWorkType)));
+
+        sp1.setSelection(getArrayToList(R.array.disBaseStationProperty).size()-1,true);
+        sp2.setSelection(getArrayToList(R.array.disBuildType).size()-1,true);
+        sp3.setSelection(getArrayToList(R.array.disIsPass).size()-1,true);
+        sp4.setSelection(getArrayToList(R.array.disNetWorkType).size()-1,true);
+
+
         /**
          * window_weak_confirm_layout组件初始化
          */
@@ -365,11 +456,141 @@ public class signTestingFragment extends ListFragment {
         netcoll_confirm_networktype=(EditText)contentView2.findViewById(R.id.netcoll_confirm_networktype);
         netcoll_confirm_bsss=(EditText)contentView2.findViewById(R.id.netcoll_confirm_bsss);
 
+        confirm_relation_demand_button=(Button)contentView2.findViewById(R.id.confirm_relation_demand_button);
         confirm_last_step_button=(Button)contentView2.findViewById(R.id.confirm_last_step_button);
         confirm_refresh_button=(Button)contentView2.findViewById(R.id.confirm_refresh_button);
         confirm_fault_button=(Button)contentView2.findViewById(R.id.confirm_fault_button);
         confirm_demand_button=(Button)contentView2.findViewById(R.id.confirm_demand_button);
         dynamic_content=(LinearLayout)contentView2.findViewById(R.id.dynamic_content);
+        hint_info=(TextView)contentView2.findViewById(R.id.hint_info);
+
+
+        /**
+         * 故障网优备注信息按钮组初始化
+         */
+
+        Button weak_fault_last_step= contentView2.findViewById(R.id.weak_fault_last_step);
+        Button weak_fault_upload=contentView2.findViewById(R.id.weak_fault_upload);
+        Button weak_fault_save=contentView2.findViewById(R.id.weak_fault_save);
+
+        /**
+         * 建站需求按钮初始化
+         */
+        Button weak_demand_last_step=contentView2.findViewById(R.id.weak_demand_last_step);
+        Button weak_demand_upload=contentView2.findViewById(R.id.weak_demand_upload);
+        Button weak_demand_save=contentView2.findViewById(R.id.weak_demand_save);
+
+
+        /**
+         * 列表信息初始化
+         */
+
+        demand_list=(ListView) contentView2.findViewById(R.id.demand_list);
+        List<Map<String,String>> infoList=new ArrayList<>();
+        for(int i=0;i<=10;i++){
+            HashMap<String,String> map=new HashMap<>();
+            map.put("Stname","5JP-锦屏平略果丛拉远田坝LHHV");
+            map.put("Staddress","锦屏县平略镇果丛拉远田坝");
+            map.put("netmodel","TDD-LTE");
+            map.put("prope","宏站");
+            map.put("buildtype","新建");
+            map.put("cellnum",""+i+1);
+            infoList.add(map);
+        }
+
+
+        listAdapter2=new SimpleAdapter(activity,infoList,R.layout.list_view_demand,
+                new String[]{"Stname","Staddress","netmodel","prope","buildtype","cellnum"},
+                new int[]{
+                        R.id.row_demand_Stname,
+                        R.id.row_demand_Staddress,
+                        R.id.row_demand_netmodel,
+                        R.id.row_demand_prope,
+                        R.id.row_demand_buildtype,
+                        R.id.row_demand_cellnum
+                        });
+        demand_list.setAdapter(listAdapter2);
+        demand_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(activity, "当前点击"+String.valueOf(position), Toast.LENGTH_LONG).show();
+            }
+        });
+
+
+
+
+        /**
+         * 建站需求保存
+         */
+        weak_demand_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weakCoverageDemand wd=getDemandData(2);
+                if(wd==null){
+                    Toast.makeText(activity, "请检查数据完整性。", Toast.LENGTH_LONG).show();
+                }else{
+                    boolean flag=dbforweak.save(db,wd,context);
+                    if(flag){
+                        Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                    }
+
+                }
+
+            }
+        });
+        /**
+         * 故障信息保存
+         */
+        weak_fault_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                weakCoverageDemand wd=getDemandData(1);
+                if(wd==null){
+                    Toast.makeText(activity, "请检查数据完整性与正确性。", Toast.LENGTH_LONG).show();
+                }else{
+                    boolean flag=dbforweak.save(db,wd,context);
+                    if(flag){
+                        Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(activity, "保存失败。", Toast.LENGTH_LONG).show();
+                    }
+                }
+
+
+            }
+        });
+
+
+
+        /**
+         * 在故障填写信息中进行上一步
+         */
+        weak_fault_last_step.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                faultview.setVisibility(View.GONE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array1)).setVisibility(View.VISIBLE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array2)).setVisibility(View.VISIBLE);
+            }
+
+        });
+
+
+        /**
+         * 在需求填写信息中进行上一步
+         */
+
+        weak_demand_last_step.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                demand.setVisibility(View.GONE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array1)).setVisibility(View.VISIBLE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array2)).setVisibility(View.VISIBLE);
+            }
+        });
 
         /**
          * 上一步
@@ -390,23 +611,62 @@ public class signTestingFragment extends ListFragment {
         confirm_refresh_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopWindow2.dismiss();
-                showConfirmWindow(inf);
+                refershWin();
             }
         });
 
         /**
-         * 填写备注信息
+         * 填写故障网优备注信息
          */
         confirm_fault_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                EditText faultview=(EditText) otherView.findViewById(R.id.weak_fault_info);
-                dynamic_content.addView(faultview);
+                faultview.setVisibility(View.VISIBLE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array1)).setVisibility(View.GONE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array2)).setVisibility(View.GONE);
             }
         });
 
+        /**
+         * 填写基站建设需求信息
+         */
+
+        confirm_demand_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                demand.setVisibility(View.VISIBLE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array1)).setVisibility(View.GONE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array2)).setVisibility(View.GONE);
+            }
+        });
+
+        /**
+         * 关联到已有的弱覆盖按钮
+         */
+        confirm_relation_demand_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                conform_demand_list.setVisibility(View.VISIBLE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array1)).setVisibility(View.GONE);
+                ((LinearLayout)contentView2.findViewById(R.id.weak_confirm_button_array2)).setVisibility(View.GONE);
+
+            }
+        });
+
+
+        /**监听当前信号*/
+        TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+        boolean isSIM=hasSimCard(tmm);
+        if(isSIM ){
+            signTestingFragment.mylistener listener=new signTestingFragment.mylistener();
+            tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        }else{
+            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
+        }
+        /**
+         * 设置待确认弱覆盖的具体值
+         */
         netcoll_confirm_district.setText(inf.getDistrict());
         netcoll_confirm_overlayScene.setText(inf.getOverlayScene());
         netcoll_confirm_address.setText(inf.getAddress());
@@ -415,6 +675,31 @@ public class signTestingFragment extends ListFragment {
         netcoll_confirm_weak_networkType.setText(inf.getNetWorkType());
         netcoll_confirm_weak_bsss.setText(String.valueOf(inf.getBSSS()));
 
+
+
+
+        refershWin();
+
+
+
+        View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
+        mPopWindow2.showAtLocation(rootview, Gravity.TOP, 0, 20);
+    }
+
+
+    private List<String> getArrayToList(int id){
+        Resources res=getResources();
+        List<String> list= new ArrayList<>();
+        String[] ArrayList=res.getStringArray(id);
+        for(String x:ArrayList){
+            list.add(x);
+        }
+
+        return list;
+    }
+
+
+    private void refershWin(){
         String Eci="-1";
         String Tac="-1";
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
@@ -437,23 +722,23 @@ public class signTestingFragment extends ListFragment {
         currentNetType=getNetWorkType(mTelephonyManager);
 
 
-        /**监听当前信号*/
-        TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-        boolean isSIM=hasSimCard(tmm);
-        if(isSIM ){
-            signTestingFragment.mylistener listener=new signTestingFragment.mylistener();
-            tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-        }else{
-            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
-        }
         netcoll_confirm_eci.setText(Eci);
         netcoll_confirm_tac.setText(Tac);
+        netcoll_confirm_bsss.setText(currentDbmValue);
+        boolean f1=currentWeakInf.getBSSS()>=-110;
+        boolean f2=Integer.valueOf(currentDbmValue)>=-110;
+        if(f1&&f2){
+            hint_info.setText("当前信号强度与待确认记录信号强度均不属于弱覆盖。");
+        }else if(f1&&!f2){
+            hint_info.setText("待确认记录信号强度不属于弱覆盖，当前信号强度属于弱覆盖。");
+        }else if(!f1&&f2){
+            hint_info.setText("待确认记录信号强度属于弱覆盖，当前信号强度不属于弱覆盖。请刷新或移动手机位置。");
+        }else if(!f1&&!f2){
+            hint_info.setText("当前信号强度与待确认记录信号强度均属于弱覆盖。");
+        }
 
 
 
-
-        View rootview = LayoutInflater.from(activity).inflate(R.layout.window_weak_confirm_layout, null);
-        mPopWindow2.showAtLocation(rootview, Gravity.TOP, 0, 20);
     }
 
 
@@ -471,7 +756,6 @@ private String currentDbmValue="-130";
 
             try{
                 Method method1 = null;
-
                 method1 = signalStrength.getClass().getMethod("getDbm");
                 String dbm = method1.invoke(signalStrength).toString();
 
@@ -489,6 +773,7 @@ private String currentDbmValue="-130";
                     currentNetType="无网络";
                     netcoll_confirm_bsss.setText(String.valueOf(-130));
                     currentDbmValue="-130";
+                    netcoll_confirm_networktype.setText(currentNetType);
                 }else{
                     if(Integer.valueOf(dbm2)>=-130&&Integer.valueOf(dbm2)<-1&&dbm.equals(dbm2)){
                         currentNetType="2G";
@@ -503,6 +788,7 @@ private String currentDbmValue="-130";
                     }
                     netcoll_confirm_bsss.setText(dbm);
                     currentDbmValue=dbm;
+                    netcoll_confirm_networktype.setText(currentNetType);
                 }
             }catch (Exception e){
                 currentNetType="无网络";
@@ -539,28 +825,6 @@ private String currentDbmValue="-130";
 
 
     private String getNetWorkType(TelephonyManager mTelephonyManager){
-//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE); // 获取网络服务
-//        if (null == connManager) { // 为空则认为无网络
-//            return "无网络";
-//        }
-//
-//        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
-//        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
-//            return "无网络";
-//        }
-//
-//
-//        NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        if (null != wifiInfo) {
-//            NetworkInfo.State state = wifiInfo.getState();
-//            if (null != state) {
-//                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
-//                    return "WIFI";
-//                }
-//            }
-//        }
-
-
         int networkType = mTelephonyManager.getNetworkType();
         switch (networkType) {
 
@@ -605,8 +869,6 @@ private String currentDbmValue="-130";
                         String res = connNetReq.post(getString(R.string.getWeakForConfirm),
                                 connNetReq.weakQueryToJson(currentDate.getText().toString(),currentDate2.getText().toString(),
                                         address.getText().toString(), distract.getSelectedItem().toString(),gps[0],gps[1]));
-
-
                         res= AesAndToken.decrypt(res,AesAndToken.KEY);
                         if("0".equals(res)){
                             warmText="网络异常";
@@ -616,9 +878,6 @@ private String currentDbmValue="-130";
                                 warmText="未找到满足的数据";
                             }
                         }
-
-
-
                     }catch (Exception e){
                         e.printStackTrace();
                         warmText="网络错误";
@@ -811,6 +1070,87 @@ private String currentDbmValue="-130";
         }
         DecimalFormat df = new DecimalFormat(pattern);
         return df.format(Double.valueOf(d));
+    }
+
+
+
+    public weakCoverageDemand getDemandData(int getType){
+        weakCoverageDemand wd=new weakCoverageDemand();
+
+        /**
+         * 故障网优-数据收集
+         */
+        if(getType==1){
+            String fault_remark=weak_fault_remark.getText().toString();
+            if("".equals(fault_remark)){
+                return null;
+            }
+            else{
+                wd.setRemark(fault_remark);
+                wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
+                wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());
+                wd.setConfirm_networktype(netcoll_confirm_networktype.getText().toString());
+                wd.setConfirm_bsss(currentDbmValue);
+                String []gps=getLocation(context);
+                wd.setConfirm_lon(gps[0]);
+                wd.setConfirm_lat(gps[1]);
+                return wd;
+            }
+        }
+
+        /**
+         * 建站需求数据收集
+         */
+        else if(getType==2){
+
+            /**
+             * 需求信息
+             */
+            String demand_remark=weak_demand_remark.getText().toString();
+            String demand_personTel=weak_demand_personTel.getText().toString();
+            String demand_personCharge=weak_demand_personCharge.getText().toString();
+            String demand_reqCellNum=weak_demand_reqCellNum.getText().toString();
+            String demand_stAddress=weak_demand_stAddress.getText().toString();
+            String demand_preStName=weak_demand_preStName.getText().toString();
+            String stPrope=sp1.getSelectedItem().toString();
+            String buildType=sp2.getSelectedItem().toString();
+            String isPass=sp3.getSelectedItem().toString();
+            String netModel=sp4.getSelectedItem().toString();
+            /**
+             * 确认后采集参数
+             */
+            wd.setWeakCollID(currentWeakInf.getID());
+            wd.setDemandID(UUID.randomUUID().toString());
+            wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
+            wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());
+            wd.setConfirm_networktype(netcoll_confirm_networktype.getText().toString());
+            wd.setConfirm_bsss(currentDbmValue);
+
+            String []gps=getLocation(context);
+            wd.setConfirm_lon(gps[0]);
+            wd.setConfirm_lat(gps[1]);
+
+
+            wd.setRemark(demand_remark);
+            wd.setPersonTel(demand_personTel);
+            wd.setPersonCharge(demand_personCharge);
+            wd.setReqCellNum(demand_reqCellNum);
+            wd.setStAddress(demand_stAddress);
+            wd.setPreStName(demand_preStName);
+            wd.setStPrope(stPrope);
+            wd.setBuildType(buildType);
+            wd.setIsPass(isPass);
+            wd.setNetModel(netModel);
+            if(wd.checkData()){
+                return wd;
+            }else{
+                return null;
+            }
+
+
+        }else{
+            return null;
+        }
     }
 
 

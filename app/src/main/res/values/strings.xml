@@ -75,6 +75,35 @@
     </string-array>
 
 
+    <string-array name="disNetWorkType">
+        <item>GSM</item>
+        <item>TDD-LTE</item>
+        <item>FDD-LTE</item>
+        <item>NB</item>
+        <item>选择网络制式</item>
+    </string-array>
+
+    <string-array name="disBaseStationProperty">
+        <item>宏站</item>
+        <item>室分</item>
+        <item>小基站</item>
+        <item>选择站点属性</item>
+    </string-array>
+
+    <string-array name="disBuildType">
+        <item>新建</item>
+        <item>共址</item>
+        <item>选择建设类型</item>
+    </string-array>
+
+    <string-array name="disIsPass">
+        <item>是</item>
+        <item>否</item>
+        <item>是否通过联席会</item>
+    </string-array>
+
+
+
     <string-array name="upload">
         <item>未上传</item>
         <item>已上传</item>

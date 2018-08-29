@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingLeft="0dip"
+    android:paddingRight="0dip"
+    android:paddingTop="1dip"
+    android:layout_margin="4dp"
+    android:paddingBottom="1dip">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@drawable/znntitle"
+        android:orientation="vertical"
+        android:paddingBottom="1dip"
+        android:paddingLeft="0dip"
+        android:paddingRight="0dip"
+        android:paddingTop="1dip">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:orientation="horizontal"
+            android:paddingBottom="1dip"
+            android:paddingLeft="0dip"
+            android:paddingRight="0dip"
+            android:paddingTop="1dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="#aee275"
+                android:singleLine="true"
+                android:text="预建站名:"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_demand_Stname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="#aee275"
+                android:gravity="right"
+                android:singleLine="true"
+                android:text="5JP-锦屏平略果丛拉远田坝LHHV"
+                android:textSize="5pt" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:orientation="horizontal"
+            android:paddingBottom="1dip"
+            android:paddingLeft="0dip"
+            android:paddingRight="0dip"
+            android:paddingTop="1dip">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:background="#00b0f0"
+                android:singleLine="true"
+                android:text="预建地址:"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_demand_Staddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:background="#00b0f0"
+                android:gravity="right"
+                android:singleLine="true"
+                android:text="锦屏县平略镇果丛拉远田坝"
+                android:textSize="5pt" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:orientation="horizontal"
+            android:paddingBottom="1dip"
+            android:paddingLeft="0dip"
+            android:paddingRight="0dip"
+            android:paddingTop="1dip">
+            <TextView
+                android:id="@+id/row_demand_netmodel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#64f7e6"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="TDD-LTE"
+                android:textSize="5pt" />
+
+            <TextView
+                android:id="@+id/row_demand_prope"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#4af491"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="宏站"
+                android:textSize="5pt" />
+            <TextView
+                android:id="@+id/row_demand_buildtype"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#a6acf1"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="新建"
+                android:textSize="5pt" />
+            <TextView
+                android:id="@+id/row_demand_cellnum"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="#ffc000"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="2CN"
+                android:textSize="5pt" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -219,14 +219,11 @@
         android:layout_margin="10dp"
         android:background="@drawable/znntitle"
         android:orientation="vertical">
-
         <ListView android:id="@id/android:list"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:drawSelectorOnTop="true"
             android:divider="@null"
             android:orientation="vertical"/>
-
-
     </LinearLayout>
 </LinearLayout>
