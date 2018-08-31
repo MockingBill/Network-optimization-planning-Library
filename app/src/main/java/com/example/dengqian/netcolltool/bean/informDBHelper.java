@@ -27,26 +27,22 @@ public class informDBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    String sql="CREATE TABLE IF NOT EXISTS 'bu_weak_coverage_demand' (\n" +
-            "'weakCollID' varchar(50) DEFAULT NULL,\n" +
-            "'demandID' varchar(50) DEFAULT NULL,\n" +
-            "'preStName' varchar(30) DEFAULT NULL,\n" +
-            "'stAddress' varchar(50) DEFAULT NULL,\n" +
-            "'netModel' varchar(32) DEFAULT NULL,\n" +
-            "'stPrope' varchar(32) DEFAULT NULL,\n" +
-            "'buildType' varchar(32) DEFAULT NULL,\n" +
-            "'reqCellNum' varchar(32) DEFAULT NULL,\n" +
-            "'isPass' varchar(32) DEFAULT NULL,\n" +
-            "'personCharge' varchar(32) DEFAULT NULL,\n" +
-            "'personTel' varchar(32) DEFAULT NULL,\n" +
-            "'remark' varchar(500) DEFAULT NULL,\n" +
-            "'confirm_eci' varchar(32) DEFAULT NULL,\n" +
-            "'confirm_tac' varchar(32) DEFAULT NULL,\n" +
-            "'confirm_bsss' varchar(32) DEFAULT NULL,\n" +
-            "'confirm_networktype' varchar(32) DEFAULT NULL,\n" +
-            "'confirm_lon' varchar(32) DEFAULT NULL,\n" +
-            "'confirm_lat' varchar(32) DEFAULT NULL\n" +
-            ");";
+    String sql="CREATE TABLE 'NetWorkInfor' (" +
+            "  'ID' varchar(50) NOT NULL ," +
+            "  'TAC' varchar(20) DEFAULT NULL ," +
+            "  'ECI' varchar(50) DEFAULT NULL ," +
+            "  'BSSS' varchar(20) DEFAULT NULL ," +
+            "  'GPS' varchar(50) DEFAULT NULL ," +
+            "  'phoneNumber' varchar(80) DEFAULT NULL ," +
+            "  'phoneType' varchar(50) DEFAULT NULL ," +
+            "  'overlayScene' varchar(20) DEFAULT NULL ," +
+            "  'collTime' varchar(32) DEFAULT NULL ," +
+            "  'isUpload'int(4) DEFAULT NULL ," +
+            "  'district' varchar(10) DEFAULT NULL ," +
+            "  'address' varchar(80) DEFAULT NULL ," +
+            "  'NetworkOperatorName' varchar(30) DEFAULT NULL ," +
+            "  PRIMARY KEY ('ID')" +
+            ")";
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(sql);
     }

@@ -10,22 +10,19 @@
         android:icon="@drawable/ic_mark"
         android:title="弱覆盖核查" />
     <item
-        android:id="@+id/confirm_demand_fragment"
+        android:id="@+id/confirm_history"
         android:icon="@drawable/ic_weak_confim"
-        android:title="弱覆盖核查" />
-
+        android:title="核查历史"
+        />
     <item
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/history_log"
-        android:title="历史记录" />
+        android:title="历史记录" >
+    </item>
     <item
         android:id="@+id/deal_status"
         android:icon="@drawable/deal_status_log"
         android:title="受理情况" />
 
-    <item
-    android:id="@+id/navigation_notifications"
-    android:icon="@drawable/user_logo"
-    android:title="个人信息" />
 
 </menu>

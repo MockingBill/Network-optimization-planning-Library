@@ -21,6 +21,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.MimeTypeMap;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.spec.ECField;
 
 
 //实现所有的Fragment的监听接口
@@ -67,11 +69,11 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
              */
             netCollFragment f1 = new netCollFragment();
             historyFragment f2=new historyFragment();
-            personFragment f3=new personFragment();
+
             dealStatusFragment f4=new dealStatusFragment();
             signTestingFragment f5=new signTestingFragment();
 
-//            confirmHistoryFragment f6=new confirmHistoryFragment();
+            confirmHistoryFragment f6=new confirmHistoryFragment();
 
 
             switch (item.getItemId()) {
@@ -82,21 +84,14 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
                     MfragmentTransaction.commit();
                     return true;
                 }
-//                case R.id.confirm_demand_fragment:
-//                {
-//                    MfragmentTransaction.replace(R.id.container,f6);
-//                    MfragmentTransaction.commit();
-//                    return true;
-//                }
-
-                case R.id.navigation_dashboard:{
-                    MfragmentTransaction.replace(R.id.container,f2);
+                case R.id.confirm_history:
+                {
+                    MfragmentTransaction.replace(R.id.container,f6);
                     MfragmentTransaction.commit();
                     return true;
                 }
-                case R.id.navigation_notifications:
-                {
-                    MfragmentTransaction.replace(R.id.container,f3);
+                case R.id.navigation_dashboard:{
+                    MfragmentTransaction.replace(R.id.container,f2);
                     MfragmentTransaction.commit();
                     return true;
                 }
@@ -118,7 +113,33 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
         }
     };
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        FragmentManager FM = getSupportFragmentManager();
+
+        FragmentTransaction MfragmentTransaction =FM.beginTransaction();
+        personFragment f3=new personFragment();
+        switch (item.getItemId()) {
+            case R.id.persionInfo:{
+
+                    MfragmentTransaction.replace(R.id.container,f3);
+                    MfragmentTransaction.commit();
+                    break;
+            }
+
+
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
         /**
          * 默认显示第一个网络测试模块
          */
+
         netCollFragment f1 = new netCollFragment();
         FragmentManager FM = getSupportFragmentManager();
         FragmentTransaction MfragmentTransaction =FM.beginTransaction();
