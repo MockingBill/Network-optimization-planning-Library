@@ -2,6 +2,8 @@ package com.example.dengqian.netcolltool;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -93,12 +96,16 @@ public class personFragment extends Fragment {
         }
     }
 
+    private TextView current_version;
+
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
 
         this.view=inflater.inflate(R.layout.fragment_person, container, false);
         view.findViewById(R.id.button_save).setOnClickListener(new saveButtonListener());
@@ -111,7 +118,8 @@ public class personFragment extends Fragment {
         name.setText(sp.getString("user_name",""));
         phoneNumber.setText(sp.getString("user_phone",""));
         setSpinnerItemSelectedByValue(department,sp.getString("user_department",""));
-
+        current_version=view.findViewById(R.id.current_version);
+        current_version.setText("当前版本:"+getString(R.string.currentVersion));
 
 
 

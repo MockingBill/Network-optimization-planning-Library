@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.dengqian.netcolltool.bean.AesAndToken;
 import com.example.dengqian.netcolltool.bean.connNetReq;
+import com.example.dengqian.netcolltool.bean.informDBHelperForWeakConfirm;
 import com.example.dengqian.netcolltool.bean.versionInfo;
 
 import java.io.File;
@@ -167,6 +169,17 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
         * 检查版本更新
         */
         getCheckVersion();
+        checkDatabases();
+
+    }
+
+    private informDBHelperForWeakConfirm dbforweak;
+    private SQLiteDatabase db;
+
+    private void checkDatabases() {
+        dbforweak = new informDBHelperForWeakConfirm(context);
+        db = dbforweak.getReadableDatabase();
+        dbforweak.checkTable(db);
 
     }
 

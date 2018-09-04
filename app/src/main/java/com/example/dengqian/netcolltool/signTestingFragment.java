@@ -24,8 +24,11 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -156,6 +159,10 @@ public class signTestingFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_signaltesting, container, false);
+
+        dbforweak=new informDBHelperForWeakConfirm(context);
+        db=dbforweak.getReadableDatabase();
+
 
         selectDate = (LinearLayout)  view.findViewById(R.id.selectDate);
         currentDate = (TextView) view.findViewById(R.id.currentDate);
@@ -425,8 +432,7 @@ public class signTestingFragment extends ListFragment {
          * 数据库组件初始化
          */
         currentWeakInf=new weakInformation(inf);
-        dbforweak=new informDBHelperForWeakConfirm(context);
-        db=dbforweak.getReadableDatabase();
+
 
         /**
          * 弹窗界面View
@@ -447,6 +453,32 @@ public class signTestingFragment extends ListFragment {
          */
 
         weak_fault_remark=(EditText)contentView2.findViewById(R.id.weak_fault_remark);
+
+
+        weak_fault_remark.setCustomSelectionActionModeCallback(new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return true;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+        });
+        weak_fault_remark.setLongClickable(true);
+
+
         weak_demand_remark=(EditText)contentView2.findViewById(R.id.weak_demand_remark);
         weak_demand_personTel=(EditText)contentView2.findViewById(R.id.weak_demand_personTel);
         weak_demand_personCharge=(EditText)contentView2.findViewById(R.id.weak_demand_personCharge);
@@ -580,7 +612,7 @@ public class signTestingFragment extends ListFragment {
                     List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
 
                     if(kk.size()==0){
-                        boolean flag=dbforweak.save(db,wd,context);
+                        boolean flag=dbforweak.save(db,wd,context,activity);
                         if(flag){
                             Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
                         }else{
@@ -608,7 +640,7 @@ public class signTestingFragment extends ListFragment {
                     List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
 
                     if(kk.size()==0){
-                        boolean flag=dbforweak.save(db,wd,context);
+                        boolean flag=dbforweak.save(db,wd,context,activity);
                         if(flag){
                             Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
                         }else{
@@ -790,7 +822,7 @@ public class signTestingFragment extends ListFragment {
                     List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
 
                     if(kk.size()==0){
-                        boolean flag=dbforweak.save(db,wd,context);
+                        boolean flag=dbforweak.save(db,wd,context,activity);
                         if(flag){
                             Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
                         }else{
@@ -1213,6 +1245,7 @@ private String currentDbmValue="-130";
         wd.setConfirm_lon(gps[0]);
         wd.setConfirm_lat(gps[1]);
 
+        wd.setWeakAddress(currentWeakInf.getAddress());
 
         wd.setRemark(reled.getRemark());
         wd.setPersonTel(reled.getPersonTel());
@@ -1242,6 +1275,7 @@ private String currentDbmValue="-130";
             }
             else{
                 wd.setWeakCollID(currentWeakInf.getID());
+                wd.setWeakAddress(currentWeakInf.getAddress());
                 wd.setRemark(fault_remark);
                 wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
                 wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());
@@ -1276,6 +1310,7 @@ private String currentDbmValue="-130";
              * 确认后采集参数
              */
             wd.setWeakCollID(currentWeakInf.getID());
+            wd.setWeakAddress(currentWeakInf.getAddress());
             wd.setDemandID(UUID.randomUUID().toString());
             wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
             wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());

@@ -27,22 +27,22 @@ public class informDBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    String sql="CREATE TABLE 'NetWorkInfor' (" +
-            "  'ID' varchar(50) NOT NULL ," +
-            "  'TAC' varchar(20) DEFAULT NULL ," +
-            "  'ECI' varchar(50) DEFAULT NULL ," +
-            "  'BSSS' varchar(20) DEFAULT NULL ," +
-            "  'GPS' varchar(50) DEFAULT NULL ," +
-            "  'phoneNumber' varchar(80) DEFAULT NULL ," +
-            "  'phoneType' varchar(50) DEFAULT NULL ," +
-            "  'overlayScene' varchar(20) DEFAULT NULL ," +
-            "  'collTime' varchar(32) DEFAULT NULL ," +
-            "  'isUpload'int(4) DEFAULT NULL ," +
-            "  'district' varchar(10) DEFAULT NULL ," +
-            "  'address' varchar(80) DEFAULT NULL ," +
-            "  'NetworkOperatorName' varchar(30) DEFAULT NULL ," +
-            "  PRIMARY KEY ('ID')" +
-            ")";
+    String sql="CREATE TABLE IF NOT EXISTS 'NetWorkInfor' (" +
+            "              'ID' varchar(50) NOT NULL ," +
+            "              'TAC' varchar(20) DEFAULT NULL ," +
+            "              'ECI' varchar(50) DEFAULT NULL ," +
+            "              'BSSS' varchar(20) DEFAULT NULL ," +
+            "              'GPS' varchar(50) DEFAULT NULL ," +
+            "              'phoneNumber' varchar(80) DEFAULT NULL ," +
+            "              'phoneType' varchar(50) DEFAULT NULL ," +
+            "              'overlayScene' varchar(20) DEFAULT NULL ," +
+            "              'collTime' varchar(32) DEFAULT NULL ," +
+            "              'isUpload'int(4) DEFAULT NULL ," +
+            "              'district' varchar(10) DEFAULT NULL ," +
+            "              'address' varchar(80) DEFAULT NULL ," +
+            "              'NetworkOperatorName' varchar(30) DEFAULT NULL ," +
+            "              PRIMARY KEY ('ID')" +
+            "            );";
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(sql);
     }

@@ -6,6 +6,7 @@ public class weakCoverageDemand {
 
 
     private String weakCollID;
+    private String weakAddress;
     private String demandID;
     private String preStName;
     private String stAddress;
@@ -23,6 +24,14 @@ public class weakCoverageDemand {
     private String confirm_networktype;
     private String confirm_lon;
     private String confirm_lat;
+
+    public String getWeakAddress() {
+        return weakAddress;
+    }
+
+    public void setWeakAddress(String weakAddress) {
+        this.weakAddress = weakAddress;
+    }
 
     public void setConfirm_networktype(String confirm_networktype) {
         this.confirm_networktype = confirm_networktype;

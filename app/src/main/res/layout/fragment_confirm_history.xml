@@ -5,12 +5,124 @@
     android:orientation="vertical"
     tools:context="com.example.dengqian.netcolltool.confirmHistoryFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/znntitle"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="预建站地址:"
+                android:textSize="12dp" />
+
+            <EditText
+                android:id="@+id/confirm_his_preAddress"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="2.5"
+                android:hint="输入预建站地址(支持模糊查询)"
+                android:background="@drawable/znnsign"
+                android:padding="3dp"
+                android:textSize="11dp" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="2dp"
+            android:background="#4e4444" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="3dp"
+                android:text="弱覆盖地址:"
+                android:textSize="12dp" />
+
+            <EditText
+                android:id="@+id/confirm_his_weakAddress"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="2.5"
+                android:hint="输入弱覆盖详细地址(支持模糊查询)"
+                android:background="@drawable/znnsign"
+                android:padding="3dp"
+                android:textSize="11dp" />
+        </LinearLayout>
 
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginLeft="9dp"
+            android:layout_marginRight="9dp"
+            android:orientation="horizontal">
+            <Spinner
+                android:id="@+id/confirm_his_isUpload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:entries="@array/upload"
+                >
 
+            </Spinner>
 
-<TextView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:text="欢迎"/>
+            <Button
+                android:id="@+id/confirm_his_query_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="查询需求" />
+
+            <Button
+                android:id="@+id/confirm_his_allupload_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="全部上传" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="330dp"
+        android:layout_margin="10dp"
+        android:background="@drawable/znntitle"
+        android:orientation="vertical">
+
+        <ListView
+            android:id="@+id/confirm_history_list"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:drawSelectorOnTop="true"
+            android:orientation="vertical" />
+    </LinearLayout>
 </LinearLayout>

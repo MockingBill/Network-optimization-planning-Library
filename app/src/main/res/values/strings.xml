@@ -135,13 +135,20 @@
     <string name="getStatusData">http://10.196.135.137:4000/getStatusData</string>
     <string name="getCheckVersion">http://10.196.135.137:4000/getCheckVersion</string>
     <string name="getWeakForConfirm">http://10.196.135.137:4000/getWeakForConfirm</string>
+    <string name="getAllDemand">http://10.196.135.137:4000/getAllDemand</string>
     <string name="host">10.196.135.137</string>
 
+    <!--<string name="singleObjUpload">http://192.168.1.102:4000/getSingleNetColl</string>-->
+    <!--<string name="allObjUpload">http://192.168.1.102:4000/getAllNetColl</string>-->
+    <!--<string name="getStatusData">http://192.168.1.102:4000/getStatusData</string>-->
+    <!--<string name="getCheckVersion">http://192.168.1.102:4000/getCheckVersion</string>-->
+    <!--<string name="getWeakForConfirm">http://192.168.1.102:4000/getWeakForConfirm</string>-->
+    <!--<string name="getAllDemand">http://192.168.1.102:4000/getAllDemand</string>-->
+    <!--<string name="host">192.168.1.102</string>-->
 
 
 
-
-    <string name="currentVersion">2.00</string>
+    <string name="currentVersion">2.01</string>
     <string name="BSSS4GMin">-130</string>
     <string name="is2G4Gwarm">成功上传！已生成与2G对应4G弱覆盖并上传。</string>
     <!--116.85.25.186-->

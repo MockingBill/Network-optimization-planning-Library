@@ -1,13 +1,18 @@
 package com.example.dengqian.netcolltool.bean;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.v4.util.LogWriter;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -24,19 +29,31 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    String sql="CREATE TABLE 'bu_weak_coverage_demand' (" +
-            "  'weakCollID' varchar(50) NOT NULL," +
-            "  'preStName' varchar(30) DEFAULT NULL," +
-            "  'stAddress' varchar(50) DEFAULT NULL," +
-            "  'netModel' varchar(32) DEFAULT NULL," +
-            "  'stPrope' varchar(32) DEFAULT NULL," +
-            "  'buildType' varchar(32) DEFAULT NULL," +
-            "  'reqCellNum' varchar(32) DEFAULT NULL," +
-            "  'isPass' varchar(32) DEFAULT NULL," +
-            "  'personCharge' varchar(32) DEFAULT NULL," +
-            "  'personTel' varchar(32) DEFAULT NULL," +
-            "  'remark' varchar(100) DEFAULT NULL" +
-            ")";
+
+
+
+    String sql="CREATE TABLE IF NOT EXISTS 'bu_weak_coverage_demand' (" +
+            "'weakCollID' varchar(50) DEFAULT NULL," +
+            "'weakAddress' varchar(50) DEFAULT NULL," +
+            "'demandID' varchar(50) DEFAULT NULL," +
+            "'preStName' varchar(30) DEFAULT NULL," +
+            "'stAddress' varchar(50) DEFAULT NULL," +
+            "'netModel' varchar(32) DEFAULT NULL," +
+            "'stPrope' varchar(32) DEFAULT NULL," +
+            "'buildType' varchar(32) DEFAULT NULL," +
+            "'reqCellNum' varchar(32) DEFAULT NULL," +
+            "'isPass' varchar(32) DEFAULT NULL," +
+            "'personCharge' varchar(32) DEFAULT NULL," +
+            "'personTel' varchar(32) DEFAULT NULL," +
+            "'remark' varchar(500) DEFAULT NULL," +
+            "'confirm_eci' varchar(32) DEFAULT NULL," +
+            "'confirm_tac' varchar(32) DEFAULT NULL," +
+            "'confirm_bsss' varchar(32) DEFAULT NULL," +
+            "'confirm_networktype' varchar(32) DEFAULT NULL," +
+            "'confirm_lon' varchar(32) DEFAULT NULL," +
+            "'confirm_lat' varchar(32) DEFAULT NULL," +
+            "'isUpload' varchar(4) DEFAULT '0'" +
+            ");";
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(sql);
     }
@@ -50,6 +67,23 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
     }
 
 
+    public void checkTable(SQLiteDatabase db){
+        Cursor cursor = db.rawQuery("select name from sqlite_master where type='table';", null);
+        Map<String,String> map=new HashMap<>();
+
+        while(cursor.moveToNext()){
+            //遍历出表名
+            String name = cursor.getString(0);
+            map.put(name,name);
+
+        }
+        if(!"bu_weak_coverage_demand".equals(map.get("bu_weak_coverage_demand"))){
+            onCreate(db);
+        }
+
+
+
+    }
 
 
     public List<weakCoverageDemand> query(SQLiteDatabase db, String sql,String []selection){
@@ -61,6 +95,7 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
             while (cursor.moveToNext()) {
                 info=new weakCoverageDemand();
                  info.setWeakCollID(cursor.getString(cursor.getColumnIndex("weakCollID")));
+                 info.setWeakAddress(cursor.getString(cursor.getColumnIndex("weakAddress")));
                  info.setDemandID(cursor.getString(cursor.getColumnIndex("demandID")));
                  info.setNetModel(cursor.getString(cursor.getColumnIndex("netModel")));
                  info.setIsPass(cursor.getString(cursor.getColumnIndex("isPass")));
@@ -94,16 +129,11 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
 
-
-
-
-
-
-
-    public boolean save(SQLiteDatabase db,weakCoverageDemand info,Context context){
+    public boolean save(SQLiteDatabase db, weakCoverageDemand info, Context context, Activity activity){
         try{
-            String sql="INSERT INTO 'bu_weak_coverage_demand' (weakCollID,demandID,preStName,stAddress,netModel,stPrope,buildType,reqCellNum,isPass,personCharge,personTel,remark,confirm_eci,confirm_tac,confirm_bsss,confirm_networktype,confirm_lon,confirm_lat) VALUES " +
+            String sql="INSERT INTO 'bu_weak_coverage_demand' (weakCollID,weakAddress,demandID,preStName,stAddress,netModel,stPrope,buildType,reqCellNum,isPass,personCharge,personTel,remark,confirm_eci,confirm_tac,confirm_bsss,confirm_networktype,confirm_lon,confirm_lat) VALUES " +
                     "('"+info.getWeakCollID()+"', " +
+                    "'"+info.getWeakAddress()+"', " +
                     "'"+info.getDemandID()+"', " +
                     "'"+info.getPreStName()+"', " +
                     "'"+info.getStAddress()+"', " +
@@ -122,9 +152,12 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
                     "'"+info.getConfirm_lon()+"',"+
                     "'"+info.getConfirm_lat()+"');";
             Log.e("demandSql:",sql);
+
         db.execSQL(sql);
         return true;
         }catch (Exception e){
+            Log.e("demandSqlerror",e.toString());
+            Toast.makeText(activity,e.toString() , Toast.LENGTH_LONG).show();
             return false;
         }
     }

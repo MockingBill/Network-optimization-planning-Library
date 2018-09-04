@@ -58,6 +58,78 @@ public class connNetReq {
         return json.toString();
     }
 
+    /**
+     * List需求bean转json
+     * @param list
+     * @return
+     */
+
+    public static String beanToJsonDeamdn(List<weakCoverageDemand> list){
+        JSONArray jsonArray=new JSONArray();
+        try{
+            for(weakCoverageDemand info: list){
+                JSONObject json = new JSONObject();
+                json.put("weakCollID",info.getWeakCollID());
+                json.put("weakAddress",info.getWeakAddress());
+                json.put("demandID",info.getDemandID());
+                json.put("preStName",info.getPreStName());
+                json.put("stAddress",info.getStAddress());
+                json.put("netModel",info.getNetModel());
+                json.put("stPrope",info.getStPrope());
+                json.put("buildType",info.getBuildType());
+                json.put("reqCellNum",info.getReqCellNum());
+                json.put("isPass",info.getIsPass());
+                json.put("personCharge",info.getPersonCharge());
+                json.put("personTel",info.getPersonCharge());
+                json.put("remark",info.getPersonTel());
+                json.put("confirm_eci",info.getRemark());
+                json.put("confirm_tac",info.getConfirm_eci());
+                json.put("confirm_bsss",info.getConfirm_tac());
+                json.put("confirm_networktype",info.getConfirm_bsss());
+                json.put("confirm_lon",info.getConfirm_networktype());
+                json.put("confirm_lat",info.getConfirm_lon());
+                json.put("isUpload",info.getConfirm_lat());
+                json.put("isUpload",AesAndToken.md5());
+                jsonArray.put(json);
+            }
+        }catch(Exception e){
+            return "err";
+        }
+        return jsonArray.toString();
+    }
+
+    public static String beanToJsonDeamdn(weakCoverageDemand info){
+        JSONObject json =new JSONObject();
+        try{
+            json.put("TAC",info.getWeakCollID());
+            json.put("phoneType",info.getWeakAddress());
+            json.put("phoneNumber",info.getDemandID());
+            json.put("GPS",info.getPreStName());
+            json.put("ECI",info.getStAddress());
+            json.put("BSSS",info.getNetModel());
+            json.put("overlayScene",info.getStPrope());
+            json.put("district",info.getBuildType());
+            json.put("address",info.getReqCellNum());
+            json.put("NetworkOperatorName",info.getIsPass());
+            json.put("collTime",info.getPersonCharge());
+            json.put("ID",info.getPersonCharge());
+            json.put("isUpload",info.getPersonTel());
+            json.put("isUpload",info.getRemark());
+            json.put("isUpload",info.getConfirm_eci());
+            json.put("isUpload",info.getConfirm_tac());
+            json.put("isUpload",info.getConfirm_bsss());
+            json.put("isUpload",info.getConfirm_networktype());
+            json.put("isUpload",info.getConfirm_lon());
+            json.put("isUpload",info.getConfirm_lat());
+            json.put("token",AesAndToken.md5());
+            String JSONString="collInfo"+json.toString();
+        }catch(Exception e){
+            return "err";
+        }
+
+        return json.toString();
+    }
+
 
     public static String weakQueryToJson(String collTime1,String collTime2,String address,String district,String lon,String lat){
         JSONObject json =new JSONObject();
