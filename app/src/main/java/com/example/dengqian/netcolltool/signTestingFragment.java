@@ -54,6 +54,8 @@ import com.example.dengqian.netcolltool.bean.weakCoverageDemand;
 import com.example.dengqian.netcolltool.bean.weakInformation;
 import com.example.dengqian.netcolltool.widget.CustomDatePicker;
 
+import net.lemonsoft.lemonbubble.LemonBubble;
+
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -198,7 +200,6 @@ public class signTestingFragment extends ListFragment {
 
         list=new ArrayList<HashMap<String,String>>();
         for(int i =0;i<=0;i++){
-
             map=new HashMap<String,String>();
             map.put("row_weak_address","详细地址");
             map.put("row_weak_city","地市");
@@ -242,7 +243,6 @@ public class signTestingFragment extends ListFragment {
         application=(MyApplication) activity.getApplication();
         if(application.getGlobalWeakList()!=null&&application.getGlobalWeakList().size()!=0){
             refreshList(application.getGlobalWeakList());
-
         }
 
 
@@ -562,8 +562,6 @@ public class signTestingFragment extends ListFragment {
 
         demand_list=(ListView) contentView2.findViewById(R.id.demand_list);
         List<Map<String,String>> infoList=new ArrayList<>();
-
-
         for(weakCoverageDemand demandinfo:demandList){
             HashMap<String,String> map=new HashMap<>();
             map.put("Stname",demandinfo.getPreStName());
@@ -574,8 +572,6 @@ public class signTestingFragment extends ListFragment {
             map.put("cellnum",demandinfo.getReqCellNum());
             infoList.add(map);
         }
-
-
         listAdapter2=new SimpleAdapter(activity,infoList,R.layout.list_view_demand,
                 new String[]{"Stname","Staddress","netmodel","prope","buildtype","cellnum"},
                 new int[]{
@@ -594,9 +590,6 @@ public class signTestingFragment extends ListFragment {
                 showDemandWin(demandList.get(position));
             }
         });
-
-
-
 
         /**
          * 建站需求保存
@@ -1016,6 +1009,11 @@ private String currentDbmValue="-130";
     public class QueryListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
+
+
+
+            LemonBubble.showRoundProgress(context, "等待中...");
+
             new Thread(){
 
                 String warmText="刷新成功";
@@ -1044,7 +1042,9 @@ private String currentDbmValue="-130";
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
+                                Log.e("text","回来了");
                                 refreshList(weakList);
+                                LemonBubble.showRight(context, "成功啦！", 1000);
                                 Toast.makeText(context, warmText, Toast.LENGTH_SHORT).show();
                                 Looper.loop();
                             }
@@ -1173,7 +1173,7 @@ private String currentDbmValue="-130";
         if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
             location = locationManager.getLastKnownLocation(locationProvider);
         if (location != null) {
-            String []lonlat={formatDecimalWithZero(String.valueOf(location.getLongitude()),7),formatDecimalWithZero(String.valueOf(location.getLatitude()),7)};
+            String []lonlat={formatDecimalWithZero(String.valueOf(location.getLongitude()),6),formatDecimalWithZero(String.valueOf(location.getLatitude()),6)};
             return lonlat;
 
 

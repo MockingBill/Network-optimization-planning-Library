@@ -80,10 +80,10 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
         if(!"bu_weak_coverage_demand".equals(map.get("bu_weak_coverage_demand"))){
             onCreate(db);
         }
-
-
-
     }
+
+
+
 
 
     public List<weakCoverageDemand> query(SQLiteDatabase db, String sql,String []selection){
@@ -124,9 +124,29 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
     }
 
 
-    public void delete(SQLiteDatabase db,String id,Context context){
-        String sql="DELETE FROM 'bu_weak_coverage_demand' WHERE weakCollID='"+id+"'";
-        db.execSQL(sql);
+    public boolean delete(SQLiteDatabase db,String id,Context context){
+        try{
+            String sql="DELETE FROM 'bu_weak_coverage_demand' WHERE weakCollID='"+id+"'";
+            db.execSQL(sql);
+            return true;
+        }catch(Exception e){
+            Log.e("",e.toString());
+            return false;
+        }
+    }
+
+
+    public boolean updateWeakStatus(SQLiteDatabase db,String id, Context context){
+        try{
+            String sql="update bu_weak_coverage_demand set isUpload='1' where weakCollID='"+id+"';";
+            db.execSQL(sql);
+            return true;
+        }catch (Exception e){
+            Log.e("本地上传状态变更失败",e.toString());
+            return false;
+        }
+
+
     }
 
     public boolean save(SQLiteDatabase db, weakCoverageDemand info, Context context, Activity activity){

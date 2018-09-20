@@ -121,7 +121,7 @@ public class dealStatusFragment extends ListFragment {
                     @Override
                     public void run() {
                         list = new ArrayList<HashMap<String, String>>();
-                        listInfo=connNetReq.jsonToList(resu);
+                        listInfo=connNetReq.statusJsonToList(resu);
 
                         HashMap<String, String> map1 = new HashMap<String, String>();
                         if(listInfo!=null&&!listInfo.isEmpty()) {

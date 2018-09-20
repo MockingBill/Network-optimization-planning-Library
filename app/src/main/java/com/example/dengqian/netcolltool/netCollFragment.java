@@ -240,7 +240,7 @@ public class netCollFragment extends Fragment {
                             Log.e("infoForSave",infoForSave.show());
 
                             if(infoForSave.checkData()){
-                                sqLiteOpenHelper.save(db,infoForSave,context);
+                                sqLiteOpenHelper.save(db,infoForSave,context,activity);
                                 sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID(),context);
                             }
 
@@ -344,22 +344,22 @@ public class netCollFragment extends Fragment {
                 // 中国移动和中国联通获取LAC、CID、BSSS的方式
                 //中国移动（China Mobile）
                 if (imsi.startsWith("46000")||imsi.startsWith("46007")||imsi.startsWith("46002")){
-                    information.setNetworkOperatorName("中国移动 "+currentNetType);
+                    information.setNetworkOperatorName("中国移动_"+currentNetType);
                 }
                 //中国联通（China Unicom）
                 else if(imsi.startsWith("46001")||imsi.startsWith("46006")){
-                    information.setNetworkOperatorName("中国联通 "+currentNetType);
+                    information.setNetworkOperatorName("中国联通_"+currentNetType);
                 }
                 //中国铁通（China Tietong）
                 else if(imsi.startsWith("46020")){
-                    information.setNetworkOperatorName("中国铁通 "+currentNetType);
+                    information.setNetworkOperatorName("中国铁通_"+currentNetType);
                 }
 
                 //中国电信（China Telecom）CDMA网络
                 else if (imsi.startsWith("46003")||imsi.startsWith("46011")||imsi.startsWith("46005")) {
-                    information.setNetworkOperatorName("中国电信 "+currentNetType);
+                    information.setNetworkOperatorName("中国电信_"+currentNetType);
                 }else{
-                    information.setNetworkOperatorName("未知网络 "+currentNetType);
+                    information.setNetworkOperatorName("未知网络_"+currentNetType);
                 }
                 //手机品牌类型
                 StringBuffer phoneType=new StringBuffer();
@@ -379,7 +379,7 @@ public class netCollFragment extends Fragment {
                 information.setID(UUID.randomUUID().toString());
                 setDisplay();
                 /** 保存每次采集的数据 **/
-                sqLiteOpenHelper.save(db,information,context);
+                sqLiteOpenHelper.save(db,information,context,activity);
                 /** 删除数据采集表 **/
                 //db.execSQL("drop table NetWorkInfor");
                 /** 创建数据采集表 **/
@@ -445,9 +445,13 @@ public class netCollFragment extends Fragment {
         /**监听当前信号*/
         TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
         boolean isSIM=hasSimCard(tmm);
-        if(isSIM ){
-            mylistener listener=new mylistener();
-            tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+        if(isSIM){
+            try{
+                mylistener listener=new mylistener();
+                tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+            }catch(Exception e){
+                Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
+            }
         }else{
                 collButton.setEnabled(false);
                 Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();

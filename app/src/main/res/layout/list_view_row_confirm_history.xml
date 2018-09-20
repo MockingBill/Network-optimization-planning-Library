@@ -69,7 +69,7 @@
                 android:layout_weight="0.5"
                 android:background="#24f0f7"
                 android:singleLine="true"
-                android:text="预见站点名:"
+                android:text="预建站点名:"
                 android:textSize="5pt" />
 
             <TextView

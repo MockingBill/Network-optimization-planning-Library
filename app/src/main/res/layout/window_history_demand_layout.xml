@@ -521,6 +521,14 @@
                 android:minHeight="0dp"
                 android:minWidth="0dp"
                 android:text="上传" />
+            <Button
+                android:id="@+id/win_demand_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:text="删除" />
 
             <Button
                 android:id="@+id/win_demand_return"

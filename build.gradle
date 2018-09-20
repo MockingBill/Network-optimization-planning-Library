@@ -5,6 +5,14 @@ buildscript {
     repositories {
         google()
         jcenter()
+        allprojects {
+            repositories {
+                jcenter()
+                // 加入下面这行
+                maven { url 'https://jitpack.io' }
+            }
+        }
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.4'

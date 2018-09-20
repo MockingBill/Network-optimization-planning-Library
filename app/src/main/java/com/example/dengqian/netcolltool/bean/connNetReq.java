@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,6 +59,10 @@ public class connNetReq {
         return json.toString();
     }
 
+
+
+
+
     /**
      * List需求bean转json
      * @param list
@@ -88,8 +93,7 @@ public class connNetReq {
                 json.put("confirm_networktype",info.getConfirm_bsss());
                 json.put("confirm_lon",info.getConfirm_networktype());
                 json.put("confirm_lat",info.getConfirm_lon());
-                json.put("isUpload",info.getConfirm_lat());
-                json.put("isUpload",AesAndToken.md5());
+                json.put("token",AesAndToken.md5());
                 jsonArray.put(json);
             }
         }catch(Exception e){
@@ -101,26 +105,25 @@ public class connNetReq {
     public static String beanToJsonDeamdn(weakCoverageDemand info){
         JSONObject json =new JSONObject();
         try{
-            json.put("TAC",info.getWeakCollID());
-            json.put("phoneType",info.getWeakAddress());
-            json.put("phoneNumber",info.getDemandID());
-            json.put("GPS",info.getPreStName());
-            json.put("ECI",info.getStAddress());
-            json.put("BSSS",info.getNetModel());
-            json.put("overlayScene",info.getStPrope());
-            json.put("district",info.getBuildType());
-            json.put("address",info.getReqCellNum());
-            json.put("NetworkOperatorName",info.getIsPass());
-            json.put("collTime",info.getPersonCharge());
-            json.put("ID",info.getPersonCharge());
-            json.put("isUpload",info.getPersonTel());
-            json.put("isUpload",info.getRemark());
-            json.put("isUpload",info.getConfirm_eci());
-            json.put("isUpload",info.getConfirm_tac());
-            json.put("isUpload",info.getConfirm_bsss());
-            json.put("isUpload",info.getConfirm_networktype());
-            json.put("isUpload",info.getConfirm_lon());
-            json.put("isUpload",info.getConfirm_lat());
+            json.put("weakCollID",info.getWeakCollID());
+            json.put("weakAddress",info.getWeakAddress());
+            json.put("demandID",info.getDemandID());
+            json.put("preStName",info.getPreStName());
+            json.put("stAddress",info.getStAddress());
+            json.put("netModel",info.getNetModel());
+            json.put("stPrope",info.getStPrope());
+            json.put("buildType",info.getBuildType());
+            json.put("reqCellNum",info.getReqCellNum());
+            json.put("isPass",info.getIsPass());
+            json.put("personCharge",info.getPersonCharge());
+            json.put("personTel",info.getPersonCharge());
+            json.put("remark",info.getPersonTel());
+            json.put("confirm_eci",info.getRemark());
+            json.put("confirm_tac",info.getConfirm_eci());
+            json.put("confirm_bsss",info.getConfirm_tac());
+            json.put("confirm_networktype",info.getConfirm_bsss());
+            json.put("confirm_lon",info.getConfirm_networktype());
+            json.put("confirm_lat",info.getConfirm_lon());
             json.put("token",AesAndToken.md5());
             String JSONString="collInfo"+json.toString();
         }catch(Exception e){
@@ -239,12 +242,14 @@ public class connNetReq {
             return "err";
     }
 
+
+
     /**
      * 将json数组转化为List<information>
      * @param str
      * @return
      */
-    public static List<information> jsonToList(String str){
+    public static List<information> statusJsonToList(String str){
         List<information> list = new ArrayList<information>();
         try{
             JSONArray jsonArray=new JSONArray(str);
@@ -257,8 +262,8 @@ public class connNetReq {
                 info.setCollTime(jsonObject.getString( "collTime"));
                 info.setDistrict(jsonObject.getString( "district"));
                 info.setECI(jsonObject.getString( "ECI"));
-                info.setGPS(jsonObject.getString( "GPS"));
-                info.setNetworkOperatorName(jsonObject.getString( "NetworkOperatorName"));
+                info.setGPS(jsonObject.getString( "GpsLon")+"_"+jsonObject.getString( "GpsLat"));
+                info.setNetworkOperatorName(jsonObject.getString( "netWorkType"));
                 info.setOverlayScene(jsonObject.getString( "overlayScene"));
                 info.setTAC(jsonObject.getString( "TAC"));
                 info.setSolveStatus(jsonObject.getString( "solveStatus"));
@@ -272,6 +277,35 @@ public class connNetReq {
             return list;
         }
         return list;
+    }
+
+
+    public static Map<String,ArrayList<String>> jsonToMap(String str){
+        Map<String,ArrayList<String>> map=new HashMap<>();
+        map.put("succ",new ArrayList<String>());
+        map.put("fail",new ArrayList<String>());
+        map.put("has",new ArrayList<String>());
+
+        try{
+            JSONObject jsonObject=new JSONObject(str);
+            JSONArray succ=jsonObject.getJSONArray("succ");
+            JSONArray fail=jsonObject.getJSONArray("fail");
+            JSONArray has=jsonObject.getJSONArray("has");
+            for(int i =0;i<succ.length();i++){
+                map.get("succ").add(succ.getString(i));
+            }
+            for(int i =0;i<fail.length();i++){
+                map.get("fail").add(fail.getString(i));
+            }
+            for(int i =0;i<has.length();i++){
+                map.get("has").add(has.getString(i));
+            }
+
+        }catch(Exception e){
+            Log.e("json转map失败",e.toString());
+        }
+        return map;
+
     }
 
 

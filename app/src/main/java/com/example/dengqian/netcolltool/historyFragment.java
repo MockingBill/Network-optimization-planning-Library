@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -101,6 +102,10 @@ public class historyFragment extends ListFragment {
     private  information inf;
     //批量上传按钮
     private Button allUploadButton;
+    //弱覆盖详细地址
+    private EditText his_address_query;
+    //查询按钮
+    private Button his_botton_address;
     public historyFragment() {
         // Required empty public constructor
     }
@@ -234,7 +239,7 @@ public class historyFragment extends ListFragment {
                                 inf.setIsUpload("1");
 
                                 if(infoForSave.checkData()){
-                                    sqLiteOpenHelper.save(db,infoForSave,context);
+                                    sqLiteOpenHelper.save(db,infoForSave,context,activity);
                                     sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID(), context);
                                 }
 
@@ -332,6 +337,9 @@ public class historyFragment extends ListFragment {
         sp3.setOnItemSelectedListener(selectListener2);
         sp4.setOnItemSelectedListener(selectListener2);
 
+        his_botton_address=(Button) view.findViewById(R.id.his_botton_address);
+        his_address_query=(EditText) view.findViewById(R.id.his_address_query);
+
 
         //查询所有记录显示于列表（这里查询出的并不会真正的显示在列表中，在下拉列表中定义的项中被加载后会覆盖本次查询记录）
         infoList=sqLiteOpenHelper.query(db,"select * from NetWorkInfor",null);
@@ -415,7 +423,7 @@ public class historyFragment extends ListFragment {
                                         String uploadText="批量上传成功";
                                         //将上传的对应4G数据保存到本地
                                         for (information j : listForSave){
-                                            sqLiteOpenHelper.save(db,j,context);
+                                            sqLiteOpenHelper.save(db,j,context,activity);
                                             sqLiteOpenHelper.updateIsUpload(db,j.getID(),context);
                                         }
                                         if(is2G){
@@ -438,6 +446,13 @@ public class historyFragment extends ListFragment {
             }
         });
         refreshList();
+
+        his_botton_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshListForAddressquery(his_address_query.getText().toString());
+            }
+        });
         return view;
     }
 
@@ -521,6 +536,27 @@ public class historyFragment extends ListFragment {
         return fragment;
     }
 
+    public void refreshListForAddressquery(String addressvalue){
+        String up=sp4.getSelectedItem().toString().equals("未上传")?"0":"1";
+        if("".equals(addressvalue)){
+            addressvalue="%";
+        }
+
+        String querySql="select * from  NetWorkInfor where address like '%"+addressvalue+"%' and isUpload="+up+"";
+
+        infoList=sqLiteOpenHelper.query(db,querySql,null);
+        HashMap<String,String> map;
+        list.clear();
+        for(information info : infoList){
+            map=new HashMap<String,String>();
+            map.put("row_address",info.getAddress());
+            /*map.put("ECI",info.getECI());
+            map.put("BSSS",String.valueOf(info.getBSSS()));*/
+            map.put("CollTime",info.getCollTime());
+            list.add(map);
+        }
+        listAdapter.notifyDataSetChanged();
+    }
 
 
 

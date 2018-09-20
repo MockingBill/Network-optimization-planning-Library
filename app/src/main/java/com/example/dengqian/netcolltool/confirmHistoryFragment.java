@@ -5,7 +5,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +22,10 @@ import android.widget.PopupWindow;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.dengqian.netcolltool.bean.AesAndToken;
+import com.example.dengqian.netcolltool.bean.connNetReq;
 import com.example.dengqian.netcolltool.bean.informDBHelperForWeakConfirm;
 import com.example.dengqian.netcolltool.bean.weakCoverageDemand;
 import com.example.dengqian.netcolltool.bean.weakInformation;
@@ -79,6 +85,7 @@ public class confirmHistoryFragment extends Fragment {
     private TextView win_demand_remark;
     private Button win_demand_upload;
     private Button win_demand_return;
+    private Button win_demand_delete;
 
 
 
@@ -100,10 +107,24 @@ public class confirmHistoryFragment extends Fragment {
         confirm_his_query_button=(Button) view.findViewById(R.id.confirm_his_query_button);
         confirm_his_allupload_button=(Button) view.findViewById(R.id.confirm_his_allupload_button);
         confirm_his_isUpload=(Spinner)view.findViewById(R.id.confirm_his_isUpload);
+        confirm_his_allupload_button=(Button)view.findViewById(R.id.confirm_his_allupload_button);
+
+
 
         weakAddressParam=confirm_his_weakAddress.getText().toString();
         weakpreAddressParam=confirm_his_preAddress.getText().toString();
         isup=confirm_his_isUpload.getSelectedItem().toString().equals("未上传")?"0":"1";
+
+
+        confirm_his_allupload_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
+
         confirm_his_query_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -165,8 +186,12 @@ public class confirmHistoryFragment extends Fragment {
 
         return view;
     }
+    private weakCoverageDemand currentWD=null;
+    private  Map<String,ArrayList<String>> mapResult;
+    private int succNum=0;
 
     public void showWindown(weakCoverageDemand wd){
+        currentWD=wd;
         contentView = LayoutInflater.from(activity).inflate(R.layout.window_history_demand_layout, null);
         mPopWindow = new PopupWindow(contentView,
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, true);
@@ -189,6 +214,7 @@ public class confirmHistoryFragment extends Fragment {
         win_demand_remark=(TextView)contentView.findViewById(R.id.win_demand_remark);
         win_demand_return=(Button) contentView.findViewById(R.id.win_demand_return);
         win_demand_upload=(Button) contentView.findViewById(R.id.win_demand_upload);
+        win_demand_delete=(Button)contentView.findViewById(R.id.win_demand_delete);
 
 
 
@@ -210,7 +236,102 @@ public class confirmHistoryFragment extends Fragment {
         win_demand_weak_lat.setText(wd.getConfirm_lat());
         win_demand_remark.setText(wd.getRemark());
 
-        //win_demand_upload
+
+        /**
+         * 删除一条需求记录
+         */
+        win_demand_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean flag=weakconfirmDBhelp.delete(db,currentWD.getWeakCollID(),context);
+                if(flag){
+                    Toast.makeText(activity, "删除成功", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(activity, "删除失败", Toast.LENGTH_LONG).show();
+                }
+                /**
+                 * 更新列表
+                 */
+                weakAddressParam=confirm_his_weakAddress.getText().toString();
+                weakpreAddressParam=confirm_his_preAddress.getText().toString();
+                isup=confirm_his_isUpload.getSelectedItem().toString().equals("未上传")?"0":"1";
+                demand_list=weakconfirmDBhelp.query(db,"select * from bu_weak_coverage_demand where isUpload='"+isup+"' and weakAddress like '%"+weakAddressParam+"%' and stAddress like '%"+weakpreAddressParam+"%';",null);
+                refreshList();
+                mPopWindow.dismiss();
+
+            }
+        });
+
+
+        /**
+         * 上传一条需求记录
+         */
+        win_demand_upload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    new Thread(){
+                        String res="";
+                        List<weakCoverageDemand> list4=new ArrayList<>();
+                        @Override
+                        public void run() {
+                            list4.add(currentWD);
+                            try{
+                                res = connNetReq.post(getString(R.string.getAllDemand), connNetReq.beanToJsonDeamdn(list4));
+                                res= AesAndToken.decrypt(res,AesAndToken.KEY);
+                                Log.e("上传结果",res);
+                                mapResult=new HashMap<String, ArrayList<String>>();
+                                mapResult=connNetReq.jsonToMap(res);
+                                if(mapResult!=null){
+                                    succNum=0;
+                                    for(String x:mapResult.get("succ")){
+                                        Boolean flag=weakconfirmDBhelp.updateWeakStatus(db,x,context);
+                                        if(flag){
+                                            succNum++;
+                                        }
+                                    }
+                                }
+
+
+
+
+
+                            }catch(Exception e){
+                                Log.e("",e.toString());
+                            }finally {
+                                //上传后的UI操作放在UI线程中
+                                Looper.prepare();
+                                new Handler(context.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if(mapResult!=null)
+                                            Toast.makeText(context, "上传成功"+mapResult.get("succ").size()+"条\n上传失败"+mapResult.get("fail").size()+"条\n"+"冲突记录"+mapResult.get("has").size()+"条", Toast.LENGTH_SHORT).show();
+                                        else
+                                            Toast.makeText(context, "上传异常", Toast.LENGTH_SHORT).show();
+                                        if(succNum!=mapResult.get("succ").size()){
+                                            Toast.makeText(context, "状态变更失败", Toast.LENGTH_SHORT).show();
+                                        }
+                                        /**
+                                         * 更新列表
+                                         */
+                                        weakAddressParam=confirm_his_weakAddress.getText().toString();
+                                        weakpreAddressParam=confirm_his_preAddress.getText().toString();
+                                        isup=confirm_his_isUpload.getSelectedItem().toString().equals("未上传")?"0":"1";
+                                        demand_list=weakconfirmDBhelp.query(db,"select * from bu_weak_coverage_demand where isUpload='"+isup+"' and weakAddress like '%"+weakAddressParam+"%' and stAddress like '%"+weakpreAddressParam+"%';",null);
+                                        refreshList();
+                                        mPopWindow.dismiss();
+                                        Looper.loop();
+                                    }
+                                });
+                            }
+                        }
+                    }.start();
+
+
+
+
+            }
+        });
         win_demand_return.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

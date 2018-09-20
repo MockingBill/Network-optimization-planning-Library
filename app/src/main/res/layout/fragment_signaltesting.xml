@@ -169,7 +169,7 @@
                 android:padding="3dp"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:text="维度:"
+                android:text="纬度:"
                 android:textSize="15sp"
                 android:layout_height="35dp" />
 

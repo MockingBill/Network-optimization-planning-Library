@@ -1,16 +1,20 @@
 package com.example.dengqian.netcolltool.bean;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -47,8 +51,6 @@ public class informDBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
-        db.execSQL("");
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -114,7 +116,7 @@ public class informDBHelper extends SQLiteOpenHelper {
     }
 
 
-    public void save(SQLiteDatabase db,information info,Context context){
+    public void save(SQLiteDatabase db, information info, Context context, Activity activity){
         String sql="INSERT INTO 'NetWorkInfor' (ID,TAC,ECI,BSSS,GPS,phoneNumber,phoneType,overlayScene,collTime,isUpload,district,address,NetworkOperatorName) VALUES " +
         "('"+info.getID()+"', " +
         "'"+info.getTAC()+"', " +
@@ -133,6 +135,23 @@ public class informDBHelper extends SQLiteOpenHelper {
             db.execSQL(sql);
         }catch(Exception e){
             Log.e("",e.toString());
+            Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
+        }
+        }
+
+
+    public void checkTable(SQLiteDatabase db){
+        Cursor cursor = db.rawQuery("select name from sqlite_master where type='table';", null);
+        Map<String,String> map=new HashMap<>();
+
+        while(cursor.moveToNext()){
+            //遍历出表名
+            String name = cursor.getString(0);
+            map.put(name,name);
+
+        }
+        if(!"NetWorkInfor".equals(map.get("NetWorkInfor"))){
+            onCreate(db);
         }
     }
 

@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.dengqian.netcolltool.bean.AesAndToken;
 import com.example.dengqian.netcolltool.bean.connNetReq;
+import com.example.dengqian.netcolltool.bean.informDBHelper;
 import com.example.dengqian.netcolltool.bean.informDBHelperForWeakConfirm;
 import com.example.dengqian.netcolltool.bean.versionInfo;
 
@@ -174,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
     }
 
     private informDBHelperForWeakConfirm dbforweak;
+    private informDBHelper infoDB;
     private SQLiteDatabase db;
 
     private void checkDatabases() {
@@ -181,7 +183,12 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
         db = dbforweak.getReadableDatabase();
         dbforweak.checkTable(db);
 
+        infoDB=new informDBHelper(context);
+        db=infoDB.getReadableDatabase();
+        infoDB.checkTable(db);
     }
+
+
 
     private void getCheckVersion(){
         new Thread() {
