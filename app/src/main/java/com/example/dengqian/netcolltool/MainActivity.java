@@ -436,11 +436,9 @@ public class MainActivity extends AppCompatActivity implements SignConfirmFragme
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        boolean hasPermissionDismiss = false;//有权限没有通过
         if (mRequestCode==requestCode){
             for (int i=0;i<grantResults.length;i++){
                 if (grantResults[i]==-1){
-                    hasPermissionDismiss=true;
                     break;
                 }
             }
