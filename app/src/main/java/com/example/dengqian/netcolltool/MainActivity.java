@@ -1,10 +1,12 @@
 package com.example.dengqian.netcolltool;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,10 +14,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,12 +41,29 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 
 //实现所有的Fragment的监听接口
 public class MainActivity extends AppCompatActivity implements SignConfirmFragment.OnFragmentInteractionListener,HistoryFragment.OnFragmentInteractionListener,NetCollFragment.OnFragmentInteractionListener,PersonFragment.OnFragmentInteractionListener,DealStatusFragment.OnFragmentInteractionListener   {
     ProgressDialog progressDialog=null;
     Context context=null;
+    private String []permissionList={
+            Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+            Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.REQUEST_INSTALL_PACKAGES
+    };
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -131,8 +153,6 @@ public class MainActivity extends AppCompatActivity implements SignConfirmFragme
                     MfragmentTransaction.commit();
                     break;
             }
-
-
             default:
                 break;
         }
@@ -144,29 +164,7 @@ public class MainActivity extends AppCompatActivity implements SignConfirmFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         context=MainActivity.this;
-
-
-
-
-        /**
-         * 默认显示第一个网络测试模块
-         */
-
-        NetCollFragment f1 = new NetCollFragment();
-        FragmentManager FM = getSupportFragmentManager();
-        FragmentTransaction MfragmentTransaction =FM.beginTransaction();
-        MfragmentTransaction.replace(R.id.container,f1);
-        MfragmentTransaction.commit();
-
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        /**
-        * 检查版本更新
-        */
-        getCheckVersion();
-        checkDatabases();
-
+        initPermission();
     }
 
     private informDBHelperForWeakConfirm dbforweak;
@@ -404,4 +402,76 @@ public class MainActivity extends AppCompatActivity implements SignConfirmFragme
         context.startActivity(intent);
 
     }
+
+
+    private final int mRequestCode = 100;//权限请求码
+    List<String> mPermissionList = new ArrayList<>();
+
+    //4、权限判断和申请
+    private void initPermission(){
+        mPermissionList.clear();//清空已经允许的没有通过的权限
+        //逐个判断是否还有未通过的权限
+        for (int i = 0;i<permissionList.length;i++){
+            if (ContextCompat.checkSelfPermission(this,permissionList[i])!=
+                    PackageManager.PERMISSION_GRANTED){
+                mPermissionList.add(permissionList[i]);//添加还未授予的权限到mPermissionList中
+            }
+        }
+        //申请权限
+        if (mPermissionList.size()>0){//有权限没有通过，需要申请
+            ActivityCompat.requestPermissions(this,permissionList,mRequestCode);
+        }else {
+            //权限已经都通过了，可以将程序继续打开了
+            init();
+        }
+    }
+    /**
+     * 5.请求权限后回调的方法
+     * @param requestCode 是我们自己定义的权限请求码
+     * @param permissions 是我们请求的权限名称数组
+     * @param grantResults 是我们在弹出页面后是否允许权限的标识数组，数组的长度对应的是权限
+     *                     名称数组的长度，数组的数据0表示允许权限，-1表示我们点击了禁止权限
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        boolean hasPermissionDismiss = false;//有权限没有通过
+        if (mRequestCode==requestCode){
+            for (int i=0;i<grantResults.length;i++){
+                if (grantResults[i]==-1){
+                    hasPermissionDismiss=true;
+                    break;
+                }
+            }
+        }
+        init();
+    }
+
+
+    private void init(){
+        /**
+         * 默认显示第一个网络测试模块
+         */
+        NetCollFragment f1 = new NetCollFragment();
+        FragmentManager FM = getSupportFragmentManager();
+        FragmentTransaction MfragmentTransaction =FM.beginTransaction();
+        MfragmentTransaction.replace(R.id.container,f1);
+        MfragmentTransaction.commit();
+        mTextMessage = (TextView) findViewById(R.id.message);
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        /**
+         * 检查版本更新
+         */
+        getCheckVersion();
+        checkDatabases();
+    }
+
+
+
+
+
 }
+
+

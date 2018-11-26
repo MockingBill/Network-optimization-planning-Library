@@ -28,8 +28,6 @@ import java.util.regex.*;
 
 public class BaiDuLoactionDeal {
     public static String getRequest(String lon,String lat) throws Exception {
-//        String p1="^-?((0|1?[0-7]?[0-9]?)(([.][0-9]{1,4})?)|180(([.][0]{1,4})?))$";
-//        String p2="^-?((0|[1-8]?[0-9]?)(([.][0-9]{1,4})?)|90(([.][0]{1,4})?))$";
         String surl="http://api.map.baidu.com/geocoder/v2/?location="+lat+","+lon+"&output=json&pois=1&ak=y5pwBnfPdgA6dbN6ws0i34Hefk0zD35v";
         URL url = new URL(surl);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();

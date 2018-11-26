@@ -108,7 +108,21 @@ public class NetCollFragment extends Fragment {
     //当前定位类型
     private String provider;
     //手动申请权限列表
-    private String []permissionList={Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION};
+    private String []permissionList={
+            Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.MOUNT_UNMOUNT_FILESYSTEMS,
+            Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.REQUEST_INSTALL_PACKAGES
+    };
 
     //位置信息管理者
     private LocationManager locationManager;
@@ -235,7 +249,6 @@ public class NetCollFragment extends Fragment {
                                 sqLiteOpenHelper.save(db,infoForSave,activity);
                                 sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID());
                             }
-
                         }
                         else
                             alertText="远程服务器错误,上传失败。";
@@ -363,9 +376,7 @@ public class NetCollFragment extends Fragment {
                 Date day=new Date();
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 information.setCollTime(df.format(day));
-
                 SharedPreferences sp=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
-
                 information.setPhoneNumber(sharedPreferences.getString("user_name","未填写")+"_"+sharedPreferences.getString("user_phone","未填写")+"_"+sharedPreferences.getString("user_department","未填写"));
                 information.setIsUpload("0");
                 information.setID(UUID.randomUUID().toString());
@@ -399,7 +410,7 @@ public class NetCollFragment extends Fragment {
 
         activity=(MainActivity) this.getActivity();
 
-        requestPower();
+        //requestPower();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -498,7 +509,6 @@ public class NetCollFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
     public void getLocalion(String lon, final String lat){
@@ -542,7 +552,6 @@ public class NetCollFragment extends Fragment {
         //判断是否已经赋予权限
         for (String permissionInfo : permissionList) {
             if (ContextCompat.checkSelfPermission(activity, permissionInfo) != PackageManager.PERMISSION_GRANTED) {
-
                 //如果应用之前请求过此权限但用户拒绝了请求，此方法将返回 true。
                 if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permissionInfo)) {
                     Toast.makeText(activity, "请放开权限以保证应用使用正常！", Toast.LENGTH_LONG).show();
