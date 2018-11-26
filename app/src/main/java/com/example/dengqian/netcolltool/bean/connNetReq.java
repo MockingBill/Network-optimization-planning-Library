@@ -350,7 +350,6 @@ public class connNetReq {
                 list.add(info);
             }
         }catch(Exception e){
-            Log.e("err","json to list fail\n"+e.toString());
             return list;
         }
         return list;

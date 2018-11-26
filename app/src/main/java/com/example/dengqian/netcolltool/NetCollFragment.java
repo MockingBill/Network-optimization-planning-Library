@@ -9,8 +9,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 
 import android.os.Bundle;
@@ -54,18 +52,18 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.example.dengqian.netcolltool.signTestingFragment.formatDecimalWithZero;
+import static com.example.dengqian.netcolltool.SignConfirmFragment.formatDecimalWithZero;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link netCollFragment.OnFragmentInteractionListener} interface
+ * {@link NetCollFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link netCollFragment#newInstance} factory method to
+ * Use the {@link NetCollFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class netCollFragment extends Fragment {
+public class NetCollFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -144,7 +142,7 @@ public class netCollFragment extends Fragment {
 
 
 
-    public netCollFragment() {
+    public NetCollFragment() {
         // Required empty public constructor
     }
 
@@ -166,8 +164,8 @@ public class netCollFragment extends Fragment {
     };
 
 
-    public static netCollFragment newInstance(String param1, String param2) {
-        netCollFragment fragment = new netCollFragment();
+    public static NetCollFragment newInstance(String param1, String param2) {
+        NetCollFragment fragment = new NetCollFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

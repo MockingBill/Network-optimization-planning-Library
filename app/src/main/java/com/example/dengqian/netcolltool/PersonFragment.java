@@ -2,8 +2,6 @@ package com.example.dengqian.netcolltool;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,12 +18,12 @@ import android.widget.Toast;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link personFragment.OnFragmentInteractionListener} interface
+ * {@link PersonFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link personFragment#newInstance} factory method to
+ * Use the {@link PersonFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class personFragment extends Fragment {
+public class PersonFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -41,7 +39,7 @@ public class personFragment extends Fragment {
     private  Context context;
     private MainActivity activity;
 
-    public personFragment() {
+    public PersonFragment() {
         // Required empty public constructor
     }
 
@@ -54,8 +52,8 @@ public class personFragment extends Fragment {
      * @return A new instance of fragment personFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static personFragment newInstance(String param1, String param2) {
-        personFragment fragment = new personFragment();
+    public static PersonFragment newInstance(String param1, String param2) {
+        PersonFragment fragment = new PersonFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class confirmHistoryFragment extends Fragment {
+public class ConfirmHistoryFragment extends Fragment {
     //主体activity
     private Activity activity;
     //当前Fragment的view。使用它获取布局组件
@@ -186,10 +186,6 @@ public class confirmHistoryFragment extends Fragment {
                 refreshList();
             }
         });
-
-
-
-
         /**
          * 数据库帮助组件声明
          */

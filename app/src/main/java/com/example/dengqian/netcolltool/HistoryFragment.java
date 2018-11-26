@@ -40,12 +40,12 @@ import java.util.UUID;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link historyFragment.OnFragmentInteractionListener} interface
+ * {@link HistoryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link historyFragment#newInstance} factory method to
+ * Use the {@link HistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class historyFragment extends ListFragment {
+public class HistoryFragment extends ListFragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
@@ -106,7 +106,7 @@ public class historyFragment extends ListFragment {
     private EditText his_address_query;
     //查询按钮
     private Button his_botton_address;
-    public historyFragment() {
+    public HistoryFragment() {
         // Required empty public constructor
     }
 
@@ -527,8 +527,8 @@ public class historyFragment extends ListFragment {
         listAdapter.notifyDataSetChanged();
     }
 
-    public static historyFragment newInstance(String param1, String param2) {
-        historyFragment fragment = new historyFragment();
+    public static HistoryFragment newInstance(String param1, String param2) {
+        HistoryFragment fragment = new HistoryFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

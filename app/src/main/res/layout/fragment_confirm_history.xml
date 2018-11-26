@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.dengqian.netcolltool.confirmHistoryFragment">
+    tools:context="com.example.dengqian.netcolltool.ConfirmHistoryFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

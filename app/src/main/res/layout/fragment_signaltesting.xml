@@ -8,7 +8,7 @@
     android:paddingTop="1dip"
     android:layout_margin="4dp"
     android:paddingBottom="1dip"
-    tools:context="com.example.dengqian.netcolltool.signTestingFragment"
+    tools:context="com.example.dengqian.netcolltool.SignConfirmFragment"
     >
 
 

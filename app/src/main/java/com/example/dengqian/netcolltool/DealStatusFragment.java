@@ -6,15 +6,12 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -26,14 +23,12 @@ import com.example.dengqian.netcolltool.bean.AesAndToken;
 import com.example.dengqian.netcolltool.bean.connNetReq;
 import com.example.dengqian.netcolltool.bean.information;
 
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 
-public class dealStatusFragment extends ListFragment {
+public class DealStatusFragment extends ListFragment {
     //主体activity
     private Activity activity;
     //当前Fragment的view。使用它获取布局组件
@@ -61,13 +56,13 @@ public class dealStatusFragment extends ListFragment {
     //数据加载提示
     private  String toastText="未知错误";
     //构造方法
-    public dealStatusFragment() {
+    public DealStatusFragment() {
 
     }
 
 
-    public static dealStatusFragment newInstance(String param1, String param2) {
-        dealStatusFragment fragment = new dealStatusFragment();
+    public static DealStatusFragment newInstance(String param1, String param2) {
+        DealStatusFragment fragment = new DealStatusFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;

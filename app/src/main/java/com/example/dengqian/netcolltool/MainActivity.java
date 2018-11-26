@@ -1,8 +1,6 @@
 package com.example.dengqian.netcolltool;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DownloadManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
@@ -24,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,11 +36,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.spec.ECField;
 
 
 //实现所有的Fragment的监听接口
-public class MainActivity extends AppCompatActivity implements signTestingFragment.OnFragmentInteractionListener,historyFragment.OnFragmentInteractionListener,netCollFragment.OnFragmentInteractionListener,personFragment.OnFragmentInteractionListener,dealStatusFragment.OnFragmentInteractionListener   {
+public class MainActivity extends AppCompatActivity implements SignConfirmFragment.OnFragmentInteractionListener,HistoryFragment.OnFragmentInteractionListener,NetCollFragment.OnFragmentInteractionListener,PersonFragment.OnFragmentInteractionListener,DealStatusFragment.OnFragmentInteractionListener   {
     ProgressDialog progressDialog=null;
     Context context=null;
 
@@ -70,13 +65,13 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
             /**
              * 创建五个子Fragment用于不同按钮之间切换
              */
-            netCollFragment f1 = new netCollFragment();
-            historyFragment f2=new historyFragment();
+            NetCollFragment f1 = new NetCollFragment();
+            HistoryFragment f2=new HistoryFragment();
 
-            dealStatusFragment f4=new dealStatusFragment();
-            signTestingFragment f5=new signTestingFragment();
+            DealStatusFragment f4=new DealStatusFragment();
+            SignConfirmFragment f5=new SignConfirmFragment();
 
-            confirmHistoryFragment f6=new confirmHistoryFragment();
+            ConfirmHistoryFragment f6=new ConfirmHistoryFragment();
 
 
             switch (item.getItemId()) {
@@ -128,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
         FragmentManager FM = getSupportFragmentManager();
 
         FragmentTransaction MfragmentTransaction =FM.beginTransaction();
-        personFragment f3=new personFragment();
+        PersonFragment f3=new PersonFragment();
         switch (item.getItemId()) {
             case R.id.persionInfo:{
 
@@ -157,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements signTestingFragme
          * 默认显示第一个网络测试模块
          */
 
-        netCollFragment f1 = new netCollFragment();
+        NetCollFragment f1 = new NetCollFragment();
         FragmentManager FM = getSupportFragmentManager();
         FragmentTransaction MfragmentTransaction =FM.beginTransaction();
         MfragmentTransaction.replace(R.id.container,f1);
