@@ -119,7 +119,58 @@ public class confirmHistoryFragment extends Fragment {
         confirm_his_allupload_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                new Thread(){
+                    String res="";
+                    List<weakCoverageDemand> list4=new ArrayList<>();
+                    @Override
+                    public void run() {
+                        for(weakCoverageDemand x:demand_list){
+                            list4.add(x);
+                        }
+                        try{
+                            res = connNetReq.post(getString(R.string.getAllDemand), connNetReq.beanToJsonDeamdn(list4));
+                            res= AesAndToken.decrypt(res,AesAndToken.KEY);
+                            Log.e("上传结果",res);
+                            mapResult=new HashMap<String, ArrayList<String>>();
+                            mapResult=connNetReq.jsonToMap(res);
+                            if(mapResult!=null){
+                                succNum=0;
+                                for(String x:mapResult.get("succ")){
+                                    Boolean flag=weakconfirmDBhelp.updateWeakStatus(db,x,context);
+                                    if(flag){
+                                        succNum++;
+                                    }
+                                }
+                            }
+                        }catch(Exception e){
+                            Log.e("",e.toString());
+                        }finally {
+                            //上传后的UI操作放在UI线程中
+                            Looper.prepare();
+                            new Handler(context.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if(mapResult!=null)
+                                        Toast.makeText(context, "上传成功"+mapResult.get("succ").size()+"条\n上传失败"+mapResult.get("fail").size()+"条\n"+"冲突记录"+mapResult.get("has").size()+"条", Toast.LENGTH_SHORT).show();
+                                    else
+                                        Toast.makeText(context, "上传异常", Toast.LENGTH_SHORT).show();
+                                    if(succNum!=mapResult.get("succ").size()){
+                                        Toast.makeText(context, "状态变更失败", Toast.LENGTH_SHORT).show();
+                                    }
+                                    /**
+                                     * 更新列表
+                                     */
+                                    weakAddressParam=confirm_his_weakAddress.getText().toString();
+                                    weakpreAddressParam=confirm_his_preAddress.getText().toString();
+                                    isup=confirm_his_isUpload.getSelectedItem().toString().equals("未上传")?"0":"1";
+                                    demand_list=weakconfirmDBhelp.query(db,"select * from bu_weak_coverage_demand where isUpload='"+isup+"' and weakAddress like '%"+weakAddressParam+"%' and stAddress like '%"+weakpreAddressParam+"%';",null);
+                                    refreshList();
+                                    Looper.loop();
+                                }
+                            });
+                        }
+                    }
+                }.start();
             }
         });
 
@@ -291,11 +342,6 @@ public class confirmHistoryFragment extends Fragment {
                                         }
                                     }
                                 }
-
-
-
-
-
                             }catch(Exception e){
                                 Log.e("",e.toString());
                             }finally {
@@ -338,9 +384,6 @@ public class confirmHistoryFragment extends Fragment {
                 mPopWindow.dismiss();
             }
         });
-
-
-
         View rootview = LayoutInflater.from(activity).inflate(R.layout.window_history_demand_layout, null);
         mPopWindow.showAtLocation(rootview, Gravity.TOP, 0, 20);
     }

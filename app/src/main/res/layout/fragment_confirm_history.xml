@@ -90,6 +90,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:entries="@array/upload"
+                android:background="@drawable/znns"
                 >
 
             </Spinner>
@@ -104,7 +105,7 @@
             <Button
                 android:id="@+id/confirm_his_allupload_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="全部上传" />
         </LinearLayout>

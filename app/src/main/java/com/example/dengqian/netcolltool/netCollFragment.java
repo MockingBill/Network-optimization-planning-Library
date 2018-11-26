@@ -215,9 +215,6 @@ public class netCollFragment extends Fragment {
 
                             }
                             listAll.add(information);
-                            for(information x:listAll){
-                                Log.e("",x.show());
-                            }
                             res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAll));
                             //res=connNetReq.post(getString(R.string.singleObjUpload),connNetReq.beanToJson(information));
 
@@ -234,14 +231,11 @@ public class netCollFragment extends Fragment {
                             }
 
                             isUp=true;
-                            sqLiteOpenHelper.updateIsUpload(db,information.getID(),context);
+                            sqLiteOpenHelper.updateIsUpload(db,information.getID());
                             information.setIsUpload("1");
-                            Log.e("info1",information.show());
-                            Log.e("infoForSave",infoForSave.show());
-
                             if(infoForSave.checkData()){
-                                sqLiteOpenHelper.save(db,infoForSave,context,activity);
-                                sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID(),context);
+                                sqLiteOpenHelper.save(db,infoForSave,activity);
+                                sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID());
                             }
 
                         }
@@ -379,7 +373,7 @@ public class netCollFragment extends Fragment {
                 information.setID(UUID.randomUUID().toString());
                 setDisplay();
                 /** 保存每次采集的数据 **/
-                sqLiteOpenHelper.save(db,information,context,activity);
+                sqLiteOpenHelper.save(db,information,activity);
                 /** 删除数据采集表 **/
                 //db.execSQL("drop table NetWorkInfor");
                 /** 创建数据采集表 **/
@@ -869,7 +863,7 @@ public class netCollFragment extends Fragment {
                     new Handler(context.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            GpsAddress.setText("我去玩邓千我邓千王丹我去单位");
+                            GpsAddress.setText("11");
                             Looper.loop();
                         }
                     });

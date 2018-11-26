@@ -5,6 +5,7 @@ import android.Manifest;
 import android.app.Activity;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
@@ -132,6 +133,9 @@ public class signTestingFragment extends ListFragment {
     private  Button confirm_fault_button;
     private  Button confirm_demand_button;
 
+
+    private informDBHelperForWeakConfirm dbforweak;
+    private SQLiteDatabase db;
 
     public signTestingFragment() {
         // Required empty public constructor
@@ -277,9 +281,6 @@ public class signTestingFragment extends ListFragment {
     public class SaveListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            for(weakInformation wi:weakList){
-                Log.e("",wi.show());
-            }
             MyApplication application = (MyApplication)activity.getApplication();
             application.setGlobalWeakList(weakList);
             Toast.makeText(context, "保存成功", Toast.LENGTH_SHORT).show();
@@ -334,8 +335,20 @@ public class signTestingFragment extends ListFragment {
         buttonConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPopWindow.dismiss();
-                showConfirmWindow(inf);
+
+                List<weakCoverageDemand> hasConfirm=dbforweak.query(db,"select * from bu_weak_coverage_demand",null);
+                boolean flag=true;
+                for (weakCoverageDemand wx:hasConfirm){
+                        if(wx.getWeakCollID().equals(inf.getID()))
+                        {
+                            flag=false;
+                            Toast.makeText(activity, "该条记录已被核查，请在核查历史中删除后再核查。", Toast.LENGTH_LONG).show();
+                        }
+                }
+                if(flag){
+                    mPopWindow.dismiss();
+                    showConfirmWindow(inf);
+                }
             }
         });
 
@@ -376,8 +389,7 @@ public class signTestingFragment extends ListFragment {
     private Spinner sp3;
     private Spinner sp4;
 
-    private informDBHelperForWeakConfirm dbforweak;
-    private SQLiteDatabase db;
+
 
     private Button confirm_relation_demand_button;
     private LinearLayout conform_demand_list;
@@ -809,12 +821,13 @@ public class signTestingFragment extends ListFragment {
             public void onClick(View v) {
                 weakCoverageDemand wd=relationDemandData(currentWcdemandInfo);
                 if(wd==null){
-                    Toast.makeText(activity, "请检查数据完整性。", Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, "数据不完整。", Toast.LENGTH_LONG).show();
                 }else{
                     String checkWeakisconfirm="select * from bu_weak_coverage_demand where weakCollID='"+wd.getWeakCollID()+"';";
                     List<weakCoverageDemand> kk=dbforweak.query(db,checkWeakisconfirm,null);
 
                     if(kk.size()==0){
+                        wd.setDemandID(UUID.randomUUID().toString());
                         boolean flag=dbforweak.save(db,wd,context,activity);
                         if(flag){
                             Toast.makeText(activity, "保存成功。", Toast.LENGTH_LONG).show();
@@ -1042,7 +1055,6 @@ private String currentDbmValue="-130";
                         new Handler(context.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                Log.e("text","回来了");
                                 refreshList(weakList);
                                 LemonBubble.showRight(context, "成功啦！", 1000);
                                 Toast.makeText(context, warmText, Toast.LENGTH_SHORT).show();
@@ -1274,9 +1286,20 @@ private String currentDbmValue="-130";
                 return null;
             }
             else{
+                /**
+                 * 通过sp获取当前使用者的信息
+                 */
+                SharedPreferences sp=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
+
+
+
                 wd.setWeakCollID(currentWeakInf.getID());
                 wd.setWeakAddress(currentWeakInf.getAddress());
                 wd.setRemark(fault_remark);
+
+                wd.setPersonCharge(sp.getString("user_name","未知上传者"));
+                wd.setPersonTel(sp.getString("user_phone","未知手机号"));
+
                 wd.setConfirm_tac(netcoll_confirm_tac.getText().toString());
                 wd.setConfirm_eci(netcoll_confirm_eci.getText().toString());
                 wd.setConfirm_networktype(netcoll_confirm_networktype.getText().toString());

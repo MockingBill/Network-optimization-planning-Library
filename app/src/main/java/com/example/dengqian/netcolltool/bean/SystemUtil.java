@@ -11,32 +11,11 @@ import java.util.Locale;
  */
 
 public class SystemUtil {
-    /**
-     * 获取当前手机系统语言。
-     *
-     * @return 返回当前系统语言。例如：当前设置的是“中文-中国”，则返回“zh-CN”
-     */
-    public static String getSystemLanguage() {
-        return Locale.getDefault().getLanguage();
-    }
 
-    /**
-     * 获取当前系统上的语言列表(Locale列表)
-     *
-     * @return  语言列表
-     */
-    public static Locale[] getSystemLanguageList() {
-        return Locale.getAvailableLocales();
-    }
 
-    /**
-     * 获取当前手机系统版本号
-     *
-     * @return  系统版本号
-     */
-    public static String getSystemVersion() {
-        return android.os.Build.VERSION.RELEASE;
-    }
+
+
+
 
     /**
      * 获取手机型号

@@ -85,14 +85,14 @@ public class connNetReq {
                 json.put("reqCellNum",info.getReqCellNum());
                 json.put("isPass",info.getIsPass());
                 json.put("personCharge",info.getPersonCharge());
-                json.put("personTel",info.getPersonCharge());
-                json.put("remark",info.getPersonTel());
-                json.put("confirm_eci",info.getRemark());
-                json.put("confirm_tac",info.getConfirm_eci());
-                json.put("confirm_bsss",info.getConfirm_tac());
-                json.put("confirm_networktype",info.getConfirm_bsss());
-                json.put("confirm_lon",info.getConfirm_networktype());
-                json.put("confirm_lat",info.getConfirm_lon());
+                json.put("personTel",info.getPersonTel());
+                json.put("remark",info.getRemark());
+                json.put("confirm_eci",info.getConfirm_eci());
+                json.put("confirm_tac",info.getConfirm_tac());
+                json.put("confirm_bsss",info.getConfirm_bsss());
+                json.put("confirm_networktype",info.getConfirm_networktype());
+                json.put("confirm_lon",info.getConfirm_lon());
+                json.put("confirm_lat",info.getConfirm_lat());
                 json.put("token",AesAndToken.md5());
                 jsonArray.put(json);
             }

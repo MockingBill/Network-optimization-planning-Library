@@ -24,14 +24,14 @@ import java.util.UUID;
 
 public class informDBHelper extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "NetWorkInfColl";
 
     public informDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    String sql="CREATE TABLE IF NOT EXISTS 'NetWorkInfor' (" +
+    String sql= "CREATE TABLE IF NOT EXISTS 'NetWorkInfor' (" +
             "              'ID' varchar(50) NOT NULL ," +
             "              'TAC' varchar(20) DEFAULT NULL ," +
             "              'ECI' varchar(50) DEFAULT NULL ," +
@@ -51,6 +51,7 @@ public class informDBHelper extends SQLiteOpenHelper {
         db.execSQL(sql);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("drop table if exists NetWorkInfor;");
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -92,12 +93,12 @@ public class informDBHelper extends SQLiteOpenHelper {
     }
 
 
-    public void delete(SQLiteDatabase db,String id,Context context){
+    public void delete(SQLiteDatabase db,String id){
         String sql="DELETE FROM 'NetWorkInfor' WHERE ID='"+id+"'";
         db.execSQL(sql);
     }
 
-    public void updateIsUpload(SQLiteDatabase db,String id,Context context){
+    public void updateIsUpload(SQLiteDatabase db,String id){
         String sql="UPDATE 'NetWorkInfor' set isUpload='1' where ID='"+id+"'";
         db.execSQL(sql);
 
@@ -105,7 +106,7 @@ public class informDBHelper extends SQLiteOpenHelper {
 
 
 
-    public void updateListIsUpload(SQLiteDatabase db,List<String> idList,Context context){
+    public void updateListIsUpload(SQLiteDatabase db,List<String> idList){
         if(!idList.isEmpty()){
             StringBuffer sql=new StringBuffer("UPDATE 'NetWorkInfor' set isUpload=1 where ID='"+idList.get(0)+"'");
             for(String x:idList)
@@ -116,7 +117,7 @@ public class informDBHelper extends SQLiteOpenHelper {
     }
 
 
-    public void save(SQLiteDatabase db, information info, Context context, Activity activity){
+    public void save(SQLiteDatabase db, information info, Activity activity){
         String sql="INSERT INTO 'NetWorkInfor' (ID,TAC,ECI,BSSS,GPS,phoneNumber,phoneType,overlayScene,collTime,isUpload,district,address,NetworkOperatorName) VALUES " +
         "('"+info.getID()+"', " +
         "'"+info.getTAC()+"', " +

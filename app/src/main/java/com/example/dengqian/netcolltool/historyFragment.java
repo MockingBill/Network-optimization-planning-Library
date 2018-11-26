@@ -235,12 +235,12 @@ public class historyFragment extends ListFragment {
                                 }else{
                                     alertText = "上传成功";
                                 }
-                                sqLiteOpenHelper.updateIsUpload(db, inf.getID(), context);
+                                sqLiteOpenHelper.updateIsUpload(db, inf.getID());
                                 inf.setIsUpload("1");
 
                                 if(infoForSave.checkData()){
-                                    sqLiteOpenHelper.save(db,infoForSave,context,activity);
-                                    sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID(), context);
+                                    sqLiteOpenHelper.save(db,infoForSave,activity);
+                                    sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID());
                                 }
 
 
@@ -279,7 +279,7 @@ public class historyFragment extends ListFragment {
         buttonDelete.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                sqLiteOpenHelper.delete(db,inf.getID(),context);
+                sqLiteOpenHelper.delete(db,inf.getID());
                 //Toast.makeText(activity,"删除成功", Toast.LENGTH_LONG).show();
                 refreshList();
                 mPopWindow.dismiss();
@@ -419,12 +419,12 @@ public class historyFragment extends ListFragment {
                                      * 这里写成功后的组件控制
                                      */
                                     if (res.equals("1")) {
-                                        sqLiteOpenHelper.updateListIsUpload(db, uploadListID, context);
+                                        sqLiteOpenHelper.updateListIsUpload(db, uploadListID);
                                         String uploadText="批量上传成功";
                                         //将上传的对应4G数据保存到本地
                                         for (information j : listForSave){
-                                            sqLiteOpenHelper.save(db,j,context,activity);
-                                            sqLiteOpenHelper.updateIsUpload(db,j.getID(),context);
+                                            sqLiteOpenHelper.save(db,j,activity);
+                                            sqLiteOpenHelper.updateIsUpload(db,j.getID());
                                         }
                                         if(is2G){
                                             uploadText=getString(R.string.is2G4Gwarm);

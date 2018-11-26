@@ -33,14 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link dealStatusFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link dealStatusFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class dealStatusFragment extends ListFragment {
     //主体activity
     private Activity activity;

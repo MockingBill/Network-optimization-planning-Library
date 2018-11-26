@@ -128,15 +128,16 @@
     <!--<string name="getStatusData">http://117.187.6.14:5528/getStatusData</string>-->
     <!--<string name="getCheckVersion">http://117.187.6.14:5528/getCheckVersion</string>-->
     <!--<string name="getWeakForConfirm">http://117.187.6.14:5528/getWeakForConfirm</string>-->
+    <!--<string name="getAllDemand">http://117.187.6.14:4000/getAllDemand</string>-->
     <!--<string name="host">117.187.6.14</string>-->
 
-    <string name="singleObjUpload">http://114.116.90.251:4000/getSingleNetColl</string>
-    <string name="allObjUpload">http://114.116.90.251:4000/getAllNetColl</string>
-    <string name="getStatusData">http://114.116.90.251:4000/getStatusData</string>
-    <string name="getCheckVersion">http://114.116.90.251:4000/getCheckVersion</string>
-    <string name="getWeakForConfirm">http://114.116.90.251:4000/getWeakForConfirm</string>
-    <string name="getAllDemand">http://114.116.90.251:4000/getAllDemand</string>
-    <string name="host">114.116.90.251</string>
+    <string name="singleObjUpload">http://10.196.135.137:4000/getSingleNetColl</string>
+    <string name="allObjUpload">http://10.196.135.137:4000/getAllNetColl</string>
+    <string name="getStatusData">http://10.196.135.137:4000/getStatusData</string>
+    <string name="getCheckVersion">http://10.196.135.137:4000/getCheckVersion</string>
+    <string name="getWeakForConfirm">http://10.196.135.137:4000/getWeakForConfirm</string>
+    <string name="getAllDemand">http://10.196.135.137:4000/getAllDemand</string>
+    <string name="host">10.196.135.137</string>
 
     <!--<string name="singleObjUpload">http://172.20.10.2:4000/getSingleNetColl</string>-->
     <!--<string name="allObjUpload">http://172.20.10.2:4000/getAllNetColl</string>-->

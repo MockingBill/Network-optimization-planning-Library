@@ -22,7 +22,7 @@ import java.util.UUID;
 
 public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
     // If you change the database schema, you must increment the database version.
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "NetWorkInfColl";
 
     public informDBHelperForWeakConfirm(Context context) {
@@ -59,7 +59,7 @@ public class informDBHelperForWeakConfirm extends SQLiteOpenHelper {
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        db.execSQL("");
+        db.execSQL("drop table if exists bu_weak_coverage_demand;");
         onCreate(db);
     }
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
