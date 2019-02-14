@@ -160,90 +160,92 @@ public class SignConfirmFragment extends ListFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_signaltesting, container, false);
+            view = inflater.inflate(R.layout.fragment_signaltesting, container, false);
 
-        dbforweak=new informDBHelperForWeakConfirm(context);
-        db=dbforweak.getReadableDatabase();
-
-
-        selectDate = (LinearLayout)  view.findViewById(R.id.selectDate);
-        currentDate = (TextView) view.findViewById(R.id.currentDate);
-        currentDate2=(TextView) view.findViewById(R.id.currentDate2);
+            dbforweak=new informDBHelperForWeakConfirm(context);
+            db=dbforweak.getReadableDatabase();
 
 
+            selectDate = (LinearLayout)  view.findViewById(R.id.selectDate);
+            currentDate = (TextView) view.findViewById(R.id.currentDate);
+            currentDate2=(TextView) view.findViewById(R.id.currentDate2);
 
-        //设置当前GPS的值
-        setGpsView(getLocation(context));
-        locationProvider=LocationManager.GPS_PROVIDER;
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-        {
-            locationManager.requestLocationUpdates(locationProvider, 3000, 100, locationListener);
-        }
-        initDatePicker();
-        currentDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customDatePicker1.show(currentDate.getText().toString());
+
+
+            //设置当前GPS的值
+            setGpsView(getLocation(context));
+            locationProvider=LocationManager.GPS_PROVIDER;
+            if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            {
+                locationManager.requestLocationUpdates(locationProvider, 3000, 100, locationListener);
             }
-        });
-        currentDate2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customDatePicker2.show(currentDate.getText().toString());
+            initDatePicker();
+            currentDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    customDatePicker1.show(currentDate.getText().toString());
+                }
+            });
+            currentDate2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    customDatePicker2.show(currentDate.getText().toString());
+                }
+            });
+
+
+
+            list=new ArrayList<HashMap<String,String>>();
+            for(int i =0;i<=0;i++){
+                map=new HashMap<String,String>();
+                map.put("row_weak_address","详细地址");
+                map.put("row_weak_city","地市");
+                map.put("row_weak_bsss","信号强度");
+                map.put("row_weak_collect_time","采集时间");
+                map.put("row_weak_network_type","网络制式");
+                map.put("row_weak_dis","距离");
+                list.add(map);
             }
-        });
 
 
+            listAdapter=new SimpleAdapter(activity,list,R.layout.list_view_row_weak_confirm,
+                    new String[]{
+                            "row_weak_address",
+                            "row_weak_city",
+                            "row_weak_bsss",
+                            "row_weak_collect_time",
+                            "row_weak_network_type",
+                            "row_weak_dis"
+                    },
+                    new int[]{
+                            R.id.row_weak_address,
+                            R.id.row_weak_city,
+                            R.id.row_weak_bsss,
+                            R.id.row_weak_collect_time,
+                            R.id.row_weak_network_type,
+                            R.id.row_weak_dis
+                    });
 
-        list=new ArrayList<HashMap<String,String>>();
-        for(int i =0;i<=0;i++){
-            map=new HashMap<String,String>();
-            map.put("row_weak_address","详细地址");
-            map.put("row_weak_city","地市");
-            map.put("row_weak_bsss","信号强度");
-            map.put("row_weak_collect_time","采集时间");
-            map.put("row_weak_network_type","网络制式");
-            map.put("row_weak_dis","距离");
-            list.add(map);
-        }
+            setListAdapter(listAdapter);
 
+            distract=view.findViewById(R.id.weakQuery_district_value);
+            address=view.findViewById(R.id.weakQuery_address_value);
 
-        listAdapter=new SimpleAdapter(activity,list,R.layout.list_view_row_weak_confirm,
-                new String[]{
-                        "row_weak_address",
-                        "row_weak_city",
-                        "row_weak_bsss",
-                        "row_weak_collect_time",
-                        "row_weak_network_type",
-                        "row_weak_dis"
-                },
-                new int[]{
-                        R.id.row_weak_address,
-                        R.id.row_weak_city,
-                        R.id.row_weak_bsss,
-                        R.id.row_weak_collect_time,
-                        R.id.row_weak_network_type,
-                        R.id.row_weak_dis
-        });
+            weak_query_button=(Button) view.findViewById(R.id.weak_query);
+            weak_query_button.setOnClickListener(new QueryListener());
 
-        setListAdapter(listAdapter);
+            weak_save_button=(Button)view.findViewById(R.id.weak_save);
+            weak_save_button.setOnClickListener(new SaveListener());
 
-        distract=view.findViewById(R.id.weakQuery_district_value);
-        address=view.findViewById(R.id.weakQuery_address_value);
-
-        weak_query_button=(Button) view.findViewById(R.id.weak_query);
-        weak_query_button.setOnClickListener(new QueryListener());
-
-        weak_save_button=(Button)view.findViewById(R.id.weak_save);
-        weak_save_button.setOnClickListener(new SaveListener());
-
-        application=(MyApplication) activity.getApplication();
-        if(application.getGlobalWeakList()!=null&&application.getGlobalWeakList().size()!=0){
-            refreshList(application.getGlobalWeakList());
-        }
+            application=(MyApplication) activity.getApplication();
+            if(application.getGlobalWeakList()!=null&&application.getGlobalWeakList().size()!=0){
+                refreshList(application.getGlobalWeakList());
+            }
 
 
-        return view;
+            return view;
+
+
     }
 
 

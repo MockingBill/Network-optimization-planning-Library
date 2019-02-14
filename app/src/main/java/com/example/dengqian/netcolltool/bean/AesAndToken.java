@@ -1,7 +1,4 @@
 package com.example.dengqian.netcolltool.bean;
-
-import android.util.Log;
-
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,12 +15,10 @@ import javax.crypto.spec.SecretKeySpec;
  * @author lmiky
  * @date 2014-2-25
  */
-
 public class AesAndToken {
     private final static String SALT="QWER!@#$ASDF";
     public static final String DEFAULT_CODING = "utf-8";
     public final static String KEY="bXlEZWFyTFdX132df6bVGhlV2FudGVy";
-
         /**
          * 解密
          * @author lmiky
@@ -115,10 +110,6 @@ public class AesAndToken {
             }
             return sb.toString();
         }
-
-
-
-
 
 
     public static String md5() {

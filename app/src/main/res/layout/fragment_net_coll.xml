@@ -158,6 +158,30 @@
                 android:textSize="14dp" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:focusable="true"
+            android:paddingBottom="5dp"
+            android:focusableInTouchMode="true">
+            <TextView
+                android:id="@+id/tv_GPStext"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="当前GPS:" />
+            <EditText
+                android:id="@+id/CurrentGPS"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:hint=""
+                android:textSize="14dp" />
+        </LinearLayout>
 
 
         <ScrollView
@@ -193,6 +217,12 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="采集" />
+            <Button
+                android:id="@+id/updateGPS"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="更新GPS" />
         </LinearLayout>
 
 

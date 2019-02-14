@@ -6,11 +6,15 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Criteria;
+import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.Uri;
 
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -20,7 +24,6 @@ import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
-
 
 
 import android.telephony.cdma.CdmaCellLocation;
@@ -42,8 +45,10 @@ import com.example.dengqian.netcolltool.bean.SystemUtil;
 import com.example.dengqian.netcolltool.bean.connNetReq;
 import com.example.dengqian.netcolltool.bean.informDBHelper;
 import com.example.dengqian.netcolltool.bean.information;
+
 import java.lang.reflect.Method;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -52,6 +57,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static android.content.ContentValues.TAG;
 import static com.example.dengqian.netcolltool.SignConfirmFragment.formatDecimalWithZero;
 
 
@@ -81,13 +87,13 @@ public class NetCollFragment extends Fragment {
     //采集信息类
     private information information;
     //下拉列表适配器
-    private ArrayAdapter<String> adapter ;
+    private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> adapter2;
 
     //下拉列表组件
     private Spinner sp;
-    private  Spinner sp2;
-    private  Spinner sp3;
+    private Spinner sp2;
+    private Spinner sp3;
     //地址栏组件
     private EditText addressText;
     //小型持久化数据组件
@@ -100,15 +106,17 @@ public class NetCollFragment extends Fragment {
     private Button collButton;
     //信号强度显示栏
     private TextView CurrentBess;
-    public String currentDbmValue="0";
-    public String currentNetType="4G";
+    public String currentDbmValue = "0";
+    public String currentNetType = "4G";
+    public EditText CurrentGPS;
+    public Button updateGPS;
 
     //当前imsi
     private String imsi;
     //当前定位类型
     private String provider;
     //手动申请权限列表
-    private String []permissionList={
+    private String[] permissionList = {
             Manifest.permission.CHANGE_WIFI_MULTICAST_STATE,
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -134,14 +142,14 @@ public class NetCollFragment extends Fragment {
     public TextView GpsAddress;
 
     //一级场景
-    private String[] overlay1 = new String[] {"","城区", "乡镇","农村","交通"};
+    private String[] overlay1 = new String[]{"", "城区", "乡镇", "农村", "交通"};
     //二级场景
     private String[][] overlay2 = new String[][]{
             {""},
-            {"学校","商业区","景区","党政军","住宅","医院","酒店","企事业单位"},
-            {"住宅区","景区","党政军","商业区","企事业单位","学校"},
-            {"行政村","村寨","景区","学校"},
-            {"高速","车站","高铁","公路","机场"}};
+            {"学校", "商业区", "景区", "党政军", "住宅", "医院", "酒店", "企事业单位"},
+            {"住宅区", "景区", "党政军", "商业区", "企事业单位", "学校"},
+            {"行政村", "村寨", "景区", "学校"},
+            {"高速", "车站", "高铁", "公路", "机场"}};
     public static final int NETWORK_NONE = 0; // 没有网络连接
     public static final int NETWORK_WIFI = 1; // wifi连接
     public static final int NETWORK_2G = 2; // 2G
@@ -151,9 +159,7 @@ public class NetCollFragment extends Fragment {
 
 
     private Activity activity;
-    public static final int SHOW_RESPONSE=0;//用于更新操作
-
-
+    public static final int SHOW_RESPONSE = 0;//用于更新操作
 
 
     public NetCollFragment() {
@@ -163,15 +169,15 @@ public class NetCollFragment extends Fragment {
     /**
      * 二级联动一级场景监听器，动态联动二级场景。
      */
-    private AdapterView.OnItemSelectedListener selectListener1 = new AdapterView.OnItemSelectedListener(){
-        public void onItemSelected(AdapterView parent, View v, int position,long id){
+    private AdapterView.OnItemSelectedListener selectListener1 = new AdapterView.OnItemSelectedListener() {
+        public void onItemSelected(AdapterView parent, View v, int position, long id) {
             int pos = sp.getSelectedItemPosition();
 
-            adapter2 = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, overlay2[pos]);
+            adapter2 = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, overlay2[pos]);
             sp2.setAdapter(adapter2);
         }
 
-        public void onNothingSelected(AdapterView arg0){
+        public void onNothingSelected(AdapterView arg0) {
 
         }
 
@@ -191,39 +197,38 @@ public class NetCollFragment extends Fragment {
     /**
      * 上传按钮点击监听。
      */
-    class uploadButtonListener implements View.OnClickListener{
-        private boolean isUp=false;
-        private String alertText="未知错误";
-        private String res="0";
+    class uploadButtonListener implements View.OnClickListener {
+        private boolean isUp = false;
+        private String alertText = "未知错误";
+        private String res = "0";
 
         @Override
         public void onClick(View v) {
-            if(information.checkData()){
+            if (information.checkData()) {
                 new Thread() {
                     public void run() {
-                        boolean is2G=false;
-                        information infoForSave=new information();
+                        boolean is2G = false;
+                        information infoForSave = new information();
                         try {
-                            List<information> listAll=new ArrayList<>();
+                            List<information> listAll = new ArrayList<>();
 
-                            if(information.getNetworkOperatorName().indexOf("2G")!=-1){
-                                is2G=true;
-                                information info1=new information(information);
+                            if (information.getNetworkOperatorName().indexOf("2G") != -1) {
+                                is2G = true;
+                                information info1 = new information(information);
                                 info1.setID(UUID.randomUUID().toString());
-                                info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
+                                info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G", "4G"));
                                 info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAll.add(info1);
-                                infoForSave=new information(info1);
+                                infoForSave = new information(info1);
 
-                            }
-                            else if(information.getNetworkOperatorName().indexOf("3G")!=-1){
-                                is2G=true;
-                                information info2=new information(information);
+                            } else if (information.getNetworkOperatorName().indexOf("3G") != -1) {
+                                is2G = true;
+                                information info2 = new information(information);
                                 info2.setID(UUID.randomUUID().toString());
-                                info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
+                                info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G", "4G"));
                                 info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAll.add(info2);
-                                infoForSave=new information(info2);
+                                infoForSave = new information(info2);
 
                             }
                             listAll.add(information);
@@ -231,45 +236,45 @@ public class NetCollFragment extends Fragment {
                             //res=connNetReq.post(getString(R.string.singleObjUpload),connNetReq.beanToJson(information));
 
                         } catch (Exception e) {
-                            alertText="网络错误，上传失败。"+e.toString();
-                            Log.e("err",e.toString());
+                            alertText = "网络错误，上传失败。" + e.toString();
+                            Log.e("err", e.toString());
                         }
 
-                        if(res.equals("1")){
-                            if(is2G){
-                                alertText =getString(R.string.is2G4Gwarm);
-                            }else{
-                                alertText="上传成功！";
+                        if (res.equals("1")) {
+                            if (is2G) {
+                                alertText = getString(R.string.is2G4Gwarm);
+                            } else {
+                                alertText = "上传成功！";
                             }
 
-                            isUp=true;
-                            sqLiteOpenHelper.updateIsUpload(db,information.getID());
+                            isUp = true;
+                            sqLiteOpenHelper.updateIsUpload(db, information.getID());
                             information.setIsUpload("1");
-                            if(infoForSave.checkData()){
-                                sqLiteOpenHelper.save(db,infoForSave,activity);
-                                sqLiteOpenHelper.updateIsUpload(db,infoForSave.getID());
+                            if (infoForSave.checkData()) {
+                                sqLiteOpenHelper.save(db, infoForSave, activity);
+                                sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID());
                             }
-                        }
-                        else
-                            alertText="远程服务器错误,上传失败。";
-                            Looper.prepare();
-                            new Handler(context.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    if(isUp){
-                                        setDisplay();
-                                        uploadButton.setEnabled(false);
-                                    }
-                                    Toast.makeText(context, alertText, Toast.LENGTH_SHORT).show();
-                                    Looper.loop();
+                        } else
+                            alertText = "远程服务器错误,上传失败。";
+                        Looper.prepare();
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isUp) {
+                                    setDisplay();
+                                    uploadButton.setEnabled(false);
                                 }
-                            });
+                                Toast.makeText(context, alertText, Toast.LENGTH_SHORT).show();
+                                Looper.loop();
+                            }
+                        });
 
                     }
                 }.start();
-            }else{
+            } else {
                 Toast.makeText(context, "采集数据校验失败，请等到信号强度不为0再上传", Toast.LENGTH_SHORT).show();
-            };
+            }
+            ;
         }
     }
 
@@ -277,138 +282,130 @@ public class NetCollFragment extends Fragment {
     /**
      * 采集按钮点击监听
      */
-    class collButtonListener implements View.OnClickListener{
+    class collButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
 
-            SharedPreferences sharedPreferences=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = context.getSharedPreferences("userInformation", Context.MODE_PRIVATE);
 
 
             /** 每次点击采集按钮都会创建一个新的数据对象用来保存采集的结果 */
-            information=new information();
-            if(sp3.getSelectedItem().toString().equals("")){
+            information = new information();
+            if (sp3.getSelectedItem().toString().equals("")) {
                 Toast.makeText(activity, "请选择县市名称。", Toast.LENGTH_LONG).show();
-                return ;
+                return;
             }
-            if(sp.getSelectedItem().toString().equals("")||sp2.getSelectedItem().toString().equals("")){
+            if (sp.getSelectedItem().toString().equals("") || sp2.getSelectedItem().toString().equals("")) {
                 Toast.makeText(activity, "请选择覆盖场景。", Toast.LENGTH_LONG).show();
-                return ;
+                return;
             }
 
-            information.setOverlayScene(sp.getSelectedItem().toString()+"_"+sp2.getSelectedItem().toString());
+            information.setOverlayScene(sp.getSelectedItem().toString() + "_" + sp2.getSelectedItem().toString());
             information.setDistrict(sp3.getSelectedItem().toString());
-            information.setAddress(addressText.getText().toString().equals("")?"未输入":addressText.getText().toString());
+            information.setAddress(addressText.getText().toString().equals("") ? "未输入" : addressText.getText().toString());
 
-            SharedPreferences.Editor edit=spForAddress.edit();
-            edit.putString("lastAddress",addressText.getText().toString());
+            SharedPreferences.Editor edit = spForAddress.edit();
+            edit.putString("lastAddress", addressText.getText().toString());
             edit.commit();
 
 
-
-
             //判断手机号是否有效
-            if(isMobileNO(sharedPreferences.getString("user_phone",""))&&!addressText.getText().toString().equals("")&&!sharedPreferences.getString("user_name","").equals("")&&!sharedPreferences.getString("user_department","").equals(""))
-            {
+            if (isMobileNO(sharedPreferences.getString("user_phone", "")) && !addressText.getText().toString().equals("") && !sharedPreferences.getString("user_name", "").equals("") && !sharedPreferences.getString("user_department", "").equals("")) {
                 uploadButton.setEnabled(true);
-            try {
+                try {
 
-                //获取系统服务
-                TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-                locationManager = (LocationManager)activity.getSystemService(Context.LOCATION_SERVICE);
-                TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-
-
+                    //获取系统服务
+                    TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+                    locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+                    TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
 
 
-                //鉴权后执行GPS采集
-                if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                {
-                    information.setGPS(getLocation(context));
+                    //鉴权后执行GPS采集
+                    if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                        information.setGPS(getGPSLocation());
+                    } else
+                        information.setGPS("No GPS");
+                    imsi = mTelephonyManager.getSubscriberId();
+                    if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA) {
+                        CdmaCellLocation cdmacelllocation = (CdmaCellLocation) tm.getCellLocation();
+                        information.setTAC(String.valueOf(cdmacelllocation.getNetworkId()));
+                        information.setECI(String.valueOf(cdmacelllocation.getBaseStationId()));
+                    } else {
+                        GsmCellLocation gsmCellLocation = (GsmCellLocation) mTelephonyManager.getCellLocation();
+                        information.setTAC(String.valueOf(gsmCellLocation.getLac()));
+                        information.setECI(String.valueOf(gsmCellLocation.getCid()));
+                    }
+
+
+                    if (currentNetType.equals("无网络")) {
+                        information.setBSSS(-130);
+                    } else {
+                        information.setBSSS(Integer.valueOf(currentDbmValue));
+                    }
+
+
+                    // 中国移动和中国联通获取LAC、CID、BSSS的方式
+                    //中国移动（China Mobile）
+                    if (imsi.startsWith("46000") || imsi.startsWith("46007") || imsi.startsWith("46002")) {
+                        information.setNetworkOperatorName("中国移动_" + currentNetType);
+                    }
+                    //中国联通（China Unicom）
+                    else if (imsi.startsWith("46001") || imsi.startsWith("46006")) {
+                        information.setNetworkOperatorName("中国联通_" + currentNetType);
+                    }
+                    //中国铁通（China Tietong）
+                    else if (imsi.startsWith("46020")) {
+                        information.setNetworkOperatorName("中国铁通_" + currentNetType);
+                    }
+
+                    //中国电信（China Telecom）CDMA网络
+                    else if (imsi.startsWith("46003") || imsi.startsWith("46011") || imsi.startsWith("46005")) {
+                        information.setNetworkOperatorName("中国电信_" + currentNetType);
+                    } else {
+                        information.setNetworkOperatorName("未知网络_" + currentNetType);
+                    }
+                    //手机品牌类型
+                    StringBuffer phoneType = new StringBuffer();
+                    phoneType.append(SystemUtil.getDeviceBrand() + ";");
+                    phoneType.append(SystemUtil.getSystemModel() + ";");
+                    phoneType.append(SystemUtil.getIMEI(context));
+                    information.setPhoneType(phoneType.toString());
+
+                    Date day = new Date();
+                    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    information.setCollTime(df.format(day));
+                    SharedPreferences sp = context.getSharedPreferences("userInformation", Context.MODE_PRIVATE);
+                    information.setPhoneNumber(sharedPreferences.getString("user_name", "未填写") + "_" + sharedPreferences.getString("user_phone", "未填写") + "_" + sharedPreferences.getString("user_department", "未填写"));
+                    information.setIsUpload("0");
+                    information.setID(UUID.randomUUID().toString());
+                    setDisplay();
+                    /** 保存每次采集的数据 **/
+                    sqLiteOpenHelper.save(db, information, activity);
+                    /** 删除数据采集表 **/
+                    //db.execSQL("drop table NetWorkInfor");
+                    /** 创建数据采集表 **/
+                    //sqLiteOpenHelper.onCreate(db);
+                    /** 删除表数据 */
+                    //db.execSQL("delete from NetWorkInfor");
+                } catch (Exception e) {
+                    disp.append("err:" + e.toString());
                 }
-                else
-                    information.setGPS("No GPS");
-                imsi = mTelephonyManager.getSubscriberId();
-                if(tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA){
-                    CdmaCellLocation cdmacelllocation = (CdmaCellLocation)tm.getCellLocation();
-                    information.setTAC(String.valueOf(cdmacelllocation.getNetworkId()));
-                    information.setECI(String.valueOf(cdmacelllocation.getBaseStationId()));
-                }else{
-                    GsmCellLocation gsmCellLocation = (GsmCellLocation) mTelephonyManager.getCellLocation();
-                    information.setTAC(String.valueOf(gsmCellLocation.getLac()));
-                    information.setECI(String.valueOf(gsmCellLocation.getCid()));
-                }
-
-
-                if(currentNetType.equals("无网络")){
-                    information.setBSSS(-130);
-                }else{
-                    information.setBSSS(Integer.valueOf(currentDbmValue));
-                }
-
-
-                // 中国移动和中国联通获取LAC、CID、BSSS的方式
-                //中国移动（China Mobile）
-                if (imsi.startsWith("46000")||imsi.startsWith("46007")||imsi.startsWith("46002")){
-                    information.setNetworkOperatorName("中国移动_"+currentNetType);
-                }
-                //中国联通（China Unicom）
-                else if(imsi.startsWith("46001")||imsi.startsWith("46006")){
-                    information.setNetworkOperatorName("中国联通_"+currentNetType);
-                }
-                //中国铁通（China Tietong）
-                else if(imsi.startsWith("46020")){
-                    information.setNetworkOperatorName("中国铁通_"+currentNetType);
-                }
-
-                //中国电信（China Telecom）CDMA网络
-                else if (imsi.startsWith("46003")||imsi.startsWith("46011")||imsi.startsWith("46005")) {
-                    information.setNetworkOperatorName("中国电信_"+currentNetType);
-                }else{
-                    information.setNetworkOperatorName("未知网络_"+currentNetType);
-                }
-                //手机品牌类型
-                StringBuffer phoneType=new StringBuffer();
-                phoneType.append(SystemUtil.getDeviceBrand()+";");
-                phoneType.append(SystemUtil.getSystemModel()+";");
-                phoneType.append(SystemUtil.getIMEI(context));
-                information.setPhoneType(phoneType.toString());
-
-                Date day=new Date();
-                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                information.setCollTime(df.format(day));
-                SharedPreferences sp=context.getSharedPreferences ("userInformation",Context.MODE_PRIVATE);
-                information.setPhoneNumber(sharedPreferences.getString("user_name","未填写")+"_"+sharedPreferences.getString("user_phone","未填写")+"_"+sharedPreferences.getString("user_department","未填写"));
-                information.setIsUpload("0");
-                information.setID(UUID.randomUUID().toString());
-                setDisplay();
-                /** 保存每次采集的数据 **/
-                sqLiteOpenHelper.save(db,information,activity);
-                /** 删除数据采集表 **/
-                //db.execSQL("drop table NetWorkInfor");
-                /** 创建数据采集表 **/
-                //sqLiteOpenHelper.onCreate(db);
-                /** 删除表数据 */
-                //db.execSQL("delete from NetWorkInfor");
-            }catch(Exception e){
-                disp.append("err:"+e.toString());
-            }
             } else {
-                if (addressText.getText().toString().equals("")){
+                if (addressText.getText().toString().equals("")) {
                     Toast.makeText(activity, "详细地址不能未空。", Toast.LENGTH_LONG).show();
-                }
-                else if(sharedPreferences.getString("user_department","").equals("")){
+                } else if (sharedPreferences.getString("user_department", "").equals("")) {
                     Toast.makeText(activity, "请在个人界面选择所属部门", Toast.LENGTH_LONG).show();
-                }
-                else
+                } else
                     Toast.makeText(activity, "请在个人信息界面填写有效的手机号与姓名，否则无法采集。", Toast.LENGTH_LONG).show();
             }
         }
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        activity=(MainActivity) this.getActivity();
+        activity = (MainActivity) this.getActivity();
 
         //requestPower();
         if (getArguments() != null) {
@@ -416,72 +413,182 @@ public class NetCollFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view=inflater.inflate(R.layout.fragment_net_coll, container, false);
-        addressText=(EditText)view.findViewById(R.id.address);
-        disp=view.findViewById(R.id.show);
-        CurrentBess=view.findViewById(R.id.CurrentBess);
-        collButton=view.findViewById(R.id.collButton);
-        sqLiteOpenHelper=new informDBHelper(context);
-        db=sqLiteOpenHelper.getReadableDatabase();
-        uploadButton=(Button)view.findViewById(R.id.upLoadButton);
+        view = inflater.inflate(R.layout.fragment_net_coll, container, false);
+        addressText = (EditText) view.findViewById(R.id.address);
+        disp = view.findViewById(R.id.show);
+        CurrentBess = view.findViewById(R.id.CurrentBess);
+        collButton = view.findViewById(R.id.collButton);
+
+        CurrentGPS = view.findViewById(R.id.CurrentGPS);
+        updateGPS = view.findViewById(R.id.updateGPS);
+
+        sqLiteOpenHelper = new informDBHelper(context);
+        db = sqLiteOpenHelper.getReadableDatabase();
+        uploadButton = (Button) view.findViewById(R.id.upLoadButton);
         uploadButton.setEnabled(false);
-        spForAddress=context.getSharedPreferences ("address",Context.MODE_PRIVATE);
-        addressText.setText(spForAddress.getString("lastAddress",""));
+        spForAddress = context.getSharedPreferences("address", Context.MODE_PRIVATE);
+        addressText.setText(spForAddress.getString("lastAddress", ""));
         /** 二级联动*/
         sp = (Spinner) view.findViewById(R.id.overlayScene1C);
-        sp2=(Spinner)view.findViewById(R.id.overlayScene2C);
-        sp3=(Spinner)view.findViewById(R.id.districtC);
-        adapter = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item,overlay1 );
+        sp2 = (Spinner) view.findViewById(R.id.overlayScene2C);
+        sp3 = (Spinner) view.findViewById(R.id.districtC);
+        adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, overlay1);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
         sp.setOnItemSelectedListener(selectListener1);
-        adapter2=new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, overlay2[0]);
+        adapter2 = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, overlay2[0]);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp2.setAdapter(adapter2);
         /** */
-        collButton=view.findViewById(R.id.collButton);
+        collButton = view.findViewById(R.id.collButton);
         collButton.setOnClickListener(new collButtonListener());
         uploadButton.setOnClickListener(new uploadButtonListener());
         /**监听当前信号*/
         TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-        boolean isSIM=hasSimCard(tmm);
-        if(isSIM){
-            try{
-                mylistener listener=new mylistener();
+        boolean isSIM = hasSimCard(tmm);
+        if (isSIM) {
+            try {
+                mylistener listener = new mylistener();
                 tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-            }catch(Exception e){
+            } catch (Exception e) {
                 Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
             }
-        }else{
-                collButton.setEnabled(false);
-                Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
+        } else {
+            collButton.setEnabled(false);
+            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
         }
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        locationProvider=LocationManager.GPS_PROVIDER;
-//        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-//        {
-//            locationManager.requestLocationUpdates(locationProvider, 3000, 100, locationListener);
-//        }
-//        GpsAddress=view.findViewById(R.id.GPSaddress);
-        String []gps=getLocation2(context);
 
-        getLocalion(gps[0],gps[1]);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        locationProvider = locationManager.getBestProvider(createFineCriteria(), true);
+        // 设置监听*器，自动更新的最小时间为间隔N秒(1秒为1*1000，这样写主要为了方便)或最小位移变化超过N米
+        locationManager.requestLocationUpdates(locationProvider, 1000, 10, mylocationListener);
+        getGPSLocation();
+
+
+        updateGPS.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getLocalion();
+            }
+        });
 
         return view;
     }
+
+    private void updateUI(Location location) {
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+
+        BigDecimal bg = new BigDecimal(longitude);
+        longitude = bg.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        bg = new BigDecimal(latitude);
+        latitude = bg.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+        CurrentGPS.setText("(" + String.valueOf(longitude) + "  ,  " + String.valueOf(latitude) + ")");
+    }
+
+
+    private String getGPSLocation() {
+
+        Location location = locationManager.getLastKnownLocation(locationProvider); // 通过GPS获取位置
+        if (location != null) {
+            updateUI(location);
+            return "(" + String.valueOf(location.getLongitude()) + "," + String.valueOf(location.getLatitude()) + ")";
+        }
+
+        return "no GPS";
+    }
+
+    LocationListener mylocationListener = new LocationListener() {
+        /**
+         * 位置变化
+         * @param location
+         */
+        @Override
+        public void onLocationChanged(Location location) {
+            Toast.makeText(context, "位置更新", Toast.LENGTH_SHORT).show();
+            updateUI(location);
+            getLocalion();
+        }
+
+        /**
+         * 状态变化
+         * @param provider
+         * @param status
+         * @param extras
+         */
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            switch (status) {
+                //GPS状态为可见时
+                case LocationProvider.AVAILABLE:
+                    Toast.makeText(context, "当前GPS状态为可见状态", Toast.LENGTH_SHORT).show();
+                    break;
+                //GPS状态为服务区外时
+                case LocationProvider.OUT_OF_SERVICE:
+                    Toast.makeText(context, "当前GPS状态为服务区外状态", Toast.LENGTH_SHORT).show();
+                    break;
+                //GPS状态为暂停服务时
+                case LocationProvider.TEMPORARILY_UNAVAILABLE:
+                    Toast.makeText(context, "当前GPS状态为暂停服务状态", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        }
+
+        /**
+         * gps开启时
+         * @param provider
+         */
+        @Override
+        public void onProviderEnabled(String provider) {
+            Toast.makeText(context, "GPS已开启", Toast.LENGTH_SHORT).show();
+            getGPSLocation();
+        }
+
+        /**
+         * gps关闭时
+         * @param provider
+         */
+        @Override
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(context, "请打开GPS 否则无法定位", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    public static Criteria createFineCriteria() {
+        Criteria c = new Criteria();
+
+        c.setAccuracy(Criteria.ACCURACY_FINE);//高精度
+
+        c.setAltitudeRequired(true);//包含高度信息
+
+        c.setBearingRequired(true);//包含方位信息
+
+        c.setSpeedRequired(true);//包含速度信息
+
+        c.setCostAllowed(false);//允许付费
+
+        c.setPowerRequirement(Criteria.POWER_HIGH);//高耗电
+
+        return c;
+
+    }
+
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context=context;
+        this.context = context;
 
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -491,6 +598,7 @@ public class NetCollFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -511,21 +619,26 @@ public class NetCollFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
-    public void getLocalion(String lon, final String lat){
-        final String latt=lat;
-        final String lonn=lon;
+
+    public void getLocalion() {
+        String Gpsstr=getGPSLocation();
+        String Gps = Gpsstr.replaceAll("\\(|\\)", "").replaceAll("（", "").replaceAll("）", "");
+        String[] GpsArr = Gps.split(",");
+        final String latt = GpsArr[1];
+        final String lonn = GpsArr[0];
         new Thread() {
-            public String res="";
+            public String res = "未知地址";
+
             @Override
             public void run() {
                 super.run();
-                try{
-                    String jj=BaiDuLoactionDeal.getRequest(lonn,latt);
-                    res=BaiDuLoactionDeal.formatAddress(jj);
+                try {
+                    String jj = BaiDuLoactionDeal.getRequest(lonn, latt);
+                    res = BaiDuLoactionDeal.formatAddress(jj);
 
-                }catch(Exception e){
-                    res="未知地址";
-                }finally {
+                } catch (Exception e) {
+                    res = "未知地址";
+                } finally {
                     Looper.prepare();
                     new Handler(context.getMainLooper()).post(new Runnable() {
                         @Override
@@ -538,9 +651,6 @@ public class NetCollFragment extends Fragment {
             }
         }.start();
     }
-
-
-
 
 
     /**
@@ -569,7 +679,6 @@ public class NetCollFragment extends Fragment {
     }
 
 
-
     class mylistener extends PhoneStateListener {
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
@@ -578,7 +687,7 @@ public class NetCollFragment extends Fragment {
             TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
 
 
-            try{
+            try {
                 Method method1 = null;
 
                 method1 = signalStrength.getClass().getMethod("getDbm");
@@ -594,27 +703,25 @@ public class NetCollFragment extends Fragment {
                 String dbm4 = method1.invoke(signalStrength).toString();
 
 
-                if(getNetWorkType(mTelephonyManager).equals("无网络")){
-                    currentNetType="无网络";
-                    CurrentBess.setText(" "+currentNetType+"信号强度:"+"-130");
-                    currentDbmValue="-130";
-                }else{
-                    if(Integer.valueOf(dbm2)>=-130&&Integer.valueOf(dbm2)<-1&&dbm.equals(dbm2)){
-                        currentNetType="2G";
+                if (getNetWorkType(mTelephonyManager).equals("无网络")) {
+                    currentNetType = "无网络";
+                    CurrentBess.setText(" " + currentNetType + "信号强度:" + "-130");
+                    currentDbmValue = "-130";
+                } else {
+                    if (Integer.valueOf(dbm2) >= -130 && Integer.valueOf(dbm2) < -1 && dbm.equals(dbm2)) {
+                        currentNetType = "2G";
+                    } else if (Integer.valueOf(dbm3) >= -130 && Integer.valueOf(dbm3) < -1 && dbm.equals(dbm3)) {
+                        currentNetType = "4G";
+                    } else if (Integer.valueOf(dbm4) >= -130 && Integer.valueOf(dbm4) < -1 && dbm.equals(dbm4)) {
+                        currentNetType = "3G";
+                    } else {
+                        currentNetType = getNetWorkType(mTelephonyManager);
                     }
-                    else if(Integer.valueOf(dbm3)>=-130&&Integer.valueOf(dbm3)<-1&&dbm.equals(dbm3)){
-                        currentNetType="4G";
-                    }
-                    else if(Integer.valueOf(dbm4)>=-130&&Integer.valueOf(dbm4)<-1&&dbm.equals(dbm4)){
-                        currentNetType="3G";
-                    }else{
-                        currentNetType=getNetWorkType(mTelephonyManager);
-                    }
-                    CurrentBess.setText(" "+currentNetType+"信号强度:"+dbm);
-                    currentDbmValue=dbm;
+                    CurrentBess.setText(" " + currentNetType + "信号强度:" + dbm);
+                    currentDbmValue = dbm;
                 }
-            }catch (Exception e){
-                currentDbmValue="-1";
+            } catch (Exception e) {
+                currentDbmValue = "-1";
                 CurrentBess.setText("-1");
             }
         }
@@ -623,10 +730,11 @@ public class NetCollFragment extends Fragment {
 
     /**
      * 查看当前是否存在SIM卡
+     *
      * @param telMgr
      * @return
      */
-    public  boolean hasSimCard(TelephonyManager telMgr) {
+    public boolean hasSimCard(TelephonyManager telMgr) {
         int simState = telMgr.getSimState();
         boolean result = true;
         switch (simState) {
@@ -641,13 +749,9 @@ public class NetCollFragment extends Fragment {
     }
 
 
-
-
-
-
-
     /**
      * 判断手机号是否合法
+     *
      * @param mobiles
      * @return
      */
@@ -661,130 +765,33 @@ public class NetCollFragment extends Fragment {
         System.out.println(m.matches() + "---");
 
         return m.matches();
-
     }
 
     /**
      * 将当前类的information显示在面板
      */
-    public void setDisplay(){
+    public void setDisplay() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy年MM月dd日 HH:mm:s");
         Date curDate = new Date(System.currentTimeMillis());//获取当前时间
         String str = formatter.format(curDate);
-        StringBuffer sb=new StringBuffer();
-        sb.append("---------------"+str+"------------------\n");
-        sb.append("TAC:"+information.getTAC()+"\n");
-        sb.append("ECI:"+information.getECI()+"\n");
-        sb.append("GPS:"+information.getGPS()+"\n");
-        sb.append("信号强度:"+information.getBSSS()+"\n");
-        sb.append("手机类型:"+information.getPhoneType()+"\n");
-        sb.append("手机号码:"+information.getPhoneNumber()+"\n");
-        sb.append("覆盖场景:"+information.getOverlayScene()+"\n");
-        sb.append("区县:"+information.getDistrict()+"\n");
-        sb.append("地址:"+information.getAddress()+"\n");
-        sb.append("运营商信息:"+information.getNetworkOperatorName()+"\n");
-        sb.append("是否上传:"+(information.getIsUpload().equals("0")?"未上传":"已上传")+"\n");
-        sb.append("IMSI:"+imsi+"\n");
+        StringBuffer sb = new StringBuffer();
+        sb.append("---------------" + str + "------------------\n");
+        sb.append("TAC:" + information.getTAC() + "\n");
+        sb.append("ECI:" + information.getECI() + "\n");
+        sb.append("GPS:" + information.getGPS() + "\n");
+        sb.append("信号强度:" + information.getBSSS() + "\n");
+        sb.append("手机类型:" + information.getPhoneType() + "\n");
+        sb.append("手机号码:" + information.getPhoneNumber() + "\n");
+        sb.append("覆盖场景:" + information.getOverlayScene() + "\n");
+        sb.append("区县:" + information.getDistrict() + "\n");
+        sb.append("地址:" + information.getAddress() + "\n");
+        sb.append("运营商信息:" + information.getNetworkOperatorName() + "\n");
+        sb.append("是否上传:" + (information.getIsUpload().equals("0") ? "未上传" : "已上传") + "\n");
+        sb.append("IMSI:" + imsi + "\n");
         sb.append("-----------------------------------------");
         disp.setText(sb.toString());
     }
-
-    /**
-     * 调用本地GPS来获取经纬度
-     * @param context
-     */
-    private String getLocation(Context context) {
-        //1.获取位置管理器
-
-        String locationProvider="";
-        //2.获取位置提供器，GPS或是NetWork
-        List<String> providers = locationManager.getProviders(true);
-        if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-            //如果是网络定位
-            locationProvider = LocationManager.NETWORK_PROVIDER;
-        } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
-            //如果是GPS定位
-            locationProvider = LocationManager.GPS_PROVIDER;
-        } else if (providers.contains(LocationManager.PASSIVE_PROVIDER)) {
-            //如果是PASSIVE定位
-            locationProvider = LocationManager.PASSIVE_PROVIDER;
-        }
-        else {
-            Toast.makeText(activity, "请放开权限以保证应用使用正常！", Toast.LENGTH_LONG).show();
-            return "no GPS..";
-        }
-        Location location=null;
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            location = locationManager.getLastKnownLocation(locationProvider);
-        if (location != null) {
-            return "("+String.valueOf(location.getLongitude())+","+String.valueOf(location.getLatitude())+")";
-
-
-        } else {
-            return "no GPS.";
-        }
-    }
-
-    private String[] getLocation2(Context context) {
-        //1.获取位置管理器
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        String locationProvider="";
-        //2.获取位置提供器，GPS或是NetWork
-        List<String> providers = locationManager.getProviders(true);
-        if (providers.contains(LocationManager.NETWORK_PROVIDER)) {
-            //如果是网络定位
-            locationProvider = LocationManager.NETWORK_PROVIDER;
-        } else if (providers.contains(LocationManager.GPS_PROVIDER)) {
-            //如果是GPS定位
-            locationProvider = LocationManager.GPS_PROVIDER;
-        } else if (providers.contains(LocationManager.PASSIVE_PROVIDER)) {
-            //如果是PASSIVE定位
-            locationProvider = LocationManager.PASSIVE_PROVIDER;
-        }
-        else {
-            Toast.makeText(activity, "请放开权限以保证应用使用正常！", Toast.LENGTH_LONG).show();
-            return new String[]{"-1","-1"};
-        }
-        Location location=null;
-        if (ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-            location = locationManager.getLastKnownLocation(locationProvider);
-        if (location != null) {
-            String []lonlat={formatDecimalWithZero(String.valueOf(location.getLongitude()),7),formatDecimalWithZero(String.valueOf(location.getLatitude()),7)};
-            return lonlat;
-
-
-        } else {
-            return new String[]{"-1","-1"};
-        }
-    }
-
-
-
-
-
-    private String getNetWorkType(TelephonyManager mTelephonyManager){
-//        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE); // 获取网络服务
-//        if (null == connManager) { // 为空则认为无网络
-//            return "无网络";
-//        }
-//
-//        NetworkInfo activeNetInfo = connManager.getActiveNetworkInfo();
-//        if (activeNetInfo == null || !activeNetInfo.isAvailable()) {
-//            return "无网络";
-//        }
-//
-//
-//        NetworkInfo wifiInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-//        if (null != wifiInfo) {
-//            NetworkInfo.State state = wifiInfo.getState();
-//            if (null != state) {
-//                if (state == NetworkInfo.State.CONNECTED || state == NetworkInfo.State.CONNECTING) {
-//                    return "WIFI";
-//                }
-//            }
-//        }
-
-
+    private String getNetWorkType(TelephonyManager mTelephonyManager) {
         int networkType = mTelephonyManager.getNetworkType();
         switch (networkType) {
 
@@ -813,78 +820,6 @@ public class NetCollFragment extends Fragment {
                 return "无网络";
         }
     }
-
-
-
-    private LocationListener locationListener=new LocationListener() {
-
-        /**
-         * 位置信息变化时触发
-         */
-        public void onLocationChanged(Location location) {
-            setGpsView(getLocation(context));
-        }
-
-        /**
-         * GPS状态变化时触发
-         */
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            setGpsView(getLocation(context));
-
-        }
-
-        /**
-         * GPS开启时触发
-         */
-        public void onProviderEnabled(String provider) {
-            setGpsView(getLocation(context));
-
-
-        }
-
-        /**
-         * GPS禁用时触发
-         */
-        public void onProviderDisabled(String provider) {
-            Toast.makeText(activity, "请放开权限以保证应用使用正常！", Toast.LENGTH_LONG).show();
-        }
-    };
-
-
-    public void setGpsView(String gps){
-
-
-
-
-            new Thread(){
-                @Override
-                public void run() {
-                    try{
-                        String res=BaiDuLoactionDeal.getRequest("","");
-                        Log.e("",res);
-                    }catch(Exception e){
-                        Log.e("",e.toString());
-                    }
-
-                    Looper.prepare();
-                    new Handler(context.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            GpsAddress.setText("11");
-                            Looper.loop();
-                        }
-                    });
-
-                }
-            }.start();
-
-
-
-
-
-    }
-
-
 
 
 }
