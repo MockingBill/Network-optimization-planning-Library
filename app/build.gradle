@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+lwapply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 26
@@ -7,7 +7,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
-        versionName "2.02"
+        versionName "2.03"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
     }

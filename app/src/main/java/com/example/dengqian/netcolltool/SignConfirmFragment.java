@@ -1129,23 +1129,26 @@ private String currentDbmValue="-130";
         Date m = c.getTime();
         String day30pre = sdf.format(m);
 
-        String now = sdf.format(new Date());
+
+        c.setTime(new Date());
+        c.add(Calendar.DAY_OF_MONTH, 1);
+        String tomorrow = sdf.format(c.getTime());
 
         currentDate.setText(day30pre.split(" ")[0]);
-        currentDate2.setText(now.split(" ")[0]);
+        currentDate2.setText(tomorrow.split(" ")[0]);
 
         customDatePicker1 = new CustomDatePicker(activity, new CustomDatePicker.ResultHandler() {
             @Override
             public void handle(String time) { // 回调接口，获得选中的时间
                 currentDate.setText(time.split(" ")[0]);
             }
-        }, "2010-01-01 00:00", now); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
+        }, "2018-01-01 00:00", tomorrow); // 初始化日期格式请用：yyyy-MM-dd HH:mm，否则不能正常运行
         customDatePicker2 = new CustomDatePicker(activity, new CustomDatePicker.ResultHandler() {
             @Override
             public void handle(String time) { // 回调接口，获得选中的时间
                 currentDate2.setText(time.split(" ")[0]);
             }
-        }, "2010-01-01 00:00", now);
+        }, "2018-01-01 00:00", tomorrow);
 
 
         customDatePicker1.showSpecificTime(false); // 不显示时和分

@@ -325,6 +325,7 @@ public class NetCollFragment extends Fragment {
                         information.setGPS(getGPSLocation());
                     } else
                         information.setGPS("No GPS");
+
                     imsi = mTelephonyManager.getSubscriberId();
                     if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA) {
                         CdmaCellLocation cdmacelllocation = (CdmaCellLocation) tm.getCellLocation();
@@ -340,7 +341,8 @@ public class NetCollFragment extends Fragment {
                     if (currentNetType.equals("无网络")) {
                         information.setBSSS(-130);
                     } else {
-                        information.setBSSS(Integer.valueOf(currentDbmValue));
+                        information.setBSSS(-130);
+                        //Integer.valueOf(currentDbmValue)
                     }
 
 

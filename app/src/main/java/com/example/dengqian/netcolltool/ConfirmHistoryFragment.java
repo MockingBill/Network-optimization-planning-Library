@@ -332,6 +332,7 @@ public class ConfirmHistoryFragment extends Fragment {
                                 if(mapResult!=null){
                                     succNum=0;
                                     for(String x:mapResult.get("succ")){
+                                        Log.e("",x);
                                         Boolean flag=weakconfirmDBhelp.updateWeakStatus(db,x,context);
                                         if(flag){
                                             succNum++;

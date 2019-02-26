@@ -17,20 +17,21 @@
     android:layout_marginTop="22dp"
     android:orientation="horizontal">
     <TextView
-        android:layout_width="80dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="right"
         android:paddingRight="5dp"
         android:background="@drawable/znnwincontent"
+        android:textSize="18dp"
         android:text="采集时间："/>
     <TextView
         android:id="@+id/ValueCollTime"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/znnwincontent"
         android:gravity="center_horizontal"
         android:text="2018年12月21日 14时02分01秒"
-        android:textSize="14dp"
+        android:textSize="18dp"
         />
     </LinearLayout>
 
@@ -44,10 +45,11 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:background="@drawable/znnwincontent"
             android:text="ECI："/>
         <TextView
@@ -57,7 +59,7 @@
             android:text="112332"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
@@ -70,11 +72,12 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
             android:background="@drawable/znnwincontent"
+            android:textSize="18dp"
             android:text="TAC："/>
         <TextView
             android:id="@+id/ValueTAC"
@@ -83,7 +86,7 @@
             android:text="121212"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
@@ -96,10 +99,11 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:background="@drawable/znnwincontent"
             android:text="BSSS："/>
         <TextView
@@ -109,7 +113,7 @@
             android:text="-89dbm"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
@@ -122,20 +126,21 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:background="@drawable/znnwincontent"
             android:text="GPS："/>
         <TextView
             android:id="@+id/ValueGPS"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="(12133.24343434,1212324.212121)"
+            android:text="(127.2434,1212324.2124)"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
@@ -148,10 +153,11 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:background="@drawable/znnwincontent"
             android:text="手机号码："/>
         <TextView
@@ -161,7 +167,7 @@
             android:text="18785185684"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
@@ -174,9 +180,10 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:textSize="18dp"
             android:paddingRight="5dp"
             android:background="@drawable/znnwincontent"
             android:text="覆盖场景："/>
@@ -187,7 +194,7 @@
             android:text="城区_党政军"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
@@ -201,9 +208,10 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:textSize="18dp"
             android:paddingRight="5dp"
             android:background="@drawable/znnwincontent"
             android:text="是否上传："/>
@@ -214,7 +222,7 @@
             android:background="@drawable/znnwincontent"
             android:text="是"
             android:gravity="center_horizontal"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
@@ -228,9 +236,10 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:textSize="18dp"
             android:paddingRight="5dp"
             android:background="@drawable/znnwincontent"
             android:text="区县："/>
@@ -241,7 +250,7 @@
             android:text="凯里市"
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
@@ -255,9 +264,10 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
             android:gravity="right"
+            android:textSize="18dp"
             android:paddingRight="5dp"
             android:background="@drawable/znnwincontent"
             android:text="地址："/>
@@ -268,7 +278,7 @@
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
             android:text="某某区某某街道"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
@@ -282,9 +292,10 @@
         android:layout_marginTop="22dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
+            android:textSize="18dp"
             android:paddingRight="5dp"
             android:background="@drawable/znnwincontent"
             android:text="运营商："/>
@@ -295,7 +306,7 @@
             android:gravity="center_horizontal"
             android:background="@drawable/znnwincontent"
             android:text="移动4G"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 

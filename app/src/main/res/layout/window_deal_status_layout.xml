@@ -10,45 +10,47 @@
     <LinearLayout
     android:id="@+id/inf_collTime"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="30dp"
     android:layout_centerHorizontal="true"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
-    android:layout_marginTop="22dp"
+    android:layout_marginTop="5dp"
     android:orientation="horizontal">
     <TextView
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
         android:gravity="right"
         android:background="@drawable/znnwincontent"
         android:paddingRight="5dp"
+        android:textSize="18dp"
         android:text="采集时间："/>
     <TextView
         android:id="@+id/ValueCollTime"
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@drawable/znnwincontent"
         android:text="2018年12月21日 14时02分01秒"
-        android:textSize="14dp"
+        android:textSize="18dp"
         />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inf_ECI"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:background="@drawable/znnwincontent"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="ECI："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -57,24 +59,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="112332"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/inf_TAC"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="TAC："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -83,24 +86,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="121212"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/inf_BSSS"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="BSSS："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -109,50 +113,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="-89dbm"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/inf_GPS"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="GPS："/>
         <TextView
             android:background="@drawable/znnwincontent"
             android:gravity="center_horizontal"
             android:id="@+id/ValueGPS"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:text="(12133.24343434,1212324.212121)"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/inf_phoneNumber"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="手机号码："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -161,24 +167,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="18785185684"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/inf_overlayScene"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="覆盖场景："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -187,25 +194,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="城区_党政军"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inf_district"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="区县："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -214,25 +222,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="凯里市"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inf_address"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="地址："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -241,25 +250,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="某某区某某街道"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/inf_NetworkOperatorName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="运营商："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -268,24 +278,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="移动4G"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
     <LinearLayout
     android:id="@+id/inf_solveStatus"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="30dp"
     android:layout_centerHorizontal="true"
     android:layout_marginLeft="10dp"
     android:layout_marginRight="10dp"
-    android:layout_marginTop="22dp"
+    android:layout_marginTop="5dp"
     android:orientation="horizontal">
     <TextView
         android:background="@drawable/znnwincontent"
-        android:layout_width="80dp"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:gravity="right"
         android:paddingRight="5dp"
+        android:textSize="18dp"
         android:text="状态："/>
     <TextView
         android:background="@drawable/znnwincontent"
@@ -294,24 +305,25 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="未处理"
-        android:textSize="14dp"
+        android:textSize="18dp"
         />
 </LinearLayout>
     <LinearLayout
         android:id="@+id/inf_solveTime"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
         <TextView
             android:background="@drawable/znnwincontent"
-            android:layout_width="80dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:paddingRight="5dp"
+            android:textSize="18dp"
             android:text="变更时间："/>
         <TextView
             android:background="@drawable/znnwincontent"
@@ -320,7 +332,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="2018年12月21日 14时02分01秒"
-            android:textSize="14dp"
+            android:textSize="18dp"
             />
     </LinearLayout>
 

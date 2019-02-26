@@ -2,6 +2,11 @@ package com.example.dengqian.netcolltool.bean;
 
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 /**
  * Created by dengqian on 2018/3/14.
  */
@@ -182,9 +187,21 @@ public class information {
     }
 
     public String getGPS() {
-        if(this.GPS.equals(""))
+        if(this.GPS.equals("")){
             GPS="No Gps";
-
+        }else{
+            String pattern = "\\d+\\.\\d{0,4}";
+            Pattern r = Pattern.compile(pattern);
+            Matcher m = r.matcher(GPS);
+            List<String> arr=new ArrayList<>();
+            while (m.find()){
+                System.out.println(m.group());
+                arr.add(m.group());
+            }
+            if(arr.size()==2){
+                GPS="("+arr.get(0)+","+arr.get(1)+")";
+            }
+        }
         return GPS;
     }
 
