@@ -190,7 +190,7 @@ public class information {
         if(this.GPS.equals("")){
             GPS="No Gps";
         }else{
-            String pattern = "\\d+\\.\\d{0,4}";
+            String pattern = "\\d+\\.\\d{0,5}";
             Pattern r = Pattern.compile(pattern);
             Matcher m = r.matcher(GPS);
             List<String> arr=new ArrayList<>();
@@ -269,7 +269,7 @@ public class information {
         sb.append("地址:"+this.getAddress()+"\n");
         sb.append("运营商信息:"+this.getNetworkOperatorName()+"\n");
         sb.append("是否上传:"+(this.getIsUpload().equals("0")?"未上传":"已上传")+"\n");
-        sb.append("-----------------------------------------");
+        sb.append("---------------------------------");
         return sb.toString();
     }
 

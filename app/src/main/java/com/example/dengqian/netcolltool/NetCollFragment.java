@@ -21,6 +21,18 @@ import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.telephony.CellIdentityCdma;
+import android.telephony.CellIdentityGsm;
+import android.telephony.CellIdentityLte;
+import android.telephony.CellIdentityWcdma;
+import android.telephony.CellInfo;
+import android.telephony.CellInfoCdma;
+import android.telephony.CellInfoGsm;
+import android.telephony.CellInfoLte;
+import android.telephony.CellInfoWcdma;
+import android.telephony.CellSignalStrengthGsm;
+import android.telephony.CellSignalStrengthLte;
+import android.telephony.CellSignalStrengthWcdma;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -36,6 +48,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -111,6 +124,8 @@ public class NetCollFragment extends Fragment {
     public EditText CurrentGPS;
     public Button updateGPS;
 
+    public TextView neighborShow;
+
     //当前imsi
     private String imsi;
     //当前定位类型
@@ -160,7 +175,10 @@ public class NetCollFragment extends Fragment {
 
     private Activity activity;
     public static final int SHOW_RESPONSE = 0;//用于更新操作
-
+    TelephonyManager OnlyTeleMan=null;
+    private Runnable timerRun;
+    private mylistener listenerSign = null;
+    private mylistener listenerNetwork=null;
 
     public NetCollFragment() {
         // Required empty public constructor
@@ -232,8 +250,8 @@ public class NetCollFragment extends Fragment {
 
                             }
                             listAll.add(information);
+
                             res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAll));
-                            //res=connNetReq.post(getString(R.string.singleObjUpload),connNetReq.beanToJson(information));
 
                         } catch (Exception e) {
                             alertText = "网络错误，上传失败。" + e.toString();
@@ -315,9 +333,9 @@ public class NetCollFragment extends Fragment {
                 try {
 
                     //获取系统服务
-                    TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+
                     locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-                    TelephonyManager tm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+
 
 
                     //鉴权后执行GPS采集
@@ -326,23 +344,151 @@ public class NetCollFragment extends Fragment {
                     } else
                         information.setGPS("No GPS");
 
-                    imsi = mTelephonyManager.getSubscriberId();
-                    if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA) {
-                        CdmaCellLocation cdmacelllocation = (CdmaCellLocation) tm.getCellLocation();
-                        information.setTAC(String.valueOf(cdmacelllocation.getNetworkId()));
-                        information.setECI(String.valueOf(cdmacelllocation.getBaseStationId()));
-                    } else {
-                        GsmCellLocation gsmCellLocation = (GsmCellLocation) mTelephonyManager.getCellLocation();
-                        information.setTAC(String.valueOf(gsmCellLocation.getLac()));
-                        information.setECI(String.valueOf(gsmCellLocation.getCid()));
-                    }
+                    imsi = OnlyTeleMan.getSubscriberId();
+
+                    /**
+                     * 获取邻区信息
+                     */
+                    int lac=0;
+                        int cid=0;
+                        int dbm=-1;
+                        int arfcn=0;
+                        List<CellInfo> cellList=OnlyTeleMan.getAllCellInfo();
+                        StringBuffer neiString=new StringBuffer();
+                        for(CellInfo statcellinfo:cellList){
+                            /**
+                             * GSM
+                             */
+                            if(statcellinfo instanceof CellInfoGsm){
+                                CellInfoGsm cellInfoGsm=(CellInfoGsm)statcellinfo;
+                                CellIdentityGsm cellIdentity = cellInfoGsm.getCellIdentity();
+
+                                lac = cellIdentity.getLac();
+                                cid = cellIdentity.getCid();
+                                dbm=cellInfoGsm.getCellSignalStrength().getDbm();
+
+
+                                String mccnc=String.valueOf(cellIdentity.getMcc())+String.valueOf(cellIdentity.getMnc());
+                                String oper=mccnc2oper(mccnc);
+                                neiString.append(
+                                        "无线协议 : GSM"+"\n"+
+                                        "运营商: "+oper+"\n"+
+                                        "mcc mnc : "+String.valueOf(cellIdentity.getMcc())+"-"+String.valueOf(cellIdentity.getMnc())+"\n"+
+                                        "Lac : "+String.valueOf(lac)+"\n"+
+                                        "Cid : "+String.valueOf(cid)+"\n"+
+                                        "信号强度 : "+String.valueOf(dbm)+"\n"+
+                                        "-----------------------------------\n"
+                                );
+                            }
+                            /**
+                             * wCDMA
+                             */
+                            else if(statcellinfo instanceof CellInfoWcdma){
+                                CellInfoWcdma cellInfoWcdma=(CellInfoWcdma)statcellinfo;
+                                CellIdentityWcdma cellIdentity = cellInfoWcdma.getCellIdentity();
+                                CellSignalStrengthWcdma cssw=cellInfoWcdma.getCellSignalStrength();
+
+                                lac = cellIdentity.getLac();
+                                cid = cellIdentity.getCid();
+                                String mccnc=String.valueOf(cellIdentity.getMcc())+String.valueOf(cellIdentity.getMnc());
+                                String oper=mccnc2oper(mccnc);
+                                dbm=cssw.getDbm();
+                                neiString.append(
+                                        "无线协议 : wCDMA"+"\n"+
+                                        "运营商: "+oper+"\n"+
+                                        "mcc mnc : "+mccnc+"\n"+
+                                        "Lac : "+String.valueOf(lac)+"\n"+
+                                        "Cid : "+String.valueOf(cid)+"\n"+
+                                        "信号强度 : "+String.valueOf(dbm)+"\n"+
+                                        "-----------------------------------"
+                                );
+
+                            }
+                            /**
+                             * LTE
+                             */
+                            else if(statcellinfo instanceof CellInfoLte){
+                                CellInfoLte cellInfoLte=(CellInfoLte)statcellinfo;
+                                CellIdentityLte cellIdentity = cellInfoLte.getCellIdentity();
+                                lac = cellIdentity.getTac();
+                                cid = cellIdentity.getCi();
+                                String mccnc=String.valueOf(cellIdentity.getMcc())+String.valueOf(cellIdentity.getMnc());
+                                String oper=mccnc2oper(mccnc);
+                                CellSignalStrengthLte cssl =  cellInfoLte.getCellSignalStrength();
+                                dbm=cssl.getDbm();
+                                neiString.append(
+                                                "无线协议 : LTE"+"\n"+
+                                                "运营商: "+oper+"\n"+
+                                                "mcc mnc : "+mccnc+"\n"+
+                                                "Tac : "+String.valueOf(lac)+"\n"+
+                                                "Ci : "+String.valueOf(cid)+"\n"+
+                                                "信号强度 : "+String.valueOf(dbm)+"\n"+
+                                                "-----------------------------------"
+                                );
+
+                            }
+                            /**
+                             *  CDMA
+                             */
+                            else if(statcellinfo instanceof CellInfoCdma ){
+                                CellInfoCdma cellInfocdma=(CellInfoCdma)statcellinfo;
+                                CellIdentityCdma cellIdentity= cellInfocdma.getCellIdentity();
+                                lac=cellIdentity.getNetworkId();
+                                cid=cellIdentity.getBasestationId();
+                                String oper="中国电信";
+                                dbm=cellInfocdma.getCellSignalStrength().getDbm();
+                                neiString.append(
+                                                "无线协议 : CDMA"+"\n"+
+                                                "运营商: "+oper+"\n"+
+                                                "NetworkId : "+String.valueOf(lac)+"\n"+
+                                                "BasestationId : "+String.valueOf(cid)+"\n"+
+                                                "信号强度 : "+String.valueOf(dbm)+"\n"+
+                                                "-----------------------------------"
+                                );
+
+                            }
+                        }
+                        neighborShow.setText(neiString.toString());
+
+
+                        if(OnlyTeleMan!=null&&OnlyTeleMan.getAllCellInfo().size()>0){
+                            CellInfo statcellinfo=OnlyTeleMan.getAllCellInfo().get(0);
+                            if(statcellinfo instanceof CellInfoGsm){
+                                CellInfoGsm cellInfoGsm=(CellInfoGsm)statcellinfo;
+                                CellIdentityGsm cellIdentity = cellInfoGsm.getCellIdentity();
+                                lac = cellIdentity.getLac();
+                                cid = cellIdentity.getCid();
+
+                            }
+                            else if(statcellinfo instanceof CellInfoWcdma){
+                                CellInfoWcdma cellInfoWcdma=(CellInfoWcdma)statcellinfo;
+                                CellIdentityWcdma cellIdentity = cellInfoWcdma.getCellIdentity();
+                                lac = cellIdentity.getLac();
+                                cid = cellIdentity.getCid();
+                            }
+                            else if(statcellinfo instanceof CellInfoLte){
+                                CellInfoLte cellInfoLte=(CellInfoLte)statcellinfo;
+                                CellIdentityLte cellIdentity = cellInfoLte.getCellIdentity();
+                                lac = cellIdentity.getTac();
+                                cid = cellIdentity.getCi();
+                            }
+                            else if(statcellinfo instanceof CellInfoCdma ){
+                                CellInfoCdma cellInfocdma=(CellInfoCdma)statcellinfo;
+                                CellIdentityCdma cellIdentity= cellInfocdma.getCellIdentity();
+                                lac=cellIdentity.getNetworkId();
+                                cid=cellIdentity.getBasestationId();
+                            }
+                            information.setTAC(String.valueOf(lac));
+                            information.setECI(String.valueOf(cid));
+                        }
+
+
 
 
                     if (currentNetType.equals("无网络")) {
                         information.setBSSS(-130);
                     } else {
-                        information.setBSSS(-130);
-                        //Integer.valueOf(currentDbmValue)
+                        information.setBSSS(Integer.valueOf(currentDbmValue));
                     }
 
 
@@ -408,11 +554,27 @@ public class NetCollFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         activity = (MainActivity) this.getActivity();
-
         //requestPower();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        OnlyTeleMan=(TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+        /**监听当前信号*/
+        listenerSign = new mylistener();
+        listenerNetwork=new mylistener();
+        boolean isSIM = hasSimCard();
+        if (isSIM) {
+            try {
+                OnlyTeleMan.listen(listenerSign, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+                OnlyTeleMan.listen(listenerNetwork,PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
+            } catch (Exception e) {
+                Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            //collButton.setEnabled(false);
+            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -420,7 +582,11 @@ public class NetCollFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_net_coll, container, false);
+
+
+        neighborShow=(TextView)view.findViewById(R.id.neighborShow);
         addressText = (EditText) view.findViewById(R.id.address);
+        neighborShow=(TextView)view.findViewById(R.id.neighborShow);
         disp = view.findViewById(R.id.show);
         CurrentBess = view.findViewById(R.id.CurrentBess);
         collButton = view.findViewById(R.id.collButton);
@@ -449,27 +615,13 @@ public class NetCollFragment extends Fragment {
         collButton = view.findViewById(R.id.collButton);
         collButton.setOnClickListener(new collButtonListener());
         uploadButton.setOnClickListener(new uploadButtonListener());
-        /**监听当前信号*/
-        TelephonyManager tmm = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
-        boolean isSIM = hasSimCard(tmm);
-        if (isSIM) {
-            try {
-                mylistener listener = new mylistener();
-                tmm.listen(listener, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
-            } catch (Exception e) {
-                Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
-            }
-        } else {
-            collButton.setEnabled(false);
-            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
-        }
 
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+
         locationProvider = locationManager.getBestProvider(createFineCriteria(), true);
         // 设置监听*器，自动更新的最小时间为间隔N秒(1秒为1*1000，这样写主要为了方便)或最小位移变化超过N米
         locationManager.requestLocationUpdates(locationProvider, 1000, 10, mylocationListener);
         getGPSLocation();
-
 
         updateGPS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -477,6 +629,7 @@ public class NetCollFragment extends Fragment {
                 getLocalion();
             }
         });
+
 
         return view;
     }
@@ -486,16 +639,15 @@ public class NetCollFragment extends Fragment {
         double latitude = location.getLatitude();
 
         BigDecimal bg = new BigDecimal(longitude);
-        longitude = bg.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+        longitude = bg.setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
 
         bg = new BigDecimal(latitude);
-        latitude = bg.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+        latitude = bg.setScale(5, BigDecimal.ROUND_HALF_UP).doubleValue();
         CurrentGPS.setText("(" + String.valueOf(longitude) + "  ,  " + String.valueOf(latitude) + ")");
     }
 
 
     private String getGPSLocation() {
-
         Location location = locationManager.getLastKnownLocation(locationProvider); // 通过GPS获取位置
         if (location != null) {
             updateUI(location);
@@ -514,7 +666,6 @@ public class NetCollFragment extends Fragment {
         public void onLocationChanged(Location location) {
             Toast.makeText(context, "位置更新", Toast.LENGTH_SHORT).show();
             updateUI(location);
-            getLocalion();
         }
 
         /**
@@ -528,7 +679,6 @@ public class NetCollFragment extends Fragment {
             switch (status) {
                 //GPS状态为可见时
                 case LocationProvider.AVAILABLE:
-                    Toast.makeText(context, "当前GPS状态为可见状态", Toast.LENGTH_SHORT).show();
                     break;
                 //GPS状态为服务区外时
                 case LocationProvider.OUT_OF_SERVICE:
@@ -622,36 +772,45 @@ public class NetCollFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    /**
+     * 更新地理位置
+     */
     public void getLocalion() {
         String Gpsstr=getGPSLocation();
         String Gps = Gpsstr.replaceAll("\\(|\\)", "").replaceAll("（", "").replaceAll("）", "");
         String[] GpsArr = Gps.split(",");
-        final String latt = GpsArr[1];
-        final String lonn = GpsArr[0];
-        new Thread() {
-            public String res = "未知地址";
 
-            @Override
-            public void run() {
-                super.run();
-                try {
-                    String jj = BaiDuLoactionDeal.getRequest(lonn, latt);
-                    res = BaiDuLoactionDeal.formatAddress(jj);
+        if(GpsArr.length>=2){
+            final String latt = GpsArr[1];
+            final String lonn = GpsArr[0];
+            new Thread() {
+                public String res = "未知地址";
 
-                } catch (Exception e) {
-                    res = "未知地址";
-                } finally {
-                    Looper.prepare();
-                    new Handler(context.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            addressText.setText(res);
-                            Looper.loop();
-                        }
-                    });
+                @Override
+                public void run() {
+                    super.run();
+                    try {
+                        String jj = BaiDuLoactionDeal.getRequest(lonn, latt);
+                        res = BaiDuLoactionDeal.formatAddress(jj);
+
+                    } catch (Exception e) {
+                        res = "未知地址";
+                    } finally {
+                        Looper.prepare();
+                        new Handler(context.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                addressText.setText(res);
+                                Looper.loop();
+                            }
+                        });
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }else{
+            addressText.setText("未知地址");
+        }
+
     }
 
 
@@ -680,48 +839,83 @@ public class NetCollFragment extends Fragment {
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        boolean isSIM = hasSimCard();
+        if (isSIM) {
+            try {
+                OnlyTeleMan.listen(listenerSign, PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
+                OnlyTeleMan.listen(listenerNetwork,PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
+            } catch (Exception e) {
+                Toast.makeText(activity, e.toString(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            //collButton.setEnabled(false);
+            Toast.makeText(activity, "未检测到SIM卡,或SIM卡无效", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        OnlyTeleMan.listen(listenerSign,PhoneStateListener.LISTEN_NONE);
+        OnlyTeleMan.listen(listenerNetwork,PhoneStateListener.LISTEN_NONE);
+    }
 
     class mylistener extends PhoneStateListener {
+        SignalStrength signal=null;
+        int networktype=0;
+
+        /**
+         * 监听网络类型变化
+         * @param state
+         * @param networkType
+         */
+        @Override
+        public void onDataConnectionStateChanged(int state, int networkType) {
+            currentNetType=getNetWorkType();
+            networktype=networkType;
+            Toast.makeText(activity, "检测到网络类型变化", Toast.LENGTH_LONG).show();
+            if(signal!=null){
+                setDbm(signal,networktype);
+            }
+        }
+
+        /**
+         * 监听信号强度变化
+         * @param signalStrength
+         */
+
         @Override
         public void onSignalStrengthsChanged(SignalStrength signalStrength) {
             super.onSignalStrengthsChanged(signalStrength);
+            Toast.makeText(activity, "检测到信号强度变化", Toast.LENGTH_LONG).show();
+            signal=signalStrength;
+            setDbm(signal,networktype);
+        }
 
-            TelephonyManager mTelephonyManager = (TelephonyManager) activity.getSystemService(Context.TELEPHONY_SERVICE);
 
-
+        private void setDbm(SignalStrength signalStrength,int networktype){
             try {
-                Method method1 = null;
-
-                method1 = signalStrength.getClass().getMethod("getDbm");
-                String dbm = method1.invoke(signalStrength).toString();
-
-                method1 = signalStrength.getClass().getMethod("getGsmDbm");
-                String dbm2 = method1.invoke(signalStrength).toString();
-
-                method1 = signalStrength.getClass().getMethod("getLteDbm");
-                String dbm3 = method1.invoke(signalStrength).toString();
-
-                method1 = signalStrength.getClass().getMethod("getTdScdmaDbm");
-                String dbm4 = method1.invoke(signalStrength).toString();
-
-
-                if (getNetWorkType(mTelephonyManager).equals("无网络")) {
-                    currentNetType = "无网络";
-                    CurrentBess.setText(" " + currentNetType + "信号强度:" + "-130");
-                    currentDbmValue = "-130";
-                } else {
-                    if (Integer.valueOf(dbm2) >= -130 && Integer.valueOf(dbm2) < -1 && dbm.equals(dbm2)) {
-                        currentNetType = "2G";
-                    } else if (Integer.valueOf(dbm3) >= -130 && Integer.valueOf(dbm3) < -1 && dbm.equals(dbm3)) {
-                        currentNetType = "4G";
-                    } else if (Integer.valueOf(dbm4) >= -130 && Integer.valueOf(dbm4) < -1 && dbm.equals(dbm4)) {
-                        currentNetType = "3G";
-                    } else {
-                        currentNetType = getNetWorkType(mTelephonyManager);
-                    }
-                    CurrentBess.setText(" " + currentNetType + "信号强度:" + dbm);
-                    currentDbmValue = dbm;
-                }
+                Method method = null;
+                method = signalStrength.getClass().getMethod("getDbm");
+                String dbm = method.invoke(signalStrength).toString();
+//                method = signalStrength.getClass().getMethod("getGsmDbm");
+//                String dbm2 = method.invoke(signalStrength).toString();
+//
+//                method = signalStrength.getClass().getMethod("getLteDbm");
+//                String dbm3 = method.invoke(signalStrength).toString();
+//
+//                method = signalStrength.getClass().getMethod("getTdScdmaDbm");
+//                String dbm4 = method.invoke(signalStrength).toString();
+//                Log.e("getDbm",dbm);
+//                Log.e("getGsmDbm",dbm2);
+//                Log.e("getLteDbm",dbm3);
+//                Log.e("getTdScdmaDbm",dbm4);
+                currentNetType = getNetWorkType();
+                CurrentBess.setText(" " + currentNetType + "信号强度:" + dbm);
+                currentDbmValue = dbm;
             } catch (Exception e) {
                 currentDbmValue = "-1";
                 CurrentBess.setText("-1");
@@ -736,8 +930,8 @@ public class NetCollFragment extends Fragment {
      * @param telMgr
      * @return
      */
-    public boolean hasSimCard(TelephonyManager telMgr) {
-        int simState = telMgr.getSimState();
+    public boolean hasSimCard() {
+        int simState = OnlyTeleMan.getSimState();
         boolean result = true;
         switch (simState) {
             case TelephonyManager.SIM_STATE_ABSENT:
@@ -793,8 +987,8 @@ public class NetCollFragment extends Fragment {
         sb.append("-----------------------------------------");
         disp.setText(sb.toString());
     }
-    private String getNetWorkType(TelephonyManager mTelephonyManager) {
-        int networkType = mTelephonyManager.getNetworkType();
+    private String getNetWorkType() {
+        int networkType = OnlyTeleMan.getNetworkType();
         switch (networkType) {
 
             // 2G网络
@@ -803,6 +997,8 @@ public class NetCollFragment extends Fragment {
             case TelephonyManager.NETWORK_TYPE_EDGE:
             case TelephonyManager.NETWORK_TYPE_1xRTT:
             case TelephonyManager.NETWORK_TYPE_IDEN:
+            case TelephonyManager.NETWORK_TYPE_GSM:
+
                 return "2G";
             // 3G网络
             case TelephonyManager.NETWORK_TYPE_EVDO_A:
@@ -814,12 +1010,34 @@ public class NetCollFragment extends Fragment {
             case TelephonyManager.NETWORK_TYPE_EVDO_B:
             case TelephonyManager.NETWORK_TYPE_EHRPD:
             case TelephonyManager.NETWORK_TYPE_HSPAP:
+            case TelephonyManager.NETWORK_TYPE_TD_SCDMA:
                 return "3G";
             // 4G网络
             case TelephonyManager.NETWORK_TYPE_LTE:
                 return "4G";
+            case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                return "未知网络";
             default:
-                return "无网络";
+                return "未知网络";
+        }
+    }
+
+
+
+
+
+    public String mccnc2oper(String ccnc){
+
+        if("46000".equals(ccnc)||"46007".equals(ccnc)||"46002".equals(ccnc)){
+            return "中国移动";
+        }else if("46001".equals(ccnc)||"46006".equals(ccnc)){
+            return "中国联通";
+        }else if("46020".equals(ccnc)){
+            return "中国铁通";
+        }else if("46003".equals(ccnc)||"46011".equals(ccnc)||"46005".equals(ccnc)){
+            return "中国电信";
+        }else{
+            return ccnc;
         }
     }
 

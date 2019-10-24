@@ -34,6 +34,7 @@ import com.example.dengqian.netcolltool.bean.connNetReq;
 import com.example.dengqian.netcolltool.bean.informDBHelper;
 import com.example.dengqian.netcolltool.bean.informDBHelperForWeakConfirm;
 import com.example.dengqian.netcolltool.bean.versionInfo;
+import com.example.dengqian.netcolltool.widget.CrashHandler;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -148,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements SignConfirmFragme
         PersonFragment f3=new PersonFragment();
         switch (item.getItemId()) {
             case R.id.persionInfo:{
-
                     MfragmentTransaction.replace(R.id.container,f3);
                     MfragmentTransaction.commit();
                     break;
@@ -165,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements SignConfirmFragme
         setContentView(R.layout.activity_main);
         context=MainActivity.this;
         initPermission();
+        CrashHandler.getInstance().init(getApplicationContext());
     }
 
     private informDBHelperForWeakConfirm dbforweak;

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.Fragment;
@@ -27,10 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.dengqian.netcolltool.bean.FileUnit;
 import com.example.dengqian.netcolltool.bean.connNetReq;
 import com.example.dengqian.netcolltool.bean.informDBHelper;
 import com.example.dengqian.netcolltool.bean.information;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,6 +111,7 @@ public class HistoryFragment extends ListFragment {
     private EditText his_address_query;
     //查询按钮
     private Button his_botton_address;
+    private  Button allLoadButton;
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -223,7 +229,6 @@ public class HistoryFragment extends ListFragment {
 
                             try {
                                 res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllinfo));
-                                //res = connNetReq.post(getString(R.string.singleObjUpload), connNetReq.beanToJson(inf));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -319,6 +324,35 @@ public class HistoryFragment extends ListFragment {
         sp3=(Spinner)view.findViewById(R.id.district);
 
         sp4=(Spinner)view.findViewById(R.id.isUpload);
+        allLoadButton=view.findViewById(R.id.allLoadButton);
+        allLoadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Dict=Environment.getExternalStorageDirectory().getAbsolutePath()+"/wyghk/";
+
+
+
+                String FileName="allData.txt";
+                FileUnit.makeRootDirectory(Dict);
+                System.out.println(Dict);
+
+
+
+                StringBuffer sb=new StringBuffer();
+                for (information info:infoList){
+                    sb.append(info.show());
+                }
+                try{
+                    System.out.println(sb.toString());
+                    FileUnit.writeTxtToFile("弱覆盖数据存储\n"+sb.toString(),Dict,FileName);
+                    Toast.makeText(activity, "保存到:"+Dict+FileName, Toast.LENGTH_LONG).show();
+                }catch(Exception e){
+                    Toast.makeText(activity, "保存失败", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+        });
 
 
 
@@ -343,6 +377,7 @@ public class HistoryFragment extends ListFragment {
 
         //查询所有记录显示于列表（这里查询出的并不会真正的显示在列表中，在下拉列表中定义的项中被加载后会覆盖本次查询记录）
         infoList=sqLiteOpenHelper.query(db,"select * from NetWorkInfor",null);
+
         HashMap<String,String> map;
         for(information info : infoList){
             map=new HashMap<String,String>();
@@ -357,11 +392,10 @@ public class HistoryFragment extends ListFragment {
                 new String[]{"row_address","CollTime"},
                 new int[]{R.id.row_address,R.id.CollTime});
         setListAdapter(listAdapter);
-
-
         //批量上传按钮的设置
         allUploadButton.setOnClickListener(new View.OnClickListener() {
             String res = "0";
+            List<String> resResult=new ArrayList<String>();
             ArrayList<String> uploadListID = new ArrayList<String>();
             List<information> listAll;
             @Override
@@ -404,6 +438,13 @@ public class HistoryFragment extends ListFragment {
                                         listAllInf.add(info2);
                                         listForSave.add(info2);
                                     }
+                                }
+
+                                for(information inf:listAllInf){
+                                    List<information> singleInf=new ArrayList<information>();
+                                    singleInf.add(inf);
+                                    res=connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(singleInf));
+                                    resResult.add(res);
                                 }
 
                                 res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllInf));

@@ -206,6 +206,7 @@ public class connNetReq {
     public static String post(String address,String info) throws Exception {
 
         //info = URLEncoder.encode(info);
+        Log.e("json",info);
 
         info=AesAndToken.encrypt(info,AesAndToken.KEY);
         byte[] data = info.getBytes();
@@ -285,7 +286,6 @@ public class connNetReq {
         map.put("succ",new ArrayList<String>());
         map.put("fail",new ArrayList<String>());
         map.put("has",new ArrayList<String>());
-
         try{
             JSONObject jsonObject=new JSONObject(str);
             JSONArray succ=jsonObject.getJSONArray("succ");
@@ -305,7 +305,6 @@ public class connNetReq {
             Log.e("json转map失败",e.toString());
         }
         return map;
-
     }
 
 

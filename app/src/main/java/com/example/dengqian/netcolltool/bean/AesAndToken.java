@@ -66,9 +66,6 @@ public class AesAndToken {
             cipher.init(Cipher.ENCRYPT_MODE, skc,ivSpec);
 
 
-
-
-
             byte[] cipherText = new byte[cipher.getOutputSize(input.length)];
             int ctLength = cipher.update(input, 0, input.length, cipherText, 0);
             ctLength += cipher.doFinal(cipherText, ctLength);

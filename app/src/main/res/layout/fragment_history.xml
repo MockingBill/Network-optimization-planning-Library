@@ -9,6 +9,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="批量上传所有未传记录" />
+    <Button
+        android:id="@+id/allLoadButton"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="导出所有记录" />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

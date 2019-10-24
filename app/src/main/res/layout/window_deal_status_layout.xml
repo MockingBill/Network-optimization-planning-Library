@@ -229,7 +229,7 @@
     <LinearLayout
         android:id="@+id/inf_address"
         android:layout_width="match_parent"
-        android:layout_height="30dp"
+        android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
@@ -238,7 +238,7 @@
         <TextView
             android:background="@drawable/znnwincontent"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="right"
             android:paddingRight="5dp"
             android:textSize="18dp"

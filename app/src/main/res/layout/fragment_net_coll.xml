@@ -1,54 +1,63 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    android:layout_height="match_parent"
-    tools:context="com.example.dengqian.netcoll.netCollFragment">
+    android:layout_height="wrap_content"
+    android:scrollbars="vertical"
+    tools:context="com.example.dengqian.netcolltool.NetCollFragment">
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        >
+        android:layout_marginHorizontal="5dp"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:visibility="invisible"/>
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:focusable="true"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:focusableInTouchMode="true">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:gravity="center"
-                android:paddingRight="5dp"
-                android:text="县市名称：" />
-            <Spinner
-                android:id="@+id/districtC"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:layout_height="35dp"
-                android:background="@drawable/znns"
-                android:entries="@array/disDataForColl" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
             android:orientation="horizontal"
-            android:focusable="true"
-            android:paddingTop="5dp"
             android:paddingBottom="5dp"
-            android:focusableInTouchMode="true">
+            android:paddingTop="5dp">
 
             <TextView
                 android:layout_width="0dp"
+                android:layout_height="35dp"
                 android:layout_weight="1"
+                android:gravity="center"
+                android:paddingRight="5dp"
+                android:text="县市名称：" />
+
+            <Spinner
+                android:id="@+id/districtC"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="2"
+                android:background="@drawable/znns"
+                android:entries="@array/disDataForColl" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp"
+            android:paddingTop="5dp">
+
+            <TextView
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="一级覆盖场景：" />
@@ -58,22 +67,22 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_weight="2"
-                android:background="@drawable/znns"
-                />
+                android:background="@drawable/znns" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:focusable="true"
-            android:paddingTop="5dp"
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal"
             android:paddingBottom="5dp"
-            android:focusableInTouchMode="true">
+            android:paddingTop="5dp">
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="二级覆盖场景：" />
@@ -83,120 +92,119 @@
                 android:layout_width="0dp"
                 android:layout_height="35dp"
                 android:layout_weight="2"
-                android:background="@drawable/znns"
-                 />
+                android:background="@drawable/znns" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:focusable="true"
-            android:paddingBottom="5dp"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp">
+
             <TextView
                 android:id="@+id/tv_mima"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="详细地址：" />
+
             <EditText
                 android:id="@+id/address"
                 android:layout_width="0dp"
-                android:layout_weight="2"
                 android:layout_height="match_parent"
-                android:singleLine="true"
+                android:layout_weight="2"
                 android:hint="请输入详细地址"
+                android:singleLine="true"
                 android:textSize="14dp" />
         </LinearLayout>
-        <!--<LinearLayout-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:orientation="horizontal"-->
-            <!--android:focusable="true"-->
-            <!--android:paddingBottom="5dp"-->
-            <!--android:focusableInTouchMode="true">-->
-            <!--<TextView-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_weight="1"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:gravity="center"-->
-                <!--android:paddingRight="5dp"-->
-                <!--android:text="GPS定位地址：" />-->
-            <!--<TextView-->
-                <!--android:id="@+id/GPSaddress"-->
-                <!--android:layout_width="0dp"-->
-                <!--android:layout_weight="2"-->
-                <!--android:layout_height="match_parent"-->
-                <!--android:singleLine="true"-->
-                <!--android:hint=""-->
-                <!--android:textSize="14dp" />-->
-        <!--</LinearLayout>-->
+
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:focusable="true"
-            android:paddingBottom="5dp"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp">
+
             <TextView
                 android:id="@+id/tv_bssstext"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="当前信号强度:" />
+
             <EditText
                 android:id="@+id/CurrentBess"
                 android:layout_width="0dp"
-                android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
+                android:layout_weight="2"
                 android:hint=""
+                android:singleLine="true"
                 android:textSize="14dp" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:focusable="true"
-            android:paddingBottom="5dp"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:orientation="horizontal"
+            android:paddingBottom="5dp">
+
             <TextView
                 android:id="@+id/tv_GPStext"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:paddingRight="5dp"
                 android:text="当前GPS:" />
+
             <EditText
                 android:id="@+id/CurrentGPS"
                 android:layout_width="0dp"
-                android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
+                android:layout_weight="2"
                 android:hint=""
+                android:singleLine="true"
                 android:textSize="14dp" />
         </LinearLayout>
 
-
-        <ScrollView
+        <com.example.dengqian.netcolltool.widget.MyScrollView
             android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:fillViewport="true">
+            android:scrollbars="vertical"
+            android:layout_marginVertical="5dp"
+            android:background="@drawable/znntitle"
+            android:layout_height="200dp">
             <TextView
                 android:id="@+id/show"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:background="@drawable/znntitle"
-                android:padding="20sp" />
-        </ScrollView>
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20sp"
+                android:text="\n\n\n\n\n\n" />
+        </com.example.dengqian.netcolltool.widget.MyScrollView>
+
+
+        <com.example.dengqian.netcolltool.widget.MyScrollView
+            android:layout_width="match_parent"
+            android:visibility="gone"
+            android:scrollbars="vertical"
+            android:background="@drawable/znntitle"
+            android:layout_height="150dp">
+            <TextView
+                android:id="@+id/neighborShow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="20sp"
+                android:text="\n\n\n\n\n\n" />
+        </com.example.dengqian.netcolltool.widget.MyScrollView>
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
@@ -204,29 +212,30 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-
             <Button
                 android:id="@+id/upLoadButton"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="上传" />
+
             <Button
                 android:id="@+id/collButton"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:text="采集" />
+
             <Button
                 android:id="@+id/updateGPS"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="更新GPS" />
+                android:layout_weight="1"
+                android:text="更新详细地址" />
         </LinearLayout>
-
-
-
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:visibility="invisible"/>
     </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
