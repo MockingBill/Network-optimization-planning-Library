@@ -440,12 +440,12 @@ public class HistoryFragment extends ListFragment {
                                     }
                                 }
 
-                                for(information inf:listAllInf){
-                                    List<information> singleInf=new ArrayList<information>();
-                                    singleInf.add(inf);
-                                    res=connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(singleInf));
-                                    resResult.add(res);
-                                }
+//                                for(information inf:listAllInf){
+//                                    List<information> singleInf=new ArrayList<information>();
+//                                    singleInf.add(inf);
+//                                    res=connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(singleInf));
+//                                    resResult.add(res);
+//                                }
 
                                 res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllInf));
                             } catch (Exception e) {
