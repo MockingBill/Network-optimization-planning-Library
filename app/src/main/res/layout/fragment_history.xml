@@ -4,6 +4,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.example.dengqian.netcolltool.HistoryFragment">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:id="@+id/progressID"
+        android:visibility="gone"
+        android:layout_height="60dp">
+        <TextView
+            android:layout_width="match_parent"
+            android:id="@+id/tv_main_desc"
+            android:text="共计上传30条，目前已上传18条"
+            android:textSize="15dp"
+            android:layout_height="match_parent" />
+
+        <ProgressBar
+            android:layout_width="match_parent"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:id="@+id/pb_main_download"
+            android:max="100"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
     <Button
         android:id="@+id/allUploadButton"
         android:layout_width="fill_parent"

@@ -1,13 +1,16 @@
 package com.example.dengqian.netcolltool;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -22,6 +25,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -58,41 +62,40 @@ public class HistoryFragment extends ListFragment {
     private OnFragmentInteractionListener mListener;
 
 
-
     /**
      * 声明区
      */
     private Activity activity;
     private View view;
     //地市下拉框适配器
-    private ArrayAdapter<String> adapter ;
+    private ArrayAdapter<String> adapter;
     //场景下拉框适配器
     private ArrayAdapter<String> adapter2;
     //地市下拉框
-    private  Spinner sp;
+    private Spinner sp;
     //一级场景下拉框
-    private  Spinner sp2;
+    private Spinner sp2;
     //二级场景下拉框
-    private  Spinner sp3;
+    private Spinner sp3;
     //上传状态下拉框
-    private  Spinner sp4;
+    private Spinner sp4;
 
-    private  Context context;
+    private Context context;
     //一级场景
-    private String[] overlay1 = new String[] {"全部","城区", "乡镇","农村","交通"};
+    private String[] overlay1 = new String[]{"全部", "城区", "乡镇", "农村", "交通"};
     //二级场景
     private String[][] overlay2 = new String[][]{
             {"全部"},
-            {"全部","学校","商业区","景区","党政军","住宅","医院","酒店"},
-            {"全部","住宅区","景区","党政军"},
-            {"全部","行政村","村寨","景区"},
-            {"全部","高速","车站","高铁","公路","机场"}};
+            {"全部", "学校", "商业区", "景区", "党政军", "住宅", "医院", "酒店"},
+            {"全部", "住宅区", "景区", "党政军"},
+            {"全部", "行政村", "村寨", "景区"},
+            {"全部", "高速", "车站", "高铁", "公路", "机场"}};
     //用于显示于listView列表的数据结构
-    private ArrayList<HashMap<String,String>> list;
+    private ArrayList<HashMap<String, String>> list;
     //当前对象列表用于显示于listView
     private List<information> infoList;
     //列表适配器
-    private  SimpleAdapter listAdapter;
+    private SimpleAdapter listAdapter;
     //弹出窗对象
     private PopupWindow mPopWindow;
     //本地数据库操作辅助对象
@@ -100,18 +103,23 @@ public class HistoryFragment extends ListFragment {
     //数据库实体对象
     private SQLiteDatabase db;
     //上传按钮
-    private  Button buttonUpload;
+    private Button buttonUpload;
     //弹窗view对象，用于获取弹窗对象
     private View contentView;
     //用于显示弹窗信息的information
-    private  information inf;
+    private information inf;
     //批量上传按钮
     private Button allUploadButton;
     //弱覆盖详细地址
     private EditText his_address_query;
     //查询按钮
     private Button his_botton_address;
-    private  Button allLoadButton;
+    private Button allLoadButton;
+    private ProgressBar pb_main_download;
+    private TextView tv_main_desc;
+    private FrameLayout process_win;
+
+
     public HistoryFragment() {
         // Required empty public constructor
     }
@@ -119,24 +127,28 @@ public class HistoryFragment extends ListFragment {
     /**
      * 二级联动一级场景监听器，当一级场景改变时则改变二级场景待选内容
      */
-    private AdapterView.OnItemSelectedListener selectListener1 = new AdapterView.OnItemSelectedListener(){
-        public void onItemSelected(AdapterView parent, View v, int position,long id){
+    private AdapterView.OnItemSelectedListener selectListener1 = new AdapterView.OnItemSelectedListener() {
+        public void onItemSelected(AdapterView parent, View v, int position, long id) {
             int pos = sp.getSelectedItemPosition();
-            adapter2 = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, overlay2[pos]);
+            adapter2 = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, overlay2[pos]);
             sp2.setAdapter(adapter2);
         }
-        public void onNothingSelected(AdapterView arg0){
+
+        public void onNothingSelected(AdapterView arg0) {
 
         }
     };
 
-    /**分类筛选动态响应，选择后直接从数据库查值显示于列表中*/
-    private AdapterView.OnItemSelectedListener selectListener2 = new AdapterView.OnItemSelectedListener(){
-        public void onItemSelected(AdapterView parent, View v, int position,long id){
+    /**
+     * 分类筛选动态响应，选择后直接从数据库查值显示于列表中
+     */
+    private AdapterView.OnItemSelectedListener selectListener2 = new AdapterView.OnItemSelectedListener() {
+        public void onItemSelected(AdapterView parent, View v, int position, long id) {
             //刷新
             refreshList();
         }
-        public void onNothingSelected(AdapterView arg0){
+
+        public void onNothingSelected(AdapterView arg0) {
 
         }
     };
@@ -144,6 +156,7 @@ public class HistoryFragment extends ListFragment {
 
     /**
      * 点击列表项弹出弹框
+     *
      * @param listView
      * @param view
      * @param position
@@ -158,6 +171,7 @@ public class HistoryFragment extends ListFragment {
 
     /**
      * 弹窗方法，包含按钮的定义和监听器的设置等
+     *
      * @param position
      */
     private void showPopupWindow(int position) {
@@ -204,26 +218,25 @@ public class HistoryFragment extends ListFragment {
                             alertText = "该记录已经上传，请勿重复上传。";
                         } else {
 
-                            List<information> listAllinfo=new ArrayList<>();
-                            boolean is2G=false;
-                            information infoForSave=new information();
-                            if(inf.getNetworkOperatorName().indexOf("2G")!=-1){
-                                is2G=true;
-                                information info1=new information(inf);
+                            List<information> listAllinfo = new ArrayList<>();
+                            boolean is2G = false;
+                            information infoForSave = new information();
+                            if (inf.getNetworkOperatorName().indexOf("2G") != -1) {
+                                is2G = true;
+                                information info1 = new information(inf);
                                 info1.setID(UUID.randomUUID().toString());
-                                info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
+                                info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G", "4G"));
                                 info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAllinfo.add(info1);
-                                infoForSave=new information(info1);
-                            }
-                            else if(inf.getNetworkOperatorName().indexOf("3G")!=-1){
-                                is2G=true;
-                                information info2=new information(inf);
+                                infoForSave = new information(info1);
+                            } else if (inf.getNetworkOperatorName().indexOf("3G") != -1) {
+                                is2G = true;
+                                information info2 = new information(inf);
                                 info2.setID(UUID.randomUUID().toString());
-                                info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
+                                info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G", "4G"));
                                 info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
                                 listAllinfo.add(info2);
-                                infoForSave=new information(info2);
+                                infoForSave = new information(info2);
                             }
                             listAllinfo.add(inf);
 
@@ -235,16 +248,16 @@ public class HistoryFragment extends ListFragment {
 
 
                             if (Integer.valueOf(res) == 1) {
-                                if(is2G){
+                                if (is2G) {
                                     alertText = getString(R.string.is2G4Gwarm);
-                                }else{
+                                } else {
                                     alertText = "上传成功";
                                 }
                                 sqLiteOpenHelper.updateIsUpload(db, inf.getID());
                                 inf.setIsUpload("1");
 
-                                if(infoForSave.checkData()){
-                                    sqLiteOpenHelper.save(db,infoForSave,activity);
+                                if (infoForSave.checkData()) {
+                                    sqLiteOpenHelper.save(db, infoForSave, activity);
                                     sqLiteOpenHelper.updateIsUpload(db, infoForSave.getID());
                                 }
 
@@ -274,17 +287,12 @@ public class HistoryFragment extends ListFragment {
         });
 
 
-
-
-
-
-
         //删除按钮的初始化和点击监听器实现
-        Button buttonDelete=(Button)contentView.findViewById(R.id.singleDelete);
-        buttonDelete.setOnClickListener(new View.OnClickListener(){
+        Button buttonDelete = (Button) contentView.findViewById(R.id.singleDelete);
+        buttonDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sqLiteOpenHelper.delete(db,inf.getID());
+                sqLiteOpenHelper.delete(db, inf.getID());
                 //Toast.makeText(activity,"删除成功", Toast.LENGTH_LONG).show();
                 refreshList();
                 mPopWindow.dismiss();
@@ -301,52 +309,56 @@ public class HistoryFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        activity=(MainActivity) this.getActivity();
+        activity = (MainActivity) this.getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
-
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         //相关layout组件的初始化
-        view=inflater.inflate(R.layout.fragment_history, container, false);
-        list=new ArrayList<HashMap<String,String>>();
-        sqLiteOpenHelper=new informDBHelper(context);
-        db=sqLiteOpenHelper.getReadableDatabase();
-        allUploadButton=view.findViewById(R.id.allUploadButton);
-        sp = (Spinner) view.findViewById(R.id.overlayScene1);
-        sp2=(Spinner)view.findViewById(R.id.overlayScene2);
-        sp3=(Spinner)view.findViewById(R.id.district);
+        view = inflater.inflate(R.layout.fragment_history, container, false);
 
-        sp4=(Spinner)view.findViewById(R.id.isUpload);
-        allLoadButton=view.findViewById(R.id.allLoadButton);
+        pb_main_download = view.findViewById(R.id.pb_main_download);
+        tv_main_desc = view.findViewById(R.id.tv_main_desc);
+        process_win = view.findViewById(R.id.progressID);
+
+        list = new ArrayList<HashMap<String, String>>();
+        sqLiteOpenHelper = new informDBHelper(context);
+        db = sqLiteOpenHelper.getReadableDatabase();
+        allUploadButton = view.findViewById(R.id.allUploadButton);
+        sp = (Spinner) view.findViewById(R.id.overlayScene1);
+        sp2 = (Spinner) view.findViewById(R.id.overlayScene2);
+        sp3 = (Spinner) view.findViewById(R.id.district);
+
+        sp4 = (Spinner) view.findViewById(R.id.isUpload);
+        allLoadButton = view.findViewById(R.id.allLoadButton);
+
+
         allLoadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String Dict=Environment.getExternalStorageDirectory().getAbsolutePath()+"/wyghk/";
+                String Dict = Environment.getExternalStorageDirectory().getAbsolutePath() + "/wyghk/";
 
 
-
-                String FileName="allData.txt";
+                String FileName = "allData.txt";
                 FileUnit.makeRootDirectory(Dict);
                 System.out.println(Dict);
 
 
-
-                StringBuffer sb=new StringBuffer();
-                for (information info:infoList){
+                StringBuffer sb = new StringBuffer();
+                for (information info : infoList) {
                     sb.append(info.show());
                 }
-                try{
+                try {
                     System.out.println(sb.toString());
-                    FileUnit.writeTxtToFile("弱覆盖数据存储\n"+sb.toString(),Dict,FileName);
-                    Toast.makeText(activity, "保存到:"+Dict+FileName, Toast.LENGTH_LONG).show();
-                }catch(Exception e){
+                    FileUnit.writeTxtToFile("弱覆盖数据存储\n" + sb.toString(), Dict, FileName);
+                    Toast.makeText(activity, "保存到:" + Dict + FileName, Toast.LENGTH_LONG).show();
+                } catch (Exception e) {
                     Toast.makeText(activity, "保存失败", Toast.LENGTH_LONG).show();
                 }
 
@@ -355,138 +367,95 @@ public class HistoryFragment extends ListFragment {
         });
 
 
-
-
-
-        adapter = new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item,overlay1 );
+        adapter = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, overlay1);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(adapter);
         sp.setOnItemSelectedListener(selectListener1);
 
 
-        adapter2=new ArrayAdapter<String>(activity,android.R.layout.simple_spinner_item, overlay2[0]);
+        adapter2 = new ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, overlay2[0]);
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp2.setAdapter(adapter2);
         sp2.setOnItemSelectedListener(selectListener2);
         sp3.setOnItemSelectedListener(selectListener2);
         sp4.setOnItemSelectedListener(selectListener2);
 
-        his_botton_address=(Button) view.findViewById(R.id.his_botton_address);
-        his_address_query=(EditText) view.findViewById(R.id.his_address_query);
+        his_botton_address = (Button) view.findViewById(R.id.his_botton_address);
+        his_address_query = (EditText) view.findViewById(R.id.his_address_query);
 
 
         //查询所有记录显示于列表（这里查询出的并不会真正的显示在列表中，在下拉列表中定义的项中被加载后会覆盖本次查询记录）
-        infoList=sqLiteOpenHelper.query(db,"select * from NetWorkInfor",null);
+        infoList = sqLiteOpenHelper.query(db, "select * from NetWorkInfor", null);
 
-        HashMap<String,String> map;
-        for(information info : infoList){
-            map=new HashMap<String,String>();
-            map.put("row_address",info.getAddress());
-            map.put("CollTime",info.getCollTime());
+        HashMap<String, String> map;
+        for (information info : infoList) {
+            map = new HashMap<String, String>();
+            map.put("row_address", info.getAddress());
+            map.put("CollTime", info.getCollTime());
             list.add(map);
         }
 
 
         //适配器的设置
-        listAdapter=new SimpleAdapter(activity,list,R.layout.list_view_row_,
-                new String[]{"row_address","CollTime"},
-                new int[]{R.id.row_address,R.id.CollTime});
+        listAdapter = new SimpleAdapter(activity, list, R.layout.list_view_row_,
+                new String[]{"row_address", "CollTime"},
+                new int[]{R.id.row_address, R.id.CollTime});
         setListAdapter(listAdapter);
+
+
         //批量上传按钮的设置
         allUploadButton.setOnClickListener(new View.OnClickListener() {
             String res = "0";
-            List<String> resResult=new ArrayList<String>();
+
+            List<String> resResult = new ArrayList<String>();
             ArrayList<String> uploadListID = new ArrayList<String>();
             List<information> listAll;
+
             @Override
             public void onClick(View v) {
                 listAll = sqLiteOpenHelper.query(db, "select * from NetWorkInfor where isUpload=0", null);
                 if (listAll.isEmpty())
                     Toast.makeText(activity, "没有数据需要上传", Toast.LENGTH_LONG).show();
                 else {
-                    new Thread() {
-                        boolean is2G=false;
-                        List<information> listForSave=new ArrayList<>();
-                        public void run() {
-
-                            try {
-                                List<information> listAllInf=new ArrayList<>();
-
-                                for (information x : listAll){
-                                    uploadListID.add(x.getID());
-                                }
-                                for(information y:listAll){
-                                    /**
-                                     * 筛选出当前的2G、3G信号，用于生成对应的4G标记。
-                                     */
-                                    listAllInf.add(y);
-                                    if(y.getNetworkOperatorName().indexOf("2G")!=-1){
-                                        is2G=true;
-                                        information info1=new information(y);
-                                        info1.setID(UUID.randomUUID().toString());
-                                        info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G","4G"));
-                                        info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
-                                        listAllInf.add(info1);
-                                        listForSave.add(info1);
-                                    }
-                                    else if(y.getNetworkOperatorName().indexOf("3G")!=-1){
-                                        is2G=true;
-                                        information info2=new information(y);
-                                        info2.setID(UUID.randomUUID().toString());
-                                        info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G","4G"));
-                                        info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
-                                        listAllInf.add(info2);
-                                        listForSave.add(info2);
-                                    }
-                                }
-
-//                                for(information inf:listAllInf){
-//                                    List<information> singleInf=new ArrayList<information>();
-//                                    singleInf.add(inf);
-//                                    res=connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(singleInf));
-//                                    resResult.add(res);
-//                                }
-
-                                res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(listAllInf));
-                            } catch (Exception e) {
-                                res = "0";
-                                Log.e("upload",e.toString());
-                            }
-                            Looper.prepare();
-                            new Handler(context.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    /**
-                                     * 这里写成功后的组件控制
-                                     */
-                                    if (res.equals("1")) {
-                                        sqLiteOpenHelper.updateListIsUpload(db, uploadListID);
-                                        String uploadText="批量上传成功";
-                                        //将上传的对应4G数据保存到本地
-                                        for (information j : listForSave){
-                                            sqLiteOpenHelper.save(db,j,activity);
-                                            sqLiteOpenHelper.updateIsUpload(db,j.getID());
-                                        }
-                                        if(is2G){
-                                            uploadText=getString(R.string.is2G4Gwarm);
-                                        }else{
-                                            uploadText="批量上传成功";
-                                        }
-                                        Toast.makeText(activity,uploadText, Toast.LENGTH_LONG).show();
-                                        refreshList();
-                                        Looper.loop();
-                                    } else {
-                                        Toast.makeText(activity, "批量上传失败", Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
+                    allNum = listAll.size();
+                    pb_main_download.setMax(allNum);
+                    process_win.setVisibility(View.VISIBLE);
+                    List<information> listForSave = new ArrayList<>();
+                    List<information> listAllInf = new ArrayList<>();
+                    for (information x : listAll) {
+                        uploadListID.add(x.getID());
+                    }
+                    for (information y : listAll) {
+                        /**
+                         * 筛选出当前的2G、3G信号，用于生成对应的4G标记。
+                         */
+                        listAllInf.add(y);
+                        if (y.getNetworkOperatorName().indexOf("2G") != -1) {
+                            information info1 = new information(y);
+                            info1.setID(UUID.randomUUID().toString());
+                            info1.setNetworkOperatorName(info1.getNetworkOperatorName().replace("2G", "4G"));
+                            info1.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                            listAllInf.add(info1);
+                            listForSave.add(info1);
+                        } else if (y.getNetworkOperatorName().indexOf("3G") != -1) {
+                            information info2 = new information(y);
+                            info2.setID(UUID.randomUUID().toString());
+                            info2.setNetworkOperatorName(info2.getNetworkOperatorName().replace("3G", "4G"));
+                            info2.setBSSS(Integer.valueOf(getString(R.string.BSSS4GMin)));
+                            listAllInf.add(info2);
+                            listForSave.add(info2);
                         }
-                    }.start();
+                    }
+                    for (information inf : listAllInf) {
+                        List<information> singleInf = new ArrayList<information>();
+                        singleInf.add(inf);
+                        new uploadThread(singleInf).start();
+                    }
                 }
 
             }
         });
-        refreshList();
+
 
         his_botton_address.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -505,9 +474,136 @@ public class HistoryFragment extends ListFragment {
         }
     }
 
+
+    //当前进度
+    private static int p = 0;
+    private static int allNum = 0;
+    private MyHandler myHandler = new MyHandler();
+
+
+
+    public class myThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+            p++;
+            //上传结束
+            if (allNum == p) {
+                Message msg2 = new Message();
+                msg2.what = 2;
+                myHandler.sendMessage(msg2);//发送处理码
+//                Looper.prepare();
+//                new Handler(context.getMainLooper()).post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        /**
+//                         * 这里写成功后的组件控制
+//                         */
+//                    }
+//                });
+            }else{
+                Message msg = new Message();
+                msg.what = 1;
+                myHandler.sendMessage(msg);//发送处理码
+            }
+
+
+        }
+    }
+
+
+    public class MyHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            int code = msg.what;//接受处理码
+            switch (code) {
+                case 1: {
+
+                    //给进度条的当前进度赋值
+                    pb_main_download.setProgress(p);
+                    //显示当前进度为多少
+                    tv_main_desc.setText("共计:" + String.valueOf(allNum) + "条，完成:" + String.valueOf(p) + "条");
+
+                    break;
+                }
+                case 2: {
+                    if (rightnum > 0) {
+                        AlertDialog alertDialog1 = new AlertDialog.Builder(context)
+                                .setTitle("批量上传失败")//标题
+                                .setMessage("其中成功"+String.valueOf(rightnum)+"条，失败"+String.valueOf(incorrtnum)+"条。请检查网络是否正常")//内容
+                                .setIcon(R.mipmap.ic_launcher)//图标
+                                .setPositiveButton("了解", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .create();
+                        alertDialog1.show();
+                        process_win.setVisibility(View.VISIBLE);
+                        refreshList();
+                        Looper.loop();
+                    } else {
+                        AlertDialog alertDialog1 = new AlertDialog.Builder(context)
+                                .setTitle("批量上传失败")//标题
+                                .setMessage("其中成功"+String.valueOf(rightnum)+"条，失败"+String.valueOf(incorrtnum)+"条。请检查网络是否正常")//内容
+                                .setIcon(R.mipmap.ic_launcher)//图标
+                                .setPositiveButton("了解", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                    }
+                                })
+                                .create();
+                        alertDialog1.show();
+
+                    }
+                    refreshList();
+                    process_win.setVisibility(View.GONE);
+                    p = 0;
+                    rightnum = 0;
+                    incorrtnum = 0;
+                    allNum = 0;
+                }
+            }
+
+        }
+    }
+
+    public int rightnum = 0;
+    public int incorrtnum = 0;
+
+
+    public class uploadThread extends Thread {
+        List<information> inf = null;
+        public uploadThread(List<information> x) {
+            inf = x;
+        }
+
+        @Override
+        public void run() {
+            try {
+                String res = connNetReq.post(getString(R.string.allObjUpload), connNetReq.beanToJson(inf));
+                if (res.equals("1")) {
+                    //逐条修改上传标记
+                    rightnum++;
+                    sqLiteOpenHelper.updateIsUpload(db, inf.get(0).getID());
+                } else {
+                    incorrtnum++;
+                }
+
+            } catch (Exception e) {
+                Log.e("", e.toString());
+
+            }
+            new myThread().start();
+        }
+    }
+
     @Override
     public void onAttach(Context context) {
-        this.context=context;
+        this.context = context;
         super.onAttach(context);
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
@@ -542,27 +638,35 @@ public class HistoryFragment extends ListFragment {
     /**
      * 根据当前选择刷新列表。用于上传后。删除后。对列表数据进行更新。
      */
-    public void refreshList(){
-        String a1=sp.getSelectedItem().toString().equals("全部")?"%":sp.getSelectedItem().toString();
-        String a2=sp2.getSelectedItem().toString().equals("全部")?"%":sp2.getSelectedItem().toString();
+    public void refreshList() {
+        int all_no_upload_record_num=sqLiteOpenHelper.query(db, "select * from NetWorkInfor where isUpload=0", null).size();
 
-        String sc=a1+"_"+a2;
+        allUploadButton.setText("批量上传所有未上传记录("+String.valueOf(all_no_upload_record_num)+"条)");
 
-        String di=sp3.getSelectedItem().toString();
-        String up=sp4.getSelectedItem().toString().equals("未上传")?"0":"1";
-        if(di.equals("全部"))
-            di="%";
-        String querySql="select * from  NetWorkInfor where overlayScene like '"+sc+"' and district like '"+di+"' and isUpload="+up+"";
-        String []arr={sc,di,up};
-        infoList=sqLiteOpenHelper.query(db,querySql,null);
-        HashMap<String,String> map;
+
+        int all_upload_record_num=sqLiteOpenHelper.query(db, "select * from NetWorkInfor", null).size();
+
+        allLoadButton.setText("导出本地所有记录("+String.valueOf(all_upload_record_num)+"条)");
+        String a1 = sp.getSelectedItem().toString().equals("全部") ? "%" : sp.getSelectedItem().toString();
+        String a2 = sp2.getSelectedItem().toString().equals("全部") ? "%" : sp2.getSelectedItem().toString();
+
+        String sc = a1 + "_" + a2;
+
+        String di = sp3.getSelectedItem().toString();
+        String up = sp4.getSelectedItem().toString().equals("未上传") ? "0" : "1";
+        if (di.equals("全部"))
+            di = "%";
+        String querySql = "select * from  NetWorkInfor where overlayScene like '" + sc + "' and district like '" + di + "' and isUpload=" + up + "";
+        String[] arr = {sc, di, up};
+        infoList = sqLiteOpenHelper.query(db, querySql, null);
+        HashMap<String, String> map;
         list.clear();
-        for(information info : infoList){
-            map=new HashMap<String,String>();
-            map.put("row_address",info.getAddress());
+        for (information info : infoList) {
+            map = new HashMap<String, String>();
+            map.put("row_address", info.getAddress());
             /*map.put("ECI",info.getECI());
             map.put("BSSS",String.valueOf(info.getBSSS()));*/
-            map.put("CollTime",info.getCollTime());
+            map.put("CollTime", info.getCollTime());
             list.add(map);
         }
         listAdapter.notifyDataSetChanged();
@@ -577,28 +681,27 @@ public class HistoryFragment extends ListFragment {
         return fragment;
     }
 
-    public void refreshListForAddressquery(String addressvalue){
-        String up=sp4.getSelectedItem().toString().equals("未上传")?"0":"1";
-        if("".equals(addressvalue)){
-            addressvalue="%";
+    public void refreshListForAddressquery(String addressvalue) {
+        String up = sp4.getSelectedItem().toString().equals("未上传") ? "0" : "1";
+        if ("".equals(addressvalue)) {
+            addressvalue = "%";
         }
 
-        String querySql="select * from  NetWorkInfor where address like '%"+addressvalue+"%' and isUpload="+up+"";
+        String querySql = "select * from  NetWorkInfor where address like '%" + addressvalue + "%' and isUpload=" + up + "";
 
-        infoList=sqLiteOpenHelper.query(db,querySql,null);
-        HashMap<String,String> map;
+        infoList = sqLiteOpenHelper.query(db, querySql, null);
+        HashMap<String, String> map;
         list.clear();
-        for(information info : infoList){
-            map=new HashMap<String,String>();
-            map.put("row_address",info.getAddress());
+        for (information info : infoList) {
+            map = new HashMap<String, String>();
+            map.put("row_address", info.getAddress());
             /*map.put("ECI",info.getECI());
             map.put("BSSS",String.valueOf(info.getBSSS()));*/
-            map.put("CollTime",info.getCollTime());
+            map.put("CollTime", info.getCollTime());
             list.add(map);
         }
         listAdapter.notifyDataSetChanged();
     }
-
 
 
 }
